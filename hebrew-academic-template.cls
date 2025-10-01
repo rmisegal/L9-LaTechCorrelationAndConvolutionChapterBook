@@ -513,12 +513,23 @@
   \text{\scriptsize\begingroup\selectlanguage{hebrew}\textdir TRT #1\endgroup}%
 }
 
-%% ==================== SUPERSCRIPT 2 FIX ====================
+%% ==================== SPECIAL CHARACTERS FIX ====================
 
-% Fix for ² character in Hebrew fonts that don't support it
+% Fix for special characters in Hebrew fonts that don't support them
+
 % Use \Rsquared instead of R² in Hebrew text
 \newcommand{\Rsquared}{%
   \ensuremath{R^2}%
+}
+
+% Fix for ≠ (not equal) character
+\newcommand{\neq}{%
+  \ensuremath{\neq}%
+}
+
+% Fix for → (right arrow) character
+\newcommand{\rarrow}{%
+  \ensuremath{\rightarrow}%
 }
 
 % Alternative: for inline text (not in math mode)

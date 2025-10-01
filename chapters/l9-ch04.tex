@@ -1,0 +1,861 @@
+% l9-ch04.tex
+% פרק 4: קו-ווריאנס וקורלציה – מדידת קשרים בין משתנים
+% מחבר: ד"ר יורם סגל
+% תאריך: ספטמבר 2025
+
+\hebrewsection{קו-ווריאנס וקורלציה: מדידת קשרים בין משתנים}
+
+\noindent\textbf{\en{Covariance and Correlation: Measuring Relationships Between Variables}}
+
+\vspace{0.5cm}
+
+בפרק זה נחקור את הכלים המתמטיים למדידת קשרים בין משתנים. נראה כיצד קו-ווריאנס וקורלציה מהווים הרחבה טבעית של מכפלה סקלרית ו\en{-}Cosine Similarity, ונבין מדוע "\textbf{מתאם אינו סיבתיות}" הוא אחד העקרונות החשובים ביותר במדע הנתונים.
+
+\hebrewsubsection{השאלה המרכזית: איך מודדים "יחד-משתנות"?}
+
+דמיינו שאנחנו בוחנים את הקשר בין גובה ומשקל של אנשים. אינטואיטיבית, אנחנו מצפים שאנשים גבוהים יותר יהיו בדרך כלל כבדים יותר – הם "משתנים יחד". אך \textbf{כיצד נכמת את הקשר הזה?}
+
+התשובה המתמטית היא \textbf{קו-ווריאנס} \en{(Covariance)} – מדד שמצביע על מידת ה"יחד-משתנות" של שני משתנים.
+
+\hebrewsubsection{היסטוריה: מי המציא את הקו-ווריאנס?}
+
+המושג פותח במקביל להתפתחות הסטטיסטיקה המודרנית:
+
+\textbf{\en{Francis Galton}} (\hebyear{1822}–\hebyear{1911}) היה הראשון לחקור קשרים בין משתנים במחקריו על תורשה. בעבודתו על גובה הורים וילדים (\hebyear{1886}) \cite{galton1886}, הוא גילה שהמשתנים "משתנים יחד" באופן שיטתי.
+
+\textbf{\en{Karl Pearson}} (\hebyear{1857}–\hebyear{1936}) פיתח את \textbf{מקדם הקורלציה} $r$ ב\en{-}\hebyear{1896} \cite{pearson1896}, והגדיר באופן פורמלי את הקו-ווריאנס כבסיס למקדם זה.
+
+\textbf{\en{Ronald Fisher}} (\hebyear{1890}–\hebyear{1962}) הרחיב את התורה ל\textbf{מטריצות קו-ווריאנס} \en{(Covariance Matrices)} ולניתוח רב-משתני \cite{fisher1925}.
+
+\hebrewsubsection{הגדרה: מהי קו-ווריאנס?}
+
+\textbf{הגדרה \num{4.1} – קו-ווריאנס:}
+
+עבור שני משתנים $X$ ו\en{-}$Y$ עם $n$ תצפיות, הקו-ווריאנס מוגדרת כ:
+
+\begin{equation}
+\text{Cov}(X, Y) = \frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})
+\end{equation}
+
+כאשר $\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i$ ו\en{-}$\bar{y} = \frac{1}{n}\sum_{i=1}^{n} y_i$ הם הממוצעים.
+
+\textbf{הערה על הגדרות שונות:}
+
+חלק מהספרים משתמשים בחלוקה ב\en{-}$(n-1)$ במקום $n$ (קו-ווריאנס מדגמית):
+
+\begin{equation}
+\text{Cov}_{\text{sample}}(X, Y) = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})
+\end{equation}
+
+החלוקה ב\en{-}$(n-1)$ נותנת \textbf{אומד לא מוטה} \en{(Unbiased Estimator)} לקו-ווריאנס האוכלוסייה. לצרכי למידת מכונה, ההבדל זניח כאשר $n$ גדול.
+
+\hebrewsubsection{משמעות אינטואיטיבית: מה אומר הסימן?}
+
+\textbf{פרשנות לפי סימן הקו-ווריאנס:}
+
+\begin{hebrewtable}[H]
+\caption{פרשנות הסימן של קו-ווריאנס}
+\centering
+\begin{rtltabular}{|c|p{10cm}|}
+\hline
+\textbf{\hebcell{ערך}} & \textbf{\hebcell{משמעות}} \\
+\hline
+$\text{Cov}(X,Y) > 0$ & \hebcell{קשר חיובי: כאשר $X$ גדל, $Y$ נוטה לגדול} \\
+\hline
+$\text{Cov}(X,Y) = 0$ & \hebcell{אין קשר ליניארי (לא בהכרח בלתי תלויים!)} \\
+\hline
+$\text{Cov}(X,Y) < 0$ & \hebcell{קשר שלילי: כאשר $X$ גדל, $Y$ נוטה לקטון} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\textbf{דוגמה מספרית:}
+
+נניח שיש לנו נתוני גובה ומשקל של \num{5} אנשים:
+
+\begin{hebrewtable}[H]
+\caption{דוגמה: גובה ומשקל}
+\centering
+\begin{rtltabular}{|r|r|r|}
+\hline
+\textbf{\hebcell{אדם}} & \textbf{\hebcell{גובה (ס"מ)}} & \textbf{\hebcell{משקל (ק"ג)}} \\
+\hline
+\num{1} & \num{160} & \num{55} \\
+\hline
+\num{2} & \num{170} & \num{65} \\
+\hline
+\num{3} & \num{180} & \num{75} \\
+\hline
+\num{4} & \num{175} & \num{70} \\
+\hline
+\num{5} & \num{165} & \num{60} \\
+\hline
+\textbf{\hebcell{ממוצע}} & \num{170} & \num{65} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\textbf{חישוב:}
+
+\begin{align}
+\text{Cov}(X,Y) &= \frac{1}{5}\big[(160-170)(55-65) + (170-170)(65-65) \nonumber \\
+&\quad + (180-170)(75-65) + (175-170)(70-65) \nonumber \\
+&\quad + (165-170)(60-65)\big] \nonumber \\
+&= \frac{1}{5}\big[(-10)(-10) + (0)(0) + (10)(10) + (5)(5) + (-5)(-5)\big] \nonumber \\
+&= \frac{1}{5}\big[100 + 0 + 100 + 25 + 25\big] = \frac{250}{5} = 50
+\end{align}
+
+$\text{Cov}(X,Y) = 50 > 0$ \rarrow{} קשר חיובי בין גובה למשקל.
+
+\hebrewsubsection{קשר לאלגברה ליניארית: קו-ווריאנס כמכפלה סקלרית}
+
+נזכור מפרק \num{1} את ההגדרה של מכפלה סקלרית:
+
+\begin{equation}
+\langle \vec{u}, \vec{v} \rangle = \sum_{i=1}^{n} u_i v_i
+\end{equation}
+
+\textbf{קו-ווריאנס היא מכפלה סקלרית של וקטורים ממורכזים!}
+
+אם נגדיר:
+\begin{itemize}
+\item $\vec{x}_c = [x_1 - \bar{x}, x_2 - \bar{x}, \ldots, x_n - \bar{x}]^T$ – וקטור $X$ ממורכז
+\item $\vec{y}_c = [y_1 - \bar{y}, y_2 - \bar{y}, \ldots, y_n - \bar{y}]^T$ – וקטור $Y$ ממורכז
+\end{itemize}
+
+אזי:
+
+\begin{equation}
+\text{Cov}(X, Y) = \frac{1}{n} \langle \vec{x}_c, \vec{y}_c \rangle = \frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})
+\end{equation}
+
+\textbf{משמעות גיאומטרית:}
+
+קו-ווריאנס מודדת את \textbf{"ההטיה המשותפת"} של שני משתנים מהממוצע שלהם – זו מכפלה סקלרית של הסטיות!
+
+\hebrewsubsection{הבעיה עם קו-ווריאנס: חוסר סקלה}
+
+הבעיה המרכזית של קו-ווריאנס: \textbf{הערך שלה תלוי ביחידות המדידה}.
+
+\textbf{דוגמה בעייתית:}
+
+\begin{itemize}
+\item $\text{Cov}(\text{גובה בס"מ}, \text{משקל בק"ג}) = 50$
+\item $\text{Cov}(\text{גובה במטרים}, \text{משקל בק"ג}) = 0.005$
+\end{itemize}
+
+אותו קשר, אבל ערכים שונים לחלוטין! \textbf{לא ניתן להשוות קו-ווריאנסים מזוגות משתנים שונים}.
+
+זו הסיבה שאנחנו זקוקים ל\textbf{קורלציה} – גרסה מנורמלת של קו-ווריאנס.
+
+\hebrewsubsection{קורלציה: הגרסה המנורמלת}
+
+\textbf{הגדרה \num{4.2} – מקדם הקורלציה של פירסון:}
+
+מקדם הקורלציה בין $X$ ו\en{-}$Y$ מוגדר כ:
+
+\begin{equation}
+r = \text{Cor}(X, Y) = \frac{\text{Cov}(X, Y)}{\sigma_X \sigma_Y}
+\end{equation}
+
+כאשר:
+\begin{itemize}
+\item $\sigma_X = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(x_i - \bar{x})^2}$ – סטיית התקן של $X$
+\item $\sigma_Y = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(y_i - \bar{y})^2}$ – סטיית התקן של $Y$
+\end{itemize}
+
+\textbf{נוסחה מפורשת:}
+
+\begin{equation}
+r = \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i - \bar{x})^2} \sqrt{\sum_{i=1}^{n}(y_i - \bar{y})^2}}
+\end{equation}
+
+\textbf{הכרת הנוסחה?}
+
+זו \textbf{בדיוק \en{Cosine Similarity}} של וקטורים ממורכזים! (ראו פרק \num{1})
+
+\hebrewsubsection{קשר לאלגברה ליניארית: קורלציה כ\en{-}Cosine Similarity}
+
+נזכור מפרק \num{1}:
+
+\begin{equation}
+\cos(\theta) = \frac{\langle \vec{u}, \vec{v} \rangle}{\|\vec{u}\| \cdot \|\vec{v}\|}
+\end{equation}
+
+אם $\vec{x}_c$ ו\en{-}$\vec{y}_c$ הם וקטורים ממורכזים, אזי:
+
+\begin{equation}
+r = \frac{\langle \vec{x}_c, \vec{y}_c \rangle}{\|\vec{x}_c\| \cdot \|\vec{y}_c\|} = \cos(\theta)
+\end{equation}
+
+\textbf{פרשנות גיאומטרית מרתקת:}
+
+\textbf{קורלציה היא הקוסינוס של הזווית בין שני משתנים ממורכזים במרחב התצפיות!}
+
+\begin{itemize}
+\item $r = 1$ (זווית $0°$) \rarrow{} קשר ליניארי חיובי מושלם
+\item $r = 0$ (זווית $90°$) \rarrow{} אורתוגונליים, אין קשר ליניארי
+\item $r = -1$ (זווית $180°$) \rarrow{} קשר ליניארי שלילי מושלם
+\end{itemize}
+
+\hebrewsubsection{משפט: תחום הקורלציה}
+
+\textbf{משפט \num{4.1} – תחום מקדם הקורלציה:}
+
+לכל שני משתנים $X$ ו\en{-}$Y$, מתקיים: $-1 \leq r \leq 1$.
+
+\textbf{הוכחה:}
+
+\textit{שיטה 1: אי-שוויון קושי-שוורץ}
+
+אי-שוויון קושי-שוורץ \en{(Cauchy-Schwarz Inequality)} קובע שלכל וקטורים $\vec{u}, \vec{v}$:
+
+\begin{equation}
+|\langle \vec{u}, \vec{v} \rangle| \leq \|\vec{u}\| \cdot \|\vec{v}\|
+\end{equation}
+
+כאשר השוויון מתקיים אם ורק אם הווקטורים פרופורציונליים ($\vec{v} = c\vec{u}$).
+
+\textit{צעד 1:} נישם $\vec{u} = \vec{x}_c$ ו\en{-}$\vec{v} = \vec{y}_c$ (ווקטורים ממורכזים).
+
+\textit{צעד 2:} לפי קושי-שוורץ:
+
+\[
+|\langle \vec{x}_c, \vec{y}_c \rangle| \leq \|\vec{x}_c\| \cdot \|\vec{y}_c\|
+\]
+
+\textit{צעד 3:} חלוקה ב\en{-}$\|\vec{x}_c\| \cdot \|\vec{y}_c\|$ נותנת:
+
+\[
+\left|\frac{\langle \vec{x}_c, \vec{y}_c \rangle}{\|\vec{x}_c\| \cdot \|\vec{y}_c\|}\right| \leq 1
+\]
+
+\textit{צעד 4:} אך זה בדיוק $|r|$, לכן:
+
+\[
+|r| \leq 1 \quad \Rightarrow \quad -1 \leq r \leq 1 \quad \blacksquare
+\]
+
+\textbf{מתי מתקיים $r = \pm 1$?}
+
+השוויון מתקיים כאשר $\vec{y}_c = c\vec{x}_c$ – כלומר, $Y$ ו\en{-}$X$ קשורים ליניארית: $Y = a + bX$.
+
+\hebrewsubsection{דוגמאות ויזואליות: קורלציות שונות}
+
+\textbf{פסאודו-קוד – יצירת דוגמאות קורלציה:}
+
+\begin{pythonbox}[דוגמאות קורלציה עם ויזואליזציה]
+import numpy as np
+import matplotlib.pyplot as plt
+
+np.random.seed(42)
+n = 100
+x = np.random.randn(n)
+
+# קורלציות שונות
+correlations = [1.0, 0.8, 0.5, 0.0, -0.5, -0.8, -1.0]
+
+fig, axes = plt.subplots(2, 4, figsize=(16, 8))
+axes = axes.flatten()
+
+for i, r_target in enumerate(correlations):
+    # יצירת Y עם קורלציה רצויה
+    noise = np.random.randn(n)
+    y = r_target * x + np.sqrt(1 - r_target**2) * noise
+    
+    # חישוב קורלציה בפועל
+    r_actual = np.corrcoef(x, y)[0, 1]
+    
+    # ציור
+    axes[i].scatter(x, y, alpha=0.6)
+    axes[i].set_title(f'r = {r_actual:.2f}')
+    axes[i].set_xlabel('X')
+    axes[i].set_ylabel('Y')
+    axes[i].grid(True, alpha=0.3)
+
+axes[-1].axis('off')
+plt.tight_layout()
+plt.show()
+\end{pythonbox}
+
+\textbf{תוצאה צפויה:} גרפים המראים כיצד הנקודות "מסתדרות" בצורה ליניארית ככל שהקורלציה חזקה יותר.
+
+\hebrewsubsection{תרגיל תכנות עצמי \num{4.1} – חישוב קורלציה ידני}
+
+\textbf{מטרה:} להבין את הקשר בין קו-ווריאנס, קורלציה, ומכפלה סקלרית.
+
+\textbf{משימה:}
+
+\begin{enumerate}
+\item צרו שני משתנים $X$ ו\en{-}$Y$ עם קורלציה ידועה
+\item חשבו קו-ווריאנס בשלוש דרכים:
+\begin{itemize}
+\item נוסחה ישירה
+\item מכפלה סקלרית של וקטורים ממורכזים
+\item באמצעות \en{NumPy}
+\end{itemize}
+\item חשבו קורלציה בשלוש דרכים:
+\begin{itemize}
+\item מקו-ווריאנס וסטיות תקן
+\item \en{Cosine Similarity} של וקטורים ממורכזים
+\item באמצעות \en{NumPy}
+\end{itemize}
+\item השוו את כל התוצאות
+\end{enumerate}
+
+\begin{pythonbox}[חישוב קורלציה וקו-ווריאנס ידני]
+import numpy as np
+
+# נתונים
+x = np.array([160, 170, 180, 175, 165])
+y = np.array([55, 65, 75, 70, 60])
+
+print("=== דרך 1: נוסחה ישירה ===")
+# ממוצעים
+x_mean = np.mean(x)
+y_mean = np.mean(y)
+
+# קו-ווריאנס
+cov_manual = np.mean((x - x_mean) * (y - y_mean))
+print(f"Cov(X,Y) = {cov_manual:.2f}")
+
+# סטיות תקן
+sigma_x = np.std(x)
+sigma_y = np.std(y)
+
+# קורלציה
+r_manual = cov_manual / (sigma_x * sigma_y)
+print(f"r = {r_manual:.4f}")
+
+print("\n=== דרך 2: אלגברה ליניארית ===")
+# ווקטורים ממורכזים
+x_c = x - x_mean
+y_c = y - y_mean
+
+# קו-ווריאנס כמכפלה סקלרית
+cov_dot = np.dot(x_c, y_c) / len(x)
+print(f"Cov(X,Y) = {cov_dot:.2f}")
+
+# קורלציה כ-Cosine Similarity
+r_cosine = np.dot(x_c, y_c) / (np.linalg.norm(x_c) * np.linalg.norm(y_c))
+print(f"r = {r_cosine:.4f}")
+
+print("\n=== דרך 3: NumPy ===")
+# מטריצת קו-ווריאנס
+cov_matrix = np.cov(x, y, ddof=0)  # ddof=0 לחלוקה ב-n
+cov_numpy = cov_matrix[0, 1]
+print(f"Cov(X,Y) = {cov_numpy:.2f}")
+
+# מטריצת קורלציה
+corr_matrix = np.corrcoef(x, y)
+r_numpy = corr_matrix[0, 1]
+print(f"r = {r_numpy:.4f}")
+
+print("\n=== השוואה ===")
+print(f"Cov - כל השיטות זהות? {np.allclose([cov_manual, cov_dot, cov_numpy], cov_manual)}")
+print(f"r - כל השיטות זהות? {np.allclose([r_manual, r_cosine, r_numpy], r_manual)}")
+\end{pythonbox}
+
+\textbf{תוצאה צפויה:} כל השיטות יתנו אותה תוצאה, מה שמדגים את הקשר העמוק בין קורלציה ומכפלה סקלרית.
+
+\hebrewsubsection{מטריצת הקורלציה}
+
+כאשר יש $d$ משתנים, ניתן לארגן את כל הקורלציות במטריצה.
+
+\textbf{הגדרה \num{4.3} – מטריצת קורלציה:}
+
+עבור $d$ משתנים $X_1, X_2, \ldots, X_d$, מטריצת הקורלציה $\mathbf{R} \in \mathbb{R}^{d \times d}$ מוגדרת כ:
+
+\begin{equation}
+\mathbf{R}_{ij} = \text{Cor}(X_i, X_j)
+\end{equation}
+
+\textbf{תכונות מטריצת הקורלציה:}
+
+\begin{enumerate}
+\item \textbf{סימטרית}: $\mathbf{R} = \mathbf{R}^T$ (כי $\text{Cor}(X_i, X_j) = \text{Cor}(X_j, X_i)$)
+\item \textbf{האלכסון כולו \num{1}}: $\mathbf{R}_{ii} = 1$ (כי $\text{Cor}(X_i, X_i) = 1$)
+\item \textbf{חיובית חצי-מוגדרת} \en{(Positive Semi-Definite)}: כל הערכים העצמיים $\geq 0$
+\end{enumerate}
+
+\textbf{דוגמה – מטריצת קורלציה לשלושה משתנים:}
+
+\[
+\mathbf{R} = \begin{bmatrix}
+1.00 & 0.85 & 0.62 \\
+0.85 & 1.00 & 0.71 \\
+0.62 & 0.71 & 1.00
+\end{bmatrix}
+\]
+
+פרשנות: המשתנים הראשון והשני בעלי קורלציה חזקה ($0.85$).
+
+\textbf{שימוש למעשי – זיהוי \en{Multicollinearity}:}
+
+ב\textbf{רגרסיה ליניארית}, אם שני משתנים בלתי תלויים קשורים מאוד ($|r| > 0.9$), זו בעיה שנקראת \textbf{\en{Multicollinearity}}. המודל לא יכול להפריד בין השפעתם, והמשקלים הופכים לא יציבים.
+
+\textbf{פתרון:} הסר אחד מהמשתנים או השתמש ב\en{-}PCA/Ridge Regression.
+
+\textbf{פסאודו-קוד – ויזואליזציה של מטריצת קורלציה:}
+
+\begin{pythonbox}[Heatmap של מטריצת קורלציה]
+import seaborn as sns
+import pandas as pd
+
+# דוגמה: Iris dataset
+from sklearn.datasets import load_iris
+iris = load_iris()
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+
+# מטריצת קורלציה
+corr_matrix = df.corr()
+
+# Heatmap
+plt.figure(figsize=(8, 6))
+sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0,
+            square=True, linewidths=1, cbar_kws={"shrink": 0.8})
+plt.title('Correlation Matrix - Iris Dataset')
+plt.tight_layout()
+plt.show()
+
+# זיהוי Multicollinearity
+high_corr = (corr_matrix.abs() > 0.9) & (corr_matrix != 1)
+if high_corr.any().any():
+    print("Warning: High correlation detected (Multicollinearity)")
+    print(corr_matrix[high_corr])
+\end{pythonbox}
+
+\hebrewsubsection{הסכנה הגדולה: מתאם אינו סיבתיות}
+
+זהו אחד העקרונות החשובים ביותר במדע הנתונים: \textbf{\en{"Correlation is not Causation"}}.
+
+\textbf{קורלציה גבוהה בין $X$ ו\en{-}$Y$ לא אומרת ש\en{-}$X$ גורם ל\en{-}$Y$!}
+
+\textbf{שלוש אפשרויות לקורלציה:}
+
+\begin{enumerate}
+\item \textbf{סיבתיות ישירה}: $X$ גורם ל\en{-}$Y$ (למשל: עישון \rarrow{} סרטן ריאות)
+\item \textbf{סיבתיות הפוכה}: $Y$ גורם ל\en{-}$X$ (הפוך ממה שחשבנו!)
+\item \textbf{משתנה מבלבל} \en{(Confounding Variable)}: משתנה שלישי $Z$ גורם גם ל\en{-}$X$ וגם ל\en{-}$Y$
+\end{enumerate}
+
+\textbf{דוגמאות קלאסיות לקורלציות מזויפות:}
+
+\begin{hebrewtable}[H]
+\caption{דוגמאות לקורלציות מזויפות}
+\centering
+\begin{rtltabular}{|p{4cm}|p{4cm}|p{4cm}|}
+\hline
+\textbf{\hebcell{משתנה \en{X}}} & \textbf{\hebcell{משתנה \en{Y}}} & \textbf{\hebcell{משתנה מבלבל \en{Z}}} \\
+\hline
+\hebcell{צריכת גלידה} & \hebcell{מספר טביעות מים} & \hebcell{חום הקיץ} \\
+\hline
+\hebcell{מספר כבאים} & \hebcell{נזק משריפות} & \hebcell{גודל השריפה} \\
+\hline
+\hebcell{גודל נעליים} & \hebcell{יכולת קריאה} & \hebcell{גיל (ילדים)} \\
+\hline
+\hebcell{מכירות \en{Nicolas Cage}} & \hebcell{טביעות בבריכות} & \hebcell{מקריות סטטיסטית} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\textbf{אתר מפורסם לקורלציות מזויפות:} \en{tylervigen.com/spurious-correlations}
+
+\hebrewsubsection{מחקר מקרה: עישון וסרטן}
+
+ההוכחה שעישון גורם לסרטן ריאות לקחה עשרות שנים, למרות קורלציה ברורה.
+
+\textbf{הבעיה:} חברות הטבק טענו שזו "רק קורלציה" – אולי אנשים עם נטייה גנטית לסרטן גם נוטים לעשן?
+
+\textbf{ההוכחה הסיבתית דרשה:}
+
+\begin{enumerate}
+\item \textbf{מחקרים אפידמיולוגיים רבים} – קורלציה עקבית בכל האוכלוסיות
+\item \textbf{מחקרים פרוספקטיביים} – מעקב לאורך זמן: עישון \rarrow{} סרטן (ולא להפך)
+\item \textbf{מנגנון ביולוגי} – זיהוי החומרים הקרצינוגניים בעשן
+\item \textbf{מינון-תגובה} – יותר עישון \rarrow{} יותר סרטן
+\item \textbf{הפסקת עישון} – מורידה את הסיכון
+\end{enumerate}
+
+רק שילוב של כל אלה הוכיח \textbf{סיבתיות}.
+
+\textbf{קריטריונים של ברדפורד היל} \en{(Bradford Hill Criteria)} (\hebyear{1965}) \cite{hill1965}:
+
+\begin{hebrewtable}[H]
+\caption{קריטריונים לזיהוי סיבתיות}
+\centering
+\begin{rtltabular}{|l|p{8cm}|}
+\hline
+\textbf{\hebcell{קריטריון}} & \textbf{\hebcell{הסבר}} \\
+\hline
+\hebcell{חוזק} & \hebcell{קורלציה חזקה יותר מרמזת על סיבתיות} \\
+\hline
+\hebcell{עקביות} & \hebcell{התוצאות חוזרות במחקרים שונים} \\
+\hline
+\hebcell{ספציפיות} & \hebcell{החשיפה גורמת לתוצאה ספציפית} \\
+\hline
+\hebcell{זמניות} & \hebcell{הגורם קודם לתוצאה בזמן} \\
+\hline
+\hebcell{גרדיאנט ביולוגי} & \hebcell{מינון גבוה יותר \rarrow{} השפעה חזקה יותר} \\
+\hline
+\hebcell{סבירות} & \hebcell{קיים מנגנון ביולוגי סביר} \\
+\hline
+\hebcell{קוהרנטיות} & \hebcell{התוצאות עולות בקנה אחד עם הידע הקיים} \\
+\hline
+\hebcell{ניסוי} & \hebcell{התערבות משנה את התוצאה} \\
+\hline
+\hebcell{אנלוגיה} & \hebcell{קיימות תופעות דומות} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\hebrewsubsection{כלים לזיהוי סיבתיות: \en{Causal Inference}}
+
+תחום ה\textbf{\en{Causal Inference}} מציע כלים מתמטיים לזיהוי סיבתיות מנתונים תצפיתיים.
+
+\textbf{שיטה \num{1} – ניסויים אקראיים מבוקרים} \en{(Randomized Controlled Trials - RCT)}:
+
+זהו תקן הזהב. חלוקה אקראית לקבוצת ביקורת וטיפול מבטלת משתנים מבלבלים.
+
+\textbf{שיטה \num{2} – גרפים סיבתיים} \en{(Causal Graphs / DAGs)}:
+
+פותחה על ידי \en{Judea Pearl} (זוכה פרס טיורינג \hebyear{2011}) \cite{pearl2009}.
+
+\textbf{גרף סיבתי} הוא גרף מכוון אציקלי \en{(Directed Acyclic Graph - DAG)} שבו:
+\begin{itemize}
+\item צמתים = משתנים
+\item חצים = יחסי סיבה-תוצאה
+\end{itemize}
+
+\textbf{דוגמה – גלידה, טביעות, וחום:}
+
+\[
+\begin{tikzcd}[column sep=large, row sep=large]
+& \text{\hebmath{חום הקיץ}} \arrow[dl] \arrow[dr] & \\
+\text{\hebmath{צריכת גלידה}} & & \text{\hebmath{טביעות מים}}
+\end{tikzcd}
+\]
+
+הגרף מראה ש"חום הקיץ" גורם לשניהם – אין קשר סיבתי ישיר בין גלידה לטביעות.
+
+\textbf{שיטה \num{3} – \en{Instrumental Variables}}:
+
+כאשר \en{RCT} לא אפשרי, ניתן להשתמש ב\textbf{משתנה אינסטרומנטלי} – משתנה שמשפיע על $X$ אך לא ישירות על $Y$ (רק דרך $X$).
+
+\textbf{דוגמה:} מחקר השפעת השכלה על הכנסה. משתנה אינסטרומנטלי: מרחק מבית הספר התיכון הקרוב. משפיע על שנות לימוד (מי שגר רחוק נוטה ללמוד פחות), אך לא ישירות על ההכנסה.
+
+\hebrewsubsection{קורלציה חלקית: בידוד השפעה}
+
+\textbf{קורלציה חלקית} \en{(Partial Correlation)} מודדת את הקשר בין $X$ ו\en{-}$Y$ \textbf{לאחר שליטה} על משתנה שלישי $Z$.
+
+\textbf{הגדרה \num{4.4} – קורלציה חלקית:}
+
+הקורלציה החלקית בין $X$ ו\en{-}$Y$ בשליטה על $Z$ מוגדרת כ:
+
+\begin{equation}
+r_{XY \cdot Z} = \frac{r_{XY} - r_{XZ} \cdot r_{YZ}}{\sqrt{(1 - r_{XZ}^2)(1 - r_{YZ}^2)}}
+\end{equation}
+
+\textbf{פרשנות:}
+
+$r_{XY \cdot Z}$ היא הקורלציה בין $X$ ו\en{-}$Y$ \textbf{אחרי הוצאת ההשפעה של} $Z$.
+
+\textbf{דוגמה – גלידה וטביעות:}
+
+\begin{itemize}
+\item $r_{\text{גלידה, טביעות}} = 0.85$ (קורלציה גבוהה!)
+\item $r_{\text{גלידה, טביעות} \cdot \text{חום}} = 0.02$ (אחרי שליטה על חום – כמעט אפס!)
+\end{itemize}
+
+זה מוכיח שהקשר מזויף והוא נובע מהחום.
+
+\textbf{פסאודו-קוד – חישוב קורלציה חלקית:}
+
+\begin{pythonbox}[קורלציה חלקית ב\en{-}Python]
+from scipy.stats import pearsonr
+
+def partial_correlation(x, y, z):
+    """
+    מחשבת קורלציה חלקית r_{xy.z}
+    
+    Args:
+        x, y, z: וקטורי נתונים
+        
+    Returns:
+        float: קורלציה חלקית
+    """
+    # קורלציות זוגיות
+    r_xy, _ = pearsonr(x, y)
+    r_xz, _ = pearsonr(x, z)
+    r_yz, _ = pearsonr(y, z)
+    
+    # נוסחת קורלציה חלקית
+    numerator = r_xy - r_xz * r_yz
+    denominator = np.sqrt((1 - r_xz**2) * (1 - r_yz**2))
+    
+    return numerator / denominator
+
+# דוגמה: גלידה, טביעות, חום
+np.random.seed(42)
+n = 100
+
+# חום הקיץ (משתנה מבלבל)
+heat = np.random.randn(n)
+
+# גלידה וטביעות תלויים בחום
+ice_cream = 0.8 * heat + np.random.randn(n) * 0.2
+drownings = 0.7 * heat + np.random.randn(n) * 0.3
+
+# קורלציה רגילה
+r_regular, _ = pearsonr(ice_cream, drownings)
+print(f"קורלציה רגילה: {r_regular:.3f}")
+
+# קורלציה חלקית (שליטה על חום)
+r_partial = partial_correlation(ice_cream, drownings, heat)
+print(f"קורלציה חלקית (שליטה על חום): {r_partial:.3f}")
+
+# התוצאה: הקורלציה נעלמת!
+\end{pythonbox}
+
+\textbf{תוצאה צפויה:} הקורלציה הרגילה גבוהה ($\sim 0.7$), אך הקורלציה החלקית כמעט אפס ($\sim 0.05$).
+
+\hebrewsubsection{קורלציה אפס \neq{} בלתי תלויים}
+
+\textbf{שאלה קריטית:} אם $r = 0$, האם $X$ ו\en{-}$Y$ בלתי תלויים סטטיסטית?
+
+\textbf{תשובה: לא!}
+
+קורלציה אפס משמעה רק \textbf{אין קשר ליניארי}. עדיין יכול להיות קשר לא-ליניארי חזק.
+
+\textbf{דוגמה קלאסית – קשר ריבועי:}
+
+\begin{pythonbox}[קורלציה אפס עם תלות מושלמת]
+import matplotlib.pyplot as plt
+
+# יצירת קשר ריבועי
+x = np.linspace(-3, 3, 100)
+y = x**2
+
+# חישוב קורלציה
+r, _ = pearsonr(x, y)
+
+print(f"קורלציה: {r:.6f}")
+print("אבל Y תלוי לחלוטין ב-X!")
+
+# ציור
+plt.figure(figsize=(8, 6))
+plt.scatter(x, y, alpha=0.6)
+plt.xlabel('X')
+plt.ylabel('Y = X²')
+plt.title(f'Perfect Dependency, Zero Correlation (r = {r:.3f})')
+plt.grid(True, alpha=0.3)
+plt.show()
+\end{pythonbox}
+
+\textbf{תוצאה:} $r \approx 0$, אך $Y = X^2$ – תלות מושלמת!
+
+\textbf{הסיבה:} קורלציה מודדת רק קשרים \textit{ליניאריים}. $Y = X^2$ הוא קשר סימטרי (עבור $X$ חיובי ושלילי), לכן הקורלציה הליניארית מתאפסת.
+
+\textbf{פתרון – מדדי תלות לא-פרמטריים:}
+
+\begin{hebrewtable}[H]
+\caption{מדדי תלות: פרמטריים ולא-פרמטריים}
+\centering
+\begin{rtltabular}{|l|l|p{6cm}|}
+\hline
+\textbf{\hebcell{מדד}} & \textbf{\hebcell{סוג}} & \textbf{\hebcell{מה הוא מודד}} \\
+\hline
+\hebcell{קורלציה של פירסון} & \hebcell{פרמטרי} & \hebcell{קשר ליניארי בלבד} \\
+\hline
+\hebcell{קורלציה של ספירמן} & \hebcell{לא-פרמטרי} & \hebcell{קשר מונוטוני (לא בהכרח ליניארי)} \\
+\hline
+\hebcell{קורלציה של קנדל} & \hebcell{לא-פרמטרי} & \hebcell{קשר מונוטוני (עמיד יותר ל\en{-}outliers)} \\
+\hline
+\hebcell{\en{Distance Correlation}} & \hebcell{לא-פרמטרי} & \hebcell{כל סוג תלות (כולל לא-מונוטונית)} \\
+\hline
+\hebcell{\en{Mutual Information}} & \hebcell{תאוריית מידע} & \hebcell{כל סוג תלות (גם לא-דטרמיניסטית)} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\textbf{קורלציה של ספירמן} \en{(Spearman's Rank Correlation)}:
+
+במקום הערכים עצמם, משתמשים ב\textbf{דירוגים} \en{(Ranks)}:
+
+\begin{equation}
+\rho = 1 - \frac{6\sum d_i^2}{n(n^2 - 1)}
+\end{equation}
+
+כאשר $d_i$ הוא ההפרש בין דירוגי $X$ ו\en{-}$Y$ עבור תצפית $i$.
+
+\textbf{יתרון:} מזהה קשרים מונוטוניים (עולים/יורדים) גם אם לא ליניאריים.
+
+\begin{pythonbox}[השוואת קורלציית פירסון וספירמן]
+from scipy.stats import spearmanr
+
+# קשר ריבועי
+x = np.linspace(-3, 3, 100)
+y = x**2
+
+# פירסון
+r_pearson, _ = pearsonr(x, y)
+
+# ספירמן
+r_spearman, _ = spearmanr(x, y)
+
+print(f"Pearson: {r_pearson:.4f}")
+print(f"Spearman: {r_spearman:.4f}")
+
+# קשר אקספוננציאלי (מונוטוני)
+x_exp = np.linspace(0, 5, 100)
+y_exp = np.exp(x_exp)
+
+r_pearson_exp, _ = pearsonr(x_exp, y_exp)
+r_spearman_exp, _ = spearmanr(x_exp, y_exp)
+
+print(f"\nExponential relationship:")
+print(f"Pearson: {r_pearson_exp:.4f}")
+print(f"Spearman: {r_spearman_exp:.4f}")
+\end{pythonbox}
+
+\textbf{תוצאה צפויה:} 
+- עבור $Y=X^2$: פירסון $\approx 0$, ספירמן $\approx 0$ (לא מונוטוני)
+- עבור $Y=e^X$: פירסון $\approx 0.8$, ספירמן $= 1.0$ (מונוטוני מושלם)
+
+\hebrewsubsection{תרגיל תכנות עצמי \num{4.2} – גילוי קורלציות מזויפות}
+
+\textbf{מטרה:} להבין כיצד משתנה מבלבל יוצר קורלציה מזויפת.
+
+\textbf{משימה:}
+
+\begin{enumerate}
+\item צרו סימולציה של "גלידה, טביעות, חום"
+\item חשבו קורלציה רגילה וקורלציה חלקית
+\item הציגו גרפית איך הקורלציה נעלמת לאחר שליטה
+\item נסו עם משתנים מבלבלים שונים
+\end{enumerate}
+
+\begin{pythonbox}[סימולציה: גילוי קורלציות מזויפות]
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+# פרמטרים
+np.random.seed(42)
+n = 200
+
+# משתנה מבלבל: חום הקיץ
+temperature = np.random.uniform(15, 35, n)  # טמפרטורה בצלזיוס
+
+# גלידה תלויה בחום + רעש
+ice_cream = 2 * temperature + np.random.randn(n) * 5
+
+# טביעות תלויות בחום + רעש
+drownings = 1.5 * temperature + np.random.randn(n) * 3
+
+# קורלציות
+r_naive, _ = pearsonr(ice_cream, drownings)
+r_partial = partial_correlation(ice_cream, drownings, temperature)
+
+print(f"קורלציה נאיבית (ללא שליטה): {r_naive:.3f}")
+print(f"קורלציה חלקית (עם שליטה על חום): {r_partial:.3f}")
+
+# ויזואליזציה
+fig = plt.figure(figsize=(15, 5))
+
+# גרף 1: קורלציה נאיבית
+ax1 = fig.add_subplot(131)
+ax1.scatter(ice_cream, drownings, c=temperature, cmap='hot', alpha=0.6)
+ax1.set_xlabel('Ice Cream Sales')
+ax1.set_ylabel('Drownings')
+ax1.set_title(f'Naive Correlation: r = {r_naive:.3f}')
+ax1.grid(True, alpha=0.3)
+
+# גרף 2: 3D - רואים את המבלבל
+ax2 = fig.add_subplot(132, projection='3d')
+ax2.scatter(temperature, ice_cream, drownings, c=temperature, cmap='hot', alpha=0.6)
+ax2.set_xlabel('Temperature')
+ax2.set_ylabel('Ice Cream')
+ax2.set_zlabel('Drownings')
+ax2.set_title('True Relationship (3D)')
+
+# גרף 3: לאחר הסרת המבלבל (שאריות)
+from sklearn.linear_model import LinearRegression
+model_ice = LinearRegression().fit(temperature.reshape(-1, 1), ice_cream)
+model_drown = LinearRegression().fit(temperature.reshape(-1, 1), drownings)
+
+ice_residuals = ice_cream - model_ice.predict(temperature.reshape(-1, 1))
+drown_residuals = drownings - model_drown.predict(temperature.reshape(-1, 1))
+
+ax3 = fig.add_subplot(133)
+ax3.scatter(ice_residuals, drown_residuals, alpha=0.6)
+ax3.set_xlabel('Ice Cream (residuals)')
+ax3.set_ylabel('Drownings (residuals)')
+ax3.set_title(f'After Removing Temperature: r = {r_partial:.3f}')
+ax3.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+\end{pythonbox}
+
+\textbf{תוצאה צפויה:} הגרף השמאלי מראה קורלציה חזקה, אך הגרף הימני (אחרי שליטה) מראה שאין קשר אמיתי.
+
+\hebrewsubsection{סיכום ומבט קדימה}
+
+\textbf{מה למדנו בפרק זה?}
+
+\begin{enumerate}
+\item \textbf{קו-ווריאנס היא מכפלה סקלרית} של וקטורים ממורכזים – הרחבה של מושגי פרק \num{1}
+\item \textbf{קורלציה היא \en{Cosine Similarity}} של וקטורים ממורכזים – גרסה מנורמלת ללא תלות ביחידות
+\item \textbf{תחום הקורלציה: $[-1, 1]$} – הוכחנו באמצעות אי-שוויון קושי-שוורץ
+\item \textbf{מתאם אינו סיבתיות!} – משתנים מבלבלים יוצרים קורלציות מזויפות
+\item \textbf{קורלציה חלקית} – כלי לבידוד השפעה ושליטה על משתנים מבלבלים
+\item \textbf{קורלציה אפס \neq{} בלתי תלויים} – קיימים קשרים לא-ליניאריים
+\item \textbf{מדדים לא-פרמטריים} – ספירמן, קנדל, \en{Mutual Information} למצבים מורכבים
+\end{enumerate}
+
+\textbf{מבט קדימה – פרק \num{5}:}
+
+בפרק הבא נעבור מיחסים בין משתנים ל\textbf{אופטימיזציה}. נחקור:
+
+\begin{itemize}
+\item \textbf{רגרסיה ליניארית כבעיית אופטימיזציה} – מזעור פונקציית ה\en{-}MSE
+\item \textbf{פתרון אנליטי} – נוסחת ה\en{-}Normal Equation
+\item \textbf{פתרון איטרטיבי} – \en{Gradient Descent} וגרסאות שלו
+\item \textbf{התכנסות ויציבות} – מתי האלגוריתם מצליח?
+\item \textbf{קשר למכפלה סקלרית} – גרדיאנט כווקטור אורתוגונלי
+\end{itemize}
+
+\textbf{שאלת מחשבה לסיום:}
+
+אם $X$ ו\en{-}$Y$ בעלי קורלציה $r = 0.9$, ו\en{-}$Y$ ו\en{-}$Z$ בעלי קורלציה $r = 0.9$, האם בהכרח $X$ ו\en{-}$Z$ יהיו בעלי קורלציה גבוהה?
+
+רמז: לא! קורלציה אינה טרנזיטיבית. אפשר לבנות דוגמה נגדית שבה $r_{XZ} = 0$.
+
+\subsection*{מטלות וקריאה מורחבת}
+
+\textbf{תרגיל \num{4.1}:} חשבו קו-ווריאנס וקורלציה ידנית (ראו פסאודו-קוד).
+
+\textbf{תרגיל \num{4.2}:} סמלצו קורלציה מזויפת עם משתנה מבלבל (ראו פסאודו-קוד).
+
+\textbf{תרגיל \num{4.3}:} הוכיחו שמטריצת קורלציה היא תמיד חיובית חצי-מוגדרת.
+
+רמז: השתמשו בעובדה שלכל וקטור $\vec{v}$, מתקיים $\vec{v}^T \mathbf{R} \vec{v} \geq 0$.
+
+\textbf{קריאה מורחבת:}
+
+\begin{itemize}
+\item \cite{pearson1896} – \en{"Mathematical Contributions to the Theory of Evolution"}: המאמר המקורי על קורלציה
+\item \cite{hill1965} – \en{"The Environment and Disease: Association or Causation?"}: הקריטריונים המפורסמים לסיבתיות
+\item \cite{pearl2009} – \en{"Causality: Models, Reasoning, and Inference"}: הספר המקיף על \en{Causal Inference}
+\item \cite{vigen2015} – \en{"Spurious Correlations"}: אוסף משעשע של קורלציות מזויפות
+\end{itemize}
+
+\textbf{שאלות להעמקה:}
+
+\begin{enumerate}
+\item מדוע קורלציה של ספירמן עמידה יותר ל\en{-}outliers מקורלציה של פירסון?
+\item האם שתי קורלציות חלקיות $r_{XY \cdot Z}$ ו\en{-}$r_{XY \cdot W}$ יכולות לתת תוצאות שונות?
+\item כיצד \en{Mutual Information} יכולה לזהות תלות שקורלציה מפספסת?
+\end{enumerate}
+
+\textbf{סיום פרק \num{4}}

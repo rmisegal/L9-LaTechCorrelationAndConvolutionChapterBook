@@ -525,9 +525,10 @@
   \ensuremath{R^2}%
 }
 
-% Fix for → (right arrow) character - LTR direction to prevent reversal in RTL
+% Fix for → (arrow) character - use leftarrow in RTL Hebrew context
+% In Hebrew RTL text, logical "implies" (→) should visually point left (←)
 \newcommand{\rarrow}{%
-  \textenglish{$\rightarrow$}%
+  $\leftarrow$%
 }
 
 % Alternative: for inline text (not in math mode)

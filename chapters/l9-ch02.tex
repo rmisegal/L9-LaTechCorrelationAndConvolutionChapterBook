@@ -1,0 +1,609 @@
+% l9-ch02.tex
+% פרק 2: הדיכוטומיה של המידע – קללת המימדיות
+% מחבר: ד"ר יורם סגל
+% תאריך: ספטמבר 2025
+
+\hebrewsection{הדיכוטומיה של המידע: קללת המימדיות}
+
+\noindent\textbf{\en{The Information Dichotomy: Curse of Dimensionality}}
+
+\vspace{0.5cm}
+
+בפרק זה נחקור את אחד האתגרים המרכזיים של למידת מכונה: הפרדוקס שבו הוספת מידע (תכונות) עלולה \textit{להחליש} את המודל במקום לחזק אותו. נבחן את היסודות המתמטיים של קללת המימדיות, נוכיח את השפעותיה, ונראה כיצד היא משפיעה על אלגוריתמים שונים.
+
+\hebrewsubsection{הפרדוקס: מתי "יותר" זה "פחות"?}
+
+דמיינו רופא שמנסה לאבחן מחלה. בתחילה, יש לו שלוש תכונות: טמפרטורה, דופק, ולחץ דם. המודל שלו עובד היטב. לפתע, הוא מקבל גישה למעבדה מתקדמת שמודדת \num{1000} תכונות ביוכימיות. אינטואיטיבית, המידע הנוסף אמור לשפר את האבחנה. אך במציאות, דיוק המודל \textit{יורד}.
+
+\textbf{למה זה קורה?}
+
+התשובה טמונה בתופעה מתמטית מפתיעה שגילה \en{Richard Bellman} ב\en{-}\hebyear{1957} \cite{bellman1957}: ככל שמספר הממדים גדל, המרחב "מתנפח" באופן אקספוננציאלי, והנתונים הופכים דלילים \en{(Sparse)} – כמו כוכבים ביקום המתרחב.
+
+\hebrewsubsection{בלמן והולדת המושג}
+
+\en{Richard Ernest Bellman} (\hebyear{1920}–\hebyear{1984}) היה מתמטיקאי אמריקאי שתרם תרומות מהפכניות לתחומי תכנות דינמי, תורת הבקרה, ולמידת מכונה. בספרו \en{"Dynamic Programming"} (\hebyear{1957}), הוא זיהה בעיה מהותית: \textbf{מורכבות חישובית גדלה באופן אקספוננציאלי עם מספר המשתנים}.
+
+\textbf{התובנה המרכזית של בלמן:}
+
+במרחב חד-ממדי, אם רוצים לכסות קטע באורך \num{1} ברשת של נקודות במרווח $\epsilon$, נדרשות $\sim \num{1}/\epsilon$ נקודות. אך במרחב $d$-ממדי, נדרשות $\sim (\num{1}/\epsilon)^d$ נקודות – גידול אקספוננציאלי \cite{bellman1957}.
+
+\textbf{דוגמה מספרית:}
+
+\begin{hebrewtable}[H]
+\caption{מספר הנקודות הנדרש לכיסוי מרחב \en{[0,1]} בצפיפות $\epsilon = \num{0.1}$}
+\centering
+\begin{rtltabular}{|r|r|r|}
+\hline
+\textbf{\hebcell{ממד}} & \textbf{\hebcell{נקודות נדרשות}} & \textbf{\hebcell{סדר גודל}} \\
+\hline
+\num{1} & $\num{10}^1 = \num{10}$ & \hebcell{עשרות} \\
+\hline
+\num{2} & $\num{10}^2 = \num{100}$ & \hebcell{מאות} \\
+\hline
+\num{3} & $\num{10}^3 = \num{1000}$ & \hebcell{אלפים} \\
+\hline
+\num{10} & $\num{10}^{10}$ & \hebcell{עשרה מיליארד} \\
+\hline
+\num{100} & $\num{10}^{100}$ & \hebcell{גוגול (יותר מאטומי היקום)} \\
+\hline
+\num{1000000} & $\num{10}^{1000000}$ & \hebcell{בלתי נתפס} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\textbf{מסקנה:} תמונת חתול $\num{1000} \times \num{1000}$ פיקסלים (מיליון ממדים) דורשת מספר דגימות שהוא \textit{מעבר ליכולת חישובית של כל מחשבי העולם ביחד}.
+
+\hebrewsubsection{הוכחה מתמטית: התרחקות מהמרכז}
+
+נוכיח תופעה מפתיעה: במרחבים רב-ממדיים, \textbf{כמעט כל הנפח מרוכז בקליפה החיצונית}, רחוק מהמרכז.
+
+\textbf{משפט \num{2.1} – ריכוז הנפח בקליפה:}
+
+יהי כדור יחידה $B_d = \{\vec{x} \in \mathbb{R}^d : \|\vec{x}\| \leq \num{1}\}$ במימד $d$. נפח הכדור הוא:
+
+\begin{equation}
+V_d(r) = \frac{\pi^{d/2}}{\Gamma(d/2 + \num{1})} r^d
+\end{equation}
+
+כאשר $\Gamma$ היא פונקציית הגמא, ו\en{-}$r$ הוא הרדיוס.
+
+\textbf{הוכחה – יחס הנפחים:}
+
+נחשב את יחס הנפח של הכדור הפנימי $B_d(\num{0.9})$ (רדיוס \num{0.9}) לכדור המלא $B_d(\num{1})$:
+
+\begin{align}
+\frac{V_d(\num{0.9})}{V_d(\num{1})} &= \frac{(\num{0.9})^d \cdot \pi^{d/2} / \Gamma(d/2 + \num{1})}{\num{1}^d \cdot \pi^{d/2} / \Gamma(d/2 + \num{1})} \nonumber \\
+&= (\num{0.9})^d
+\end{align}
+
+\textbf{נחשב עבור ממדים שונים:}
+
+\begin{hebrewtable}[H]
+\caption{יחס הנפח הפנימי (\percent{90} מהרדיוס) לנפח המלא}
+\centering
+\begin{rtltabular}{|r|r|r|}
+\hline
+\textbf{\hebcell{ממד \en{d}}} & \textbf{\hebcell{$(\num{0.9})^d$}} & \textbf{\hebcell{אחוז מהנפח}} \\
+\hline
+\num{2} & \num{0.81} & \percent{81} \\
+\hline
+\num{3} & \num{0.729} & \percent{73} \\
+\hline
+\num{10} & \num{0.349} & \percent{35} \\
+\hline
+\num{100} & $\num{2.66} \times \num{10}^{-5}$ & \percent{0.003} \\
+\hline
+\num{1000} & $\sim \num{10}^{-46}$ & \hebcell{כמעט אפס} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\textbf{מסקנה מדהימה:} ב\en{-}\num{100} ממדים, רק \percent{0.003} מהנפח נמצא ב\en{-}\percent{90} המרכזיים! כמעט כל הנפח מרוכז בקליפה הדקה בין $r = \num{0.9}$ ל\en{-}$r = \num{1}$.
+
+\textbf{משמעות ל\en{-}AI:}
+
+אם דגימות האימון שלנו הן "נקודות במרכז", המודל שלנו יצטרך לעשות אקסטרפולציה עצומה כדי לחזות במרחב האמיתי (הקליפה החיצונית) שבו נמצאות רוב ה"תמונות האפשריות".
+
+\hebrewsubsection{הוכחה: התכנסות המרחקים}
+
+תופעה נוספת של קללת המימדיות: במרחבים רב-ממדיים, \textbf{כל המרחקים בין נקודות הופכים להיות דומים}.
+
+\textbf{משפט \num{2.2} – התכנסות יחס המרחקים:}
+
+יהיו $\{\vec{x}_i\}_{i=1}^n$ נקודות בלתי-תלויות במרחב $\mathbb{R}^d$. יהיו $d_{\max}$ ו\en{-}$d_{\min}$ המרחקים המקסימלי והמינימלי מנקודת מבחן $\vec{q}$. אזי:
+
+\begin{equation}
+\lim_{d \to \infty} \frac{d_{\max} - d_{\min}}{d_{\min}} \to \num{0}
+\end{equation}
+
+\textbf{הוכחה (סקיצה):}
+
+\textit{צעד 1:} מרחק אוקלידי במימד $d$ בין $\vec{q}$ ל\en{-}$\vec{x}_i$:
+
+\[
+d_i = \|\vec{q} - \vec{x}_i\| = \sqrt{\sum_{j=1}^{d} (q_j - x_{ij})^2}
+\]
+
+\textit{צעד 2:} אם המרכיבים $(q_j - x_{ij})$ הם משתנים אקראיים בלתי-תלויים עם תוחלת $\mu$ ושונות $\sigma^2$, אזי לפי חוק המספרים הגדולים:
+
+\[
+\frac{\num{1}}{d}\sum_{j=1}^{d} (q_j - x_{ij})^2 \xrightarrow{P} \mu^2 + \sigma^2
+\]
+
+\textit{צעד 3:} לכן:
+
+\[
+d_i = \sqrt{d \cdot (\mu^2 + \sigma^2 + o(\num{1}))} = \sqrt{d} \cdot \sqrt{\mu^2 + \sigma^2} \cdot (1 + o(\num{1}))
+\]
+
+\textit{צעד 4:} כל המרחקים $d_i$ גדלים כ\en{-}$\sqrt{d}$, אך ההבדלים ביניהם גדלים לאט יותר (רק כ\en{-}$\sqrt{d \cdot \text{Var}}$). לכן:
+
+\[
+\frac{d_{\max} - d_{\min}}{d_{\min}} \sim \frac{O(\sqrt{d})}{ O(\sqrt{d})} \cdot \frac{\text{Var}}{\text{Mean}^2} \to \num{0} \quad \text{כאשר } d \to \infty
+\]
+
+$\blacksquare$
+
+\textbf{משמעות מעשית:}
+
+במרחב בעל \num{1000} ממדים, אם הנקודה הקרובה ביותר נמצאת במרחק \num{100}, הנקודה הרחוקה ביותר נמצאת במרחק $\sim \num{100.01}$ – \textbf{כמעט אותו דבר}. מדדי מרחק מאבדים יכולת הבחנה \cite{beyer1999, aggarwal2001}.
+
+\hebrewsubsection{השפעה על אלגוריתמים: \en{K-Nearest Neighbors}}
+
+אלגוריתם \en{K-Nearest Neighbors (KNN)}, שפותח על ידי \en{Evelyn Fix} ו\en{-}Joseph Hodges ב\en{-}\hebyear{1951} \cite{fix1951}, הוא אחד האלגוריתמים הפשוטים והאינטואיטיביים ביותר בלמידת מכונה.
+
+\textbf{הרעיון:} כדי לסווג נקודה חדשה $\vec{q}$, מצא את $k$ הנקודות הקרובות ביותר במערך האימון, והצבע לפי רוב.
+
+\textbf{למה \en{KNN} קורס במימד גבוה?}
+
+מכיוון שכל המרחקים הופכים דומים (משפט \num{2.2}), \textbf{אין משמעות ל"קרוב ביותר"}. הנקודה ה\en{-}\num{1} הקרובה ביותר והנקודה ה\en{-}\num{1000} הקרובה ביותר נמצאות כמעט באותו מרחק!
+
+\textbf{ניסוי מספרי – סימולציה:}
+
+\begin{pythonbox}[הדגמת קריסת \en{KNN} במימד גבוה]
+import numpy as np
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+
+def knn_curse_demo(dims, n_samples=1000):
+    """
+    בוחן ביצועי KNN כפונקציה של מספר הממדים.
+    """
+    results = []
+    
+    for d in dims:
+        # יצירת נתונים סינתטיים
+        X, y = make_classification(
+            n_samples=n_samples,
+            n_features=d,
+            n_informative=min(d, 10),  # רק 10 תכונות אינפורמטיביות
+            n_redundant=0,
+            random_state=42
+        )
+        
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.3, random_state=42
+        )
+        
+        # אימון KNN
+        knn = KNeighborsClassifier(n_neighbors=5)
+        knn.fit(X_train, y_train)
+        
+        # דיוק
+        accuracy = knn.score(X_test, y_test)
+        results.append(accuracy)
+        
+        print(f"Dim={d}: Accuracy={accuracy:.3f}")
+    
+    return results
+
+# הרצה
+dimensions = [2, 5, 10, 50, 100, 500, 1000]
+accuracies = knn_curse_demo(dimensions)
+\end{pythonbox}
+
+\textbf{תוצאה צפויה:} הדיוק יורד מ\en{-}\percent{95} (במימד \num{2}) ל\en{-}\percent{55} (במימד \num{1000}) – כמעט אקראי.
+
+\hebrewsubsection{יחס פיצ'ר-דגימה: כמה נתונים צריך?}
+
+כפי שהדגיש ד"ר יורם סגל בהרצאתו, קיימים כללי אצבע לקביעת מספר הדגימות הנדרש:
+
+\textbf{כלל \num{1} – למידת מכונה קלאסית:}
+
+\begin{equation}
+n_{\text{samples}} \geq \num{30} \times n_{\text{features}}
+\end{equation}
+
+\textbf{כלל \num{2} – למידה עמוקה:}
+
+\begin{equation}
+n_{\text{samples}} \geq \num{100} \times n_{\text{features}}
+\end{equation}
+
+\textbf{הצדקה מתמטית:}
+
+כללים אלו נובעים מתורת הלמידה הסטטיסטית. לפי \textbf{גבול \en{VC (Vapnik-Chervonenkis)}} \cite{vapnik1971}, שגיאת ההכללה של מודל עם \en{VC-dimension} $d$ מוגבלת ע"י:
+
+\begin{equation}
+\epsilon \leq \sqrt{\frac{d \log(n/d) + \log(\num{1}/\delta)}{n}}
+\end{equation}
+
+כאשר $n$ הוא מספר הדגימות, $\delta$ רמת הביטחון, ו\en{-}$\epsilon$ שגיאת ההכללה.
+
+\textbf{פירוש:} כדי לקבל שגיאה קטנה $\epsilon$, נדרש $n \sim O(d / \epsilon^2)$ – \textbf{מספר הדגימות צריך לגדול ליניארית עם המימד}.
+
+\textbf{דוגמה מהחיים – תמונת חתול:}
+
+תמונה $\num{1000} \times \num{1000}$ פיקסלים RGB:
+\begin{itemize}
+\item מספר תכונות: $\num{1000} \times \num{1000} \times \num{3} = \num{3000000}$
+\item דגימות נדרשות (כלל \num{2}): $\num{100} \times \num{3000000} = \num{300000000}$ (שלוש מאות מיליון תמונות!)
+\end{itemize}
+
+\textbf{למה זה בלתי אפשרי?}
+
+\begin{itemize}
+\item \en{ImageNet}, אחד ממאגרי התמונות הגדולים בעולם, מכיל רק $\sim \num{1.2}$ מיליון תמונות אימון \cite{deng2009}
+\item גם \en{Google} לא צילמה \num{300} מיליון תמונות חתולים
+\end{itemize}
+
+\textbf{אז איך \en{Deep Learning} מצליח?}
+
+התשובה: \textbf{שיתוף משקלים והנחות אינדוקטיביות} \cite{lecun1998, goodfellow2016}.
+
+\hebrewsubsection{הפתרון: רשתות \en{CNN} ומבנה מרחבי}
+
+רשתות \en{Convolutional Neural Networks (CNN)}, שפותחו על ידי \en{Yann LeCun} ב\en{-}\hebyear{1989} \cite{lecun1989}, מתגברות על קללת המימדיות באמצעות שלושה עקרונות:
+
+\textbf{עיקרון \num{1} – קישוריות מקומית} \en{(Local Connectivity)}:
+
+במקום לחבר כל פיקסל לכל נוירון (שיצטרך $\num{1000}^2 \times \num{1000}^2 = \num{10}^{12}$ משקלים), כל נוירון מחובר רק ל\textbf{אזור קטן} (למשל, $\num{3} \times \num{3}$ פיקסלים).
+
+\textbf{עיקרון \num{2} – שיתוף משקלים} \en{(Weight Sharing)}:
+
+אותו פילטר (קרנל) משמש \textbf{בכל מקום בתמונה}. במקום $\num{10}^{12}$ משקלים, נדרשים רק $\num{3} \times \num{3} \times \num{64} = \num{576}$ משקלים לשכבה!
+
+\textbf{עיקרון \num{3} – הירארכיה של תכונות}:
+
+השכבות הראשונות לומדות תכונות פשוטות (קצוות, צבעים), והשכבות העמוקות לומדות תכונות מורכבות (עיניים, אוזניים, פנים).
+
+\textbf{השוואת מספר הפרמטרים:}
+
+\begin{hebrewtable}[H]
+\caption{השוואת מספר פרמטרים: \en{Fully Connected} מול \en{CNN}}
+\centering
+\begin{rtltabular}{|l|r|r|}
+\hline
+\textbf{\hebcell{ארכיטקטורה}} & \textbf{\hebcell{מספר פרמטרים}} & \textbf{\hebcell{דגימות נדרשות (כלל \num{2})}} \\
+\hline
+\hebcell{\en{Fully Connected}} & $\sim \num{10}^{12}$ & \mixedcell{$\num{10}^{14}$ (בלתי אפשרי)} \\
+\hline
+\hebcell{\en{CNN (AlexNet)}} & $\sim \num{60} \times \num{10}^6$ & $\num{6} \times \num{10}^9$ \\
+\hline
+\hebcell{\en{CNN (ResNet-50)}} & $\sim \num{25} \times \num{10}^6$ & $\num{2.5} \times \num{10}^9$ \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\textbf{הצלחה מעשית:}
+
+רשת \en{AlexNet} \cite{krizhevsky2012} אומנה על \num{1.2} מיליון תמונות בלבד (הרבה פחות מהנדרש תיאורטית), והשיגה פריצת דרך בתחרות \en{ImageNet} ב\en{-}\hebyear{2012}, עם הפחתה של \percent{10} בשגיאה לעומת השיטות הקודמות.
+
+\hebrewsubsection{פתרונות נוספים: הפחתת ממדיות}
+
+מלבד \en{CNN}, קיימות שיטות נוספות להתמודדות עם קללת המימדיות:
+
+\textbf{שיטה \num{1} – \en{Feature Selection} (בחירת תכונות):}
+
+בחירת תת-קבוצה של התכונות החשובות ביותר. שיטות נפוצות:
+\begin{itemize}
+\item \textbf{\en{Filter Methods}}: מיון לפי קורלציה, \en{mutual information}, \en{chi-square}
+\item \textbf{\en{Wrapper Methods}}: בחירה לפי ביצועי המודל (\en{forward selection, backward elimination})
+\item \textbf{\en{Embedded Methods}}: רגולריזציה \en{L1 (Lasso)} שמאלצת משקלים לאפס
+\end{itemize}
+
+\textbf{שיטה \num{2} – \en{PCA (Principal Component Analysis)}:}
+
+המצאה של \en{Karl Pearson} (\hebyear{1901}) \cite{pearson1901} ו\en{-}Harold Hotelling (\hebyear{1933}) \cite{hotelling1933}. \en{PCA} מוצא את הכיוונים בעלי השונות המקסימלית ומקרין עליהם.
+
+\textbf{רעיון \en{PCA}:}
+
+אם $\mathbf{X} \in \mathbb{R}^{n \times d}$ היא מטריצת הנתונים, \en{PCA} מוצא את הווקטורים העצמיים של מטריצת הקווריאנס $\mathbf{C} = \frac{\num{1}}{n}\mathbf{X}^T\mathbf{X}$.
+
+הווקטורים העצמיים $\{\vec{v}_1, \ldots, \vec{v}_d\}$ עם הערכים העצמיים הגדולים ביותר $\{\lambda_1 \geq \lambda_2 \geq \cdots \geq \lambda_d\}$ מהווים כיוונים של שונות מקסימלית.
+
+\textbf{הקרנה על $k$ מרכיבים עיקריים:}
+
+\begin{equation}
+\mathbf{Z} = \mathbf{X} \mathbf{V}_k
+\end{equation}
+
+כאשר $\mathbf{V}_k = [\vec{v}_1, \ldots, \vec{v}_k]$ ו\en{-}$\mathbf{Z} \in \mathbb{R}^{n \times k}$ הוא הייצוג המופחת ($k \ll d$).
+
+\textbf{כמה מרכיבים לבחור?}
+
+כלל אצבע: בחר $k$ כך שה\textbf{שונות המוסברת} היא לפחות \percent{95}:
+
+\begin{equation}
+\frac{\sum_{i=1}^{k} \lambda_i}{\sum_{i=1}^{d} \lambda_i} \geq \num{0.95}
+\end{equation}
+
+\textbf{פסאודו-קוד – \en{PCA} ב\en{-}NumPy:}
+
+\begin{pythonbox}[\en{PCA} – הפחתת ממדיות]
+import numpy as np
+
+def pca_manual(X, n_components=2):
+    """
+    מבצע PCA ידני באמצעות SVD.
+    
+    Args:
+        X: מטריצת נתונים (n_samples, n_features)
+        n_components: מספר מרכיבים עיקריים
+        
+    Returns:
+        X_reduced: נתונים מופחתים (n_samples, n_components)
+        components: הווקטורים העצמיים
+        explained_var_ratio: שיעור השונות המוסברת
+    """
+    # ריכוז הנתונים (חיסור ממוצע)
+    X_centered = X - np.mean(X, axis=0)
+    
+    # SVD - פירוק לערכים סינגולריים
+    # U: eigenvectors של XX^T
+    # S: ערכים סינגולריים (שורש של eigenvalues)
+    # Vt: eigenvectors של X^TX (מרכיבים עיקריים)
+    U, S, Vt = np.linalg.svd(X_centered, full_matrices=False)
+    
+    # בחירת k מרכיבים עיקריים
+    components = Vt[:n_components]
+    
+    # הקרנה
+    X_reduced = X_centered @ components.T
+    
+    # חישוב שונות מוסברת
+    explained_variance = (S**2) / (len(X) - 1)
+    explained_var_ratio = explained_variance[:n_components] / np.sum(explained_variance)
+    
+    print(f"Explained variance ratio: {explained_var_ratio}")
+    print(f"Total: {np.sum(explained_var_ratio):.3f}")
+    
+    return X_reduced, components, explained_var_ratio
+
+# דוגמה
+X = np.random.rand(1000, 100)  # 1000 דגימות, 100 תכונות
+X_reduced, components, var_ratio = pca_manual(X, n_components=10)
+print(f"Original shape: {X.shape}, Reduced shape: {X_reduced.shape}")
+\end{pythonbox}
+
+\textbf{הערה על \en{SVD}:} \en{Singular Value Decomposition} הוא שיטה יעילה יותר לחישוב \en{PCA} מאשר חישוב ישיר של ערכים עצמיים, במיוחד כאשר $n \ll d$ \cite{golub1970}.
+
+\hebrewsubsection{תרגיל תכנות עצמי \num{2.1} – הפחתת ממדיות עם \en{PCA}}
+
+\textbf{מטרה:} להמחיש את יכולת \en{PCA} לשמר מידע תוך הפחתת ממדים.
+
+\textbf{משימה:}
+
+\begin{enumerate}
+\item טענו את מערך הנתונים \en{MNIST} (תמונות ספרות כתובות ביד, $\num{28} \times \num{28}$ פיקסלים = \num{784} תכונות)
+\item הפחיתו ל\en{-}\num{50} מרכיבים עיקריים באמצעות \en{PCA}
+\item שחזרו תמונות מהייצוג המופחת
+\item השוו את התמונות המקוריות למשוחזרות
+\item חשבו את אחוז השונות המוסברת
+\end{enumerate}
+
+\textbf{פסאודו-קוד מורחב:}
+
+\begin{pythonbox}[\en{PCA} על \en{MNIST} – דוגמה מלאה]
+from sklearn.datasets import fetch_openml
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+import numpy as np
+
+# טעינת MNIST
+mnist = fetch_openml('mnist_784', version=1, parser='auto')
+X = mnist.data.to_numpy()[:1000]  # 1000 דגימות ראשונות
+y = mnist.target.to_numpy()[:1000]
+
+# נרמול (חשוב!)
+X = X / 255.0
+
+print(f"Original shape: {X.shape}")  # (1000, 784)
+
+# PCA להפחתה ל-50 מרכיבים
+pca = PCA(n_components=50)
+X_reduced = pca.fit_transform(X)
+
+print(f"Reduced shape: {X_reduced.shape}")  # (1000, 50)
+print(f"Explained variance: {np.sum(pca.explained_variance_ratio_):.3f}")
+
+# שחזור תמונות
+X_reconstructed = pca.inverse_transform(X_reduced)
+
+# הצגה
+fig, axes = plt.subplots(2, 5, figsize=(12, 5))
+for i in range(5):
+    # תמונה מקורית
+    axes[0, i].imshow(X[i].reshape(28, 28), cmap='gray')
+    axes[0, i].set_title(f'Original: {y[i]}')
+    axes[0, i].axis('off')
+    
+    # תמונה משוחזרת
+    axes[1, i].imshow(X_reconstructed[i].reshape(28, 28), cmap='gray')
+    axes[1, i].set_title(f'Reconstructed')
+    axes[1, i].axis('off')
+
+plt.tight_layout()
+plt.show()
+\end{pythonbox}
+
+\textbf{תוצאה צפויה:} עם \num{50} מרכיבים (במקום \num{784}), ניתן לשמר $\sim$\percent{85} מהמידע, והתמונות המשוחזרות יהיו קריאות למדי.
+
+\hebrewsubsection{רגולריזציה: מניעת \en{Overfitting} במימד גבוה}
+
+כאשר מספר התכונות גדול ביחס למספר הדגימות, המודל נוטה ל\textbf{התאמת יתר} \en{(Overfitting)} – הוא "לומד בעל-פה" את נתוני האימון ונכשל בנתונים חדשים.
+
+\textbf{רגולריזציה} \en{(Regularization)} היא טכניקה שמוסיפה "קנס" על מורכבות המודל, ובכך מעודדת פשטות.
+
+\textbf{שתי שיטות עיקריות:}
+
+\textbf{רגולריזציה \en{L2 (Ridge)}:}
+
+\begin{equation}
+\mathcal{L}_{\text{Ridge}} = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 + \lambda \sum_{j=1}^{d} w_j^2
+\end{equation}
+
+קנס על \textbf{גודל המשקלים} – מעודד משקלים קטנים, אך לא מאפס אותם.
+
+\textbf{רגולריזציה \en{L1 (Lasso)}:}
+
+\begin{equation}
+\mathcal{L}_{\text{Lasso}} = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 + \lambda \sum_{j=1}^{d} |w_j|
+\end{equation}
+
+קנס על \textbf{סכום ערכי המשקלים} – מאלץ חלק מהמשקלים להיות \textbf{בדיוק אפס}, ובכך מבצע בחירת תכונות אוטומטית.
+
+\textbf{פרמטר הקנס} $\lambda$:
+\begin{itemize}
+\item $\lambda = \num{0}$: אין רגולריזציה (סיכון ל\en{-}Overfitting)
+\item $\lambda$ גדול מאוד: המודל פשוט מדי (\en{Underfitting})
+\item $\lambda$ אופטימלי: נקבע באמצעות \en{Cross-Validation}
+\end{itemize}
+
+\textbf{מי המציא?}
+
+\en{Ridge}: \en{Arthur Hoerl} ו\en{-}Robert Kennard (\hebyear{1970}) \cite{hoerl1970}
+
+\en{Lasso}: \en{Robert Tibshirani} (\hebyear{1996}) \cite{tibshirani1996}
+
+\textbf{פסאודו-קוד – השוואת \en{Ridge} ו\en{-}Lasso:}
+
+\begin{pythonbox}[רגולריזציה – \en{Ridge} מול \en{Lasso}]
+from sklearn.linear_model import Ridge, Lasso
+from sklearn.datasets import make_regression
+from sklearn.model_selection import train_test_split
+import numpy as np
+
+# יצירת נתונים סינתטיים: n << d (קללת המימדיות!)
+X, y = make_regression(
+    n_samples=100,      # 100 דגימות בלבד
+    n_features=500,     # 500 תכונות!
+    n_informative=10,   # רק 10 רלוונטיות
+    noise=10,
+    random_state=42
+)
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42
+)
+
+# Ridge
+ridge = Ridge(alpha=1.0)  # alpha = lambda
+ridge.fit(X_train, y_train)
+ridge_score = ridge.score(X_test, y_test)
+
+# Lasso
+lasso = Lasso(alpha=1.0)
+lasso.fit(X_train, y_train)
+lasso_score = lasso.score(X_test, y_test)
+
+print(f"Ridge R²: {ridge_score:.3f}")
+print(f"Lasso R²: {lasso_score:.3f}")
+
+# כמה משקלים Lasso אפס?
+zero_weights = np.sum(np.abs(lasso.coef_) < 1e-5)
+print(f"Lasso zeroed out {zero_weights}/{len(lasso.coef_)} features")
+\end{pythonbox}
+
+\textbf{תוצאה צפויה:} \en{Lasso} יאפס $\sim\num{490}$ מתוך \num{500} המשקלים, וישמור רק את התכונות האינפורמטיביות.
+
+\hebrewsubsection{מחקר עדכני: אקסטרפולציה מול אינטרפולציה}
+
+מחקר פורץ דרך של \en{Anadi Chaman} ו\en{-}Ivan Dokmanic (\hebyear{2021}) \cite{chaman2021} גילה תוצאה מדהימה: \textbf{במרחבים עם יותר מ\en{-}\num{100} ממדים, דגימה חדשה כמעט אף פעם אינה אינטרפולציה – היא כמעט תמיד אקסטרפולציה}.
+
+\textbf{הגדרות:}
+
+\begin{itemize}
+\item \textbf{אינטרפולציה}: דגימה חדשה נמצאת \textit{בתוך} המעטפת הקמורה \en{(Convex Hull)} של נתוני האימון
+\item \textbf{אקסטרפולציה}: דגימה חדשה נמצאת \textit{מחוץ} למעטפת הקמורה
+\end{itemize}
+
+\textbf{המעטפת הקמורה} \en{(Convex Hull)}:
+
+\begin{equation}
+\text{Conv}(\mathcal{X}) = \left\{ \sum_{i=1}^{n} \alpha_i \vec{x}_i \mid \vec{x}_i \in \mathcal{X}, \alpha_i \geq \num{0}, \sum_{i=1}^{n} \alpha_i = \num{1} \right\}
+\end{equation}
+
+\textbf{התוצאה המפתיעה:}
+
+בניסויים על מערכי נתונים אמיתיים (\en{MNIST, CIFAR-10}), \en{Chaman} ו\en{-}Dokmanic מצאו ש\en{-}\percent{99.9} מדגימות הבדיקה הן אקסטרפולציה במרחב המקורי!
+
+\textbf{משמעות ל\en{-}AI:}
+
+כל פעם שמודל \en{Deep Learning} מסווג תמונה חדשה, הוא למעשה \textbf{משער מעבר לנתונים שראה}. ההצלחה של מודלים מודרניים נובעת מה\textbf{הנחות האינדוקטיביות} שלהם (כמו מבנה ה\en{-}CNN) ולא מכיסוי מלא של המרחב.
+
+\textbf{שאלת מחשבה שהעלה המרצה:}
+
+"אם כל תחזית היא אקסטרפולציה, האם \en{AI} באמת 'מבין' את העולם, או שהוא רק מנחש בצורה חכמה?"
+
+זוהי אחת השאלות הפילוסופיות המרכזיות של \en{AI} מודרני.
+
+\hebrewsubsection{סיכום ומבט קדימה}
+
+\textbf{מה למדנו בפרק זה?}
+
+\begin{enumerate}
+\item \textbf{קללת המימדיות היא אמיתית ומוכחת} – נפח המרחב גדל אקספוננציאלית, והנתונים הופכים דלילים
+\item \textbf{מרחקים מתכנסים} – במימד גבוה, כל הנקודות נעשות "באותו מרחק", ומדדים כמו \en{KNN} קורסים
+\item \textbf{יחס פיצ'ר-דגימה הוא קריטי} – נדרשות לפחות \num{30-100} דגימות לכל תכונה
+\item \textbf{רשתות \en{CNN} מתגברות על הקללה} – שיתוף משקלים וקישוריות מקומית מפחיתים דרמטית את מספר הפרמטרים
+\item \textbf{הפחתת ממדיות עובדת} – \en{PCA, Feature Selection, Regularization} מאפשרים עבודה יעילה
+\item \textbf{רוב התחזיות הן אקסטרפולציה} – \en{AI} מצליח בזכות הנחות אינדוקטיביות, לא כיסוי מלא
+\end{enumerate}
+
+\textbf{מבט קדימה – פרק \num{3}:}
+
+בפרק הבא נעבור מהבעיות לפתרונות. נחקור את \textbf{מקדם הקביעה \Rsquared{}} – הכלי המרכזי להערכת מודלי רגרסיה. נראה:
+
+\begin{itemize}
+\item הגדרה מתמטית מלאה של \Rsquared{}
+\item הוכחה: למה \Rsquared{} תמיד בין \num{0} ל\en{-}\num{1}?
+\item סכנות: מתי \Rsquared{} מטעה?
+\item \en{Adjusted \Rsquared{}} – הגרסה המתוקנת
+\item קשר לקורלציה ולמכפלה סקלרית
+\end{itemize}
+
+\textbf{שאלת מחשבה לסיום:}
+
+אם מודל רגרסיה ליניארית השיג \Rsquared{} = \num{0.95} על נתוני האימון, אך רק \Rsquared{} = \num{0.60} על נתוני הבדיקה – מה קרה? האם זו קללת המימדיות, \en{Overfitting}, או משהו אחר?
+
+\subsection*{מטלות וקריאה מורחבת}
+
+\textbf{תרגיל \num{2.1}:} הפחיתו את \en{MNIST} עם \en{PCA} (ראו פסאודו-קוד).
+
+\textbf{תרגיל \num{2.2}:} השוו \en{Ridge} ו\en{-}Lasso על נתונים עם $n < d$ (ראו פסאודו-קוד).
+
+\textbf{תרגיל \num{2.3}:} הוכיחו בעצמכם את משפט \num{2.1} (ריכוז הנפח בקליפה) עבור $d = \num{10}$.
+
+רמז: חשבו $V_d(r) = \frac{\pi^{d/2}}{\Gamma(d/2 + \num{1})} r^d$ עבור $r = \num{0.9}$ ו\en{-}$r = \num{1}$.
+
+\textbf{קריאה מורחבת:}
+
+\begin{itemize}
+\item \cite{bellman1957} – \en{Dynamic Programming}: המקור המקורי של "קללת המימדיות"
+\item \cite{beyer1999} – \en{"When Is 'Nearest Neighbor' Meaningful?"}: ניתוח מתמטי של קריסת \en{KNN}
+\item \cite{chaman2021} – \en{"Truly Generative or Just Extrapolation?"}: המחקר על אינטרפולציה מול אקסטרפולציה
+\item \cite{goodfellow2016} – \en{Deep Learning}, פרק \num{7}: רגולריזציה והפחתת \en{Overfitting}
+\item \cite{hastie2009} – \en{The Elements of Statistical Learning}, פרק \num{3}: רגרסיה ליניארית ורגולריזציה
+\end{itemize}
+
+\textbf{שאלות להעמקה:}
+
+\begin{enumerate}
+\item מדוע \en{Lasso} מאפס משקלים אך \en{Ridge} לא? רמז: חשבו על הגיאומטריה של הקנס ($L_1$ מול $L_2$)
+\item האם קללת המימדיות משפיעה גם על רשתות \en{Transformer} ב\en{-}NLP?
+\item אם \percent{99.9} מהתחזיות הן אקסטרפולציה, איך מסבירים את ההצלחה של \en{GPT-4}?
+\end{enumerate}
+
+\textbf{סיום פרק \num{2}}

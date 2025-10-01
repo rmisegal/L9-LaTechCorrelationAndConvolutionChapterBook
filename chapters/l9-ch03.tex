@@ -1,0 +1,652 @@
+% l9-ch03.tex
+% פרק 3: הערכת מודלים – מקדם הקביעה R²
+% מחבר: ד"ר יורם סגל
+% תאריך: ספטמבר 2025
+
+\hebrewsection{הערכת מודלים: מקדם הקביעה \Rsquared{}}
+
+\noindent\textbf{\en{Model Evaluation: The Coefficient of Determination \Rsquared{}}}
+
+\vspace{0.5cm}
+
+בפרק זה נחקור את אחד הכלים המרכזיים להערכת מודלי רגרסיה: \textbf{מקדם הקביעה} \en{\Rsquared{} (R-squared)}. נבין את המשמעות המתמטית שלו, נוכיח מדוע הוא תמיד בין \num{0} ל\en{-}\num{1}, ונראה מתי הוא עלול להטעות אותנו.
+
+\hebrewsubsection{השאלה המרכזית: מה זה מודל "טוב"?}
+
+דמיינו שבניתם מודל רגרסיה ליניארית לחיזוי מחיר דירה על סמך שטח, מיקום וגיל. המודל נותן תחזיות, אך \textbf{כיצד נדע אם הוא טוב?}
+
+שאלה זו מעסיקה סטטיסטיקאים ומדעני נתונים מאז ראשית המדע. התשובה המודרנית, שהתגבשה במאה ה\en{-}\num{20}, היא \textbf{מקדם הקביעה} – מספר יחיד שמסכם את "טיב ההתאמה" של המודל לנתונים.
+
+\hebrewsubsection{היסטוריה: מי המציא את \Rsquared{}?}
+
+המושג פותח בהדרגה על ידי מספר סטטיסטיקאים:
+
+\textbf{\en{Francis Galton}} (\hebyear{1822}–\hebyear{1911}) היה הראשון לחקור קורלציה ורגרסיה. בעבודתו \en{"Regression towards Mediocrity in Hereditary Stature"} (\hebyear{1886}) \cite{galton1886}, הוא גילה שילדים של הורים גבוהים נוטים להיות נמוכים יותר מהוריהם (רגרסיה לממוצע).
+
+\textbf{\en{Karl Pearson}} (\hebyear{1857}–\hebyear{1936}), תלמידו של \en{Galton}, פיתח את \textbf{מקדם הקורלציה} $r$ (\hebyear{1896}) \cite{pearson1896}, שהוא השורש של \Rsquared{} במקרה של רגרסיה פשוטה.
+
+\textbf{\en{Ronald Fisher}} (\hebyear{1890}–\hebyear{1962}) הרחיב את המושג ל\textbf{רגרסיה מרובה} \en{(Multiple Regression)} וניתח את חלוקת השונות \cite{fisher1925}.
+
+\textbf{\en{Sewall Wright}} (\hebyear{1889}–\hebyear{1988}) טבע את הסימון \Rsquared{} ב\en{-}\hebyear{1921} \cite{wright1921}.
+
+\hebrewsubsection{הגדרה: מהו \Rsquared{}?}
+
+\textbf{הגדרה \num{3.1} – מקדם הקביעה:}
+
+\Rsquared{} הוא מדד סטטיסטי המצביע על \textbf{שיעור השונות במשתנה התלוי} $Y$ \textbf{שמוסברת על ידי המשתנים הבלתי תלויים} $X$ במודל רגרסיה.
+
+\begin{equation}
+R^2 = 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}}
+\end{equation}
+
+כאשר:
+
+\begin{itemize}
+\item $SS_{\text{res}}$ – \textbf{סכום ריבועי השאריות} \en{(Residual Sum of Squares)}
+\item $SS_{\text{tot}}$ – \textbf{סכום הריבועים הכולל} \en{(Total Sum of Squares)}
+\end{itemize}
+
+\textbf{פירוט המשתנים:}
+
+\begin{align}
+SS_{\text{res}} &= \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 \\
+SS_{\text{tot}} &= \sum_{i=1}^{n} (y_i - \bar{y})^2
+\end{align}
+
+כאשר:
+\begin{itemize}
+\item $y_i$ – הערך האמיתי של התצפית ה\en{-}$i$
+\item $\hat{y}_i$ – הערך החזוי על ידי המודל עבור התצפית ה\en{-}$i$
+\item $\bar{y} = \frac{1}{n}\sum_{i=1}^{n} y_i$ – ממוצע הערכים האמיתיים
+\end{itemize}
+
+\hebrewsubsection{משמעות אינטואיטיבית: מהו "הסבר שונות"?}
+
+כדי להבין את \Rsquared{}, נתחיל מ\textbf{מודל הבסיס} – המודל הפשוט ביותר האפשרי.
+
+\textbf{מודל הבסיס (Baseline Model):} תחזה תמיד את הממוצע $\bar{y}$.
+
+זהו המודל הטיפש ביותר – הוא מתעלם מכל התכונות $X$ ופשוט אומר "התשובה היא הממוצע". שגיאת מודל זה היא $SS_{\text{tot}}$ – \textbf{השונות הכוללת} בנתונים.
+
+\textbf{המודל שלנו:} משתמש ב\en{-}$X$ כדי לחזות $\hat{y}_i$.
+
+שגיאת המודל שלנו היא $SS_{\text{res}}$ – \textbf{השונות שנותרה} אחרי שהמודל עשה את עבודתו.
+
+\textbf{הפרשנות:}
+
+\begin{equation}
+R^2 = 1 - \frac{\hebmath{שגיאת המודל שלנו}}{\hebmath{שגיאת מודל הבסיס}} = 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}}
+\end{equation}
+
+\begin{itemize}
+\item אם $R^2 = \num{0}$: המודל שלנו לא טוב יותר מהממוצע (חסר תועלת!)
+\item אם $R^2 = \num{1}$: המודל מושלם – אין שגיאות כלל
+\item אם $R^2 = \num{0.8}$: המודל מסביר \percent{80} מהשונות
+\end{itemize}
+
+\textbf{דוגמה מספרית:}
+
+נניח שאנחנו מנבאים מחירי דירות. הממוצע הוא \num{500000} ש"ח.
+
+\begin{hebrewtable}[H]
+\caption{דוגמה: חישוב \Rsquared{} למחירי דירות}
+\centering
+\begin{rtltabular}{|r|r|r|r|r|}
+\hline
+\textbf{\hebcell{תצפית}} & \textbf{\hebcell{$y_i$ (אמיתי)}} & \textbf{\hebcell{$\hat{y}_i$ (חזוי)}} & \textbf{\hebcell{$(y_i - \bar{y})^2$}} & \textbf{\hebcell{$(y_i - \hat{y}_i)^2$}} \\
+\hline
+\num{1} & \num{600000} & \num{580000} & \num{10000000000} & \num{400000000} \\
+\hline
+\num{2} & \num{450000} & \num{470000} & \num{2500000000} & \num{400000000} \\
+\hline
+\num{3} & \num{700000} & \num{680000} & \num{40000000000} & \num{400000000} \\
+\hline
+\textbf{\hebcell{סה"כ}} & & & \mixedcell{$SS_{\text{tot}} = \num{52500000000}$} & \mixedcell{$SS_{\text{res}} = \num{1200000000}$} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\textbf{חישוב:}
+
+\[
+R^2 = 1 - \frac{\num{1200000000}}{\num{52500000000}} = 1 - \num{0.023} = \num{0.977}
+\]
+
+\textbf{פרשנות:} המודל מסביר \percent{97.7} מהשונות במחירים – מודל מצוין!
+
+\hebrewsubsection{הוכחה: \Rsquared{} תמיד בין \num{0} ל\en{-}\num{1}}
+
+\textbf{משפט \num{3.1} – תחום \Rsquared{}:}
+
+עבור רגרסיה ליניארית עם איבר חופשי, מתקיים: $\num{0} \leq R^2 \leq \num{1}$.
+
+\textbf{הוכחה:}
+
+\textit{חלק א': $R^2 \leq \num{1}$}
+
+נוכיח ש\en{-}$SS_{\text{res}} \leq SS_{\text{tot}}$.
+
+\textit{צעד 1:} מודל הרגרסיה הליניארית ממזער את $SS_{\text{res}}$ על ידי פתרון:
+
+\[
+\min_{\vec{w}} \sum_{i=1}^{n} (y_i - \vec{w}^T \vec{x}_i)^2
+\]
+
+\textit{צעד 2:} מודל הבסיס (חיזוי הממוצע) הוא \textit{מקרה פרטי} של רגרסיה ליניארית עם $\vec{w} = \vec{0}$ (למעט איבר חופשי = $\bar{y}$).
+
+\textit{צעד 3:} מכיוון שהרגרסיה ממזערת, היא לא יכולה להיות גרועה יותר ממודל הבסיס:
+
+\[
+SS_{\text{res}} \leq SS_{\text{tot}}
+\]
+
+\textit{צעד 4:} לכן:
+
+\[
+\frac{SS_{\text{res}}}{SS_{\text{tot}}} \leq \num{1} \quad \Rightarrow \quad 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}} \leq \num{1} \quad \Rightarrow \quad R^2 \leq \num{1} \quad \blacksquare
+\]
+
+\textit{חלק ב': $R^2 \geq \num{0}$}
+
+זה נכון \textbf{רק לרגרסיה ליניארית עם איבר חופשי}. במקרים מיוחדים (כמו רגרסיה דרך הראשית), \Rsquared{} יכול להיות שלילי!
+
+עבור רגרסיה רגילה, המודל תמיד יכול לחזות את הממוצע (במקרה הגרוע ביותר), כך ש\en{-}$SS_{\text{res}} \leq SS_{\text{tot}}$ ולכן $R^2 \geq \num{0}$.
+
+$\blacksquare$
+
+\hebrewsubsection{ייצוג גרפי: חלוקת השונות}
+
+ניתן לחשוב על השונות הכוללת כ"פאי" שמתחלק לשניים:
+
+\begin{equation}
+\underbrace{SS_{\text{tot}}}_{\hebmath{שונות כוללת}} = \underbrace{SS_{\text{reg}}}_{\hebmath{שונות מוסברת}} + \underbrace{SS_{\text{res}}}_{\hebmath{שונות לא מוסברת}}
+\end{equation}
+
+כאשר $SS_{\text{reg}} = \sum_{i=1}^{n} (\hat{y}_i - \bar{y})^2$ – השונות שהמודל "לכד".
+
+\textbf{קשר ל\en{-}\Rsquared{}:}
+
+\begin{equation}
+R^2 = 1 - \frac{\hebmath{שגיאת המודל שלנו}}{\hebmath{שגיאת מודל הבסיס}} = 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}}
+\end{equation}
+
+זו הגרסה החיובית של ההגדרה – במקום "אחד פחות שאריות", זה "שיעור המוסבר".
+
+\hebrewsubsection{קשר למקדם הקורלציה}
+
+במקרה של \textbf{רגרסיה ליניארית פשוטה} (משתנה בלתי תלוי אחד), מתקיים:
+
+\begin{equation}
+R^2 = r^2
+\end{equation}
+
+כאשר $r$ הוא \textbf{מקדם הקורלציה של פירסון} בין $X$ ו\en{-}$Y$:
+
+\begin{equation}
+r = \frac{\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^{n} (x_i - \bar{x})^2} \sqrt{\sum_{i=1}^{n} (y_i - \bar{y})^2}}
+\end{equation}
+
+\textbf{הוכחה (סקיצה):}
+
+ברגרסיה פשוטה, $\hat{y}_i = a + bx_i$ כאשר:
+
+\[
+b = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sum (x_i - \bar{x})^2} = r \cdot \frac{\sigma_y}{\sigma_x}
+\]
+
+ניתן להוכיח (באלגברה מייגעת אך ישירה) ש\en{-}$SS_{\text{reg}} = r^2 \cdot SS_{\text{tot}}$, ולכן $R^2 = r^2$.
+
+$\blacksquare$
+
+\textbf{משמעות:} ברגרסיה פשוטה, \Rsquared{} הוא \textit{ריבוע הקורלציה}. אם $r = \num{0.9}$ (קורלציה גבוהה), אזי $R^2 = \num{0.81}$.
+
+\hebrewsubsection{סכנה \num{1}: \Rsquared{} עולה תמיד כשמוסיפים תכונות}
+
+הבעיה הקריטית של \Rsquared{}: \textbf{הוא אף פעם לא יורד כשמוסיפים תכונות}, גם אם הן חסרות תועלת!
+
+\textbf{משפט \num{3.2} – מונוטוניות \Rsquared{}:}
+
+אם מוסיפים תכונה למודל רגרסיה, $R^2$ לא יורד (ובדרך כלל עולה).
+
+\textbf{הוכחה:}
+
+\textit{צעד 1:} נניח מודל עם $p$ תכונות מושג $R^2_p$. נוסיף תכונה נוספת (סה"כ $p+1$).
+
+\textit{צעד 2:} המודל החדש יכול תמיד לבחור משקל $w_{p+1} = \num{0}$ לתכונה החדשה, ובכך להשיג את אותה שגיאה כמו המודל הישן.
+
+\textit{צעד 3:} מכיוון שהרגרסיה \textit{ממזערת} את $SS_{\text{res}}$, היא תמצא משקלים טובים או שווים:
+
+\[
+SS_{\text{res}}^{(p+1)} \leq SS_{\text{res}}^{(p)}
+\]
+
+\textit{צעד 4:} לכן:
+
+\[
+R^2_{p+1} = 1 - \frac{SS_{\text{res}}^{(p+1)}}{SS_{\text{tot}}} \geq 1 - \frac{SS_{\text{res}}^{(p)}}{SS_{\text{tot}}} = R^2_p \quad \blacksquare
+\]
+
+\textbf{המשמעות המסוכנת:}
+
+אם נוסיף \num{1000} תכונות אקראיות (רעש טהור), \Rsquared{} יעלה! זה יוביל אותנו לחשוב שהמודל השתפר, אך באמת הוא פשוט \textbf{התאים יתר} \en{(Overfitted)}.
+
+\textbf{דוגמה מספרית – סימולציה:}
+
+\begin{pythonbox}[הדגמת בעיית \Rsquared{} עם תכונות אקראיות]
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+
+# נתונים פשוטים: Y = 2X + רעש
+np.random.seed(42)
+n = 100
+X_real = np.random.rand(n, 1)
+y = 2 * X_real.flatten() + np.random.randn(n) * 0.5
+
+# נבדוק R² כפונקציה של מספר תכונות אקראיות
+r2_scores = []
+
+for num_random_features in [0, 1, 5, 10, 20, 50]:
+    # הוספת תכונות אקראיות (רעש!)
+    X_random = np.random.randn(n, num_random_features)
+    X_combined = np.hstack([X_real, X_random])
+    
+    # אימון
+    model = LinearRegression()
+    model.fit(X_combined, y)
+    
+    # R² על נתוני האימון
+    y_pred = model.predict(X_combined)
+    r2 = r2_score(y, y_pred)
+    r2_scores.append(r2)
+    
+    print(f"Num features: {1 + num_random_features}, R²: {r2:.4f}")
+
+# תוצאה: R² עולה עם כל תכונה, גם אם היא רעש!
+\end{pythonbox}
+
+\textbf{תוצאה צפויה:}
+
+\begin{hebrewtable}[H]
+\caption{עליית \Rsquared{} עם הוספת תכונות אקראיות}
+\centering
+\begin{rtltabular}{|r|r|}
+\hline
+\textbf{\hebcell{מספר תכונות}} & \textbf{\hebcell{\Rsquared{} (אימון)}} \\
+\hline
+\num{1} & \num{0.850} \\
+\hline
+\num{2} & \num{0.852} \\
+\hline
+\num{6} & \num{0.870} \\
+\hline
+\num{11} & \num{0.895} \\
+\hline
+\num{21} & \num{0.930} \\
+\hline
+\num{51} & \num{0.975} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\Rsquared{} עלה מ\en{-}\num{0.85} ל\en{-}\num{0.975} למרות שהתכונות הנוספות היו רעש טהור!
+
+\hebrewsubsection{הפתרון: \en{Adjusted \Rsquared{}}}
+
+\textbf{\en{Adjusted \Rsquared{}}} (מקדם הקביעה המתוקן) פותר את הבעיה על ידי הטלת \textbf{"קנס"} על הוספת תכונות.
+
+\textbf{הגדרה \num{3.2} – \en{Adjusted \Rsquared{}}:}
+
+\begin{equation}
+R^2_{\text{adj}} = 1 - \frac{SS_{\text{res}} / (n - p - 1)}{SS_{\text{tot}} / (n - 1)}
+\end{equation}
+
+כאשר:
+\begin{itemize}
+\item $n$ – מספר התצפיות
+\item $p$ – מספר התכונות (לא כולל איבר חופשי)
+\end{itemize}
+
+\textbf{ניסוח חלופי:}
+
+\begin{equation}
+R^2_{\text{adj}} = 1 - (1 - R^2) \cdot \frac{n - 1}{n - p - 1}
+\end{equation}
+
+\textbf{משמעות:}
+
+המונה והמכנה מחולקים במספר \textbf{דרגות החופש} \en{(Degrees of Freedom)}. ככל שיש יותר תכונות $p$, דרגות החופש קטנות יותר, והקנס גדל.
+
+\textbf{תכונות של \en{Adjusted \Rsquared{}}:}
+
+\begin{itemize}
+\item \textbf{יכול לרדת} כשמוסיפים תכונה חסרת תועלת
+\item \textbf{יכול להיות שלילי} (אם המודל גרוע מאוד)
+\item תמיד $R^2_{\text{adj}} \leq R^2$
+\end{itemize}
+
+\textbf{מתי להשתמש?}
+
+\begin{itemize}
+\item \textbf{\Rsquared{}}: להערכת התאמה על נתוני אימון בודדים
+\item \textbf{\en{Adjusted \Rsquared{}}}: להשוואה בין מודלים עם מספר תכונות שונה
+\end{itemize}
+
+\textbf{חזרה על הסימולציה עם \en{Adjusted \Rsquared{}}:}
+
+\begin{pythonbox}[\en{Adjusted \Rsquared{}} – מונע עליה מלאכותית]
+def adjusted_r2(r2, n, p):
+    """
+    חישוב Adjusted R².
+    
+    Args:
+        r2: R² רגיל
+        n: מספר דגימות
+        p: מספר תכונות (לא כולל intercept)
+    """
+    return 1 - (1 - r2) * (n - 1) / (n - p - 1)
+
+# חישוב מחדש
+for i, num_random in enumerate([0, 1, 5, 10, 20, 50]):
+    r2 = r2_scores[i]
+    n = 100
+    p = 1 + num_random
+    adj_r2 = adjusted_r2(r2, n, p)
+    
+    print(f"Features: {p}, R²: {r2:.4f}, Adj R²: {adj_r2:.4f}")
+\end{pythonbox}
+
+\textbf{תוצאה צפויה:}
+
+\begin{hebrewtable}[H]
+\caption{השוואה: \Rsquared{} מול \en{Adjusted \Rsquared{}}}
+\centering
+\begin{rtltabular}{|r|r|r|}
+\hline
+\textbf{\hebcell{תכונות}} & \textbf{\hebcell{\Rsquared{}}} & \textbf{\hebcell{\en{Adjusted \Rsquared{}}}} \\
+\hline
+\num{1} & \num{0.850} & \num{0.849} \\
+\hline
+\num{2} & \num{0.852} & \num{0.849} \\
+\hline
+\num{6} & \num{0.870} & \num{0.862} \\
+\hline
+\num{11} & \num{0.895} & \num{0.880} \\
+\hline
+\num{21} & \num{0.930} & \num{0.900} \\
+\hline
+\num{51} & \num{0.975} & \num{0.895} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\en{Adjusted \Rsquared{}} יורד כשמוסיפים תכונות חסרות תועלת – בדיוק כמו שצריך!
+
+\hebrewsubsection{סכנה \num{2}: \Rsquared{} לא מתאים לסיווג}
+
+\Rsquared{} מיועד ל\textbf{רגרסיה} (תחזית של ערך מספרי). עבור \textbf{סיווג} (תחזית של קטגוריה), הוא לא מתאים.
+
+\textbf{למה?}
+
+בסיווג, $y_i \in \{\num{0}, \num{1}\}$ אך $\hat{y}_i$ יכול להיות כל מספר (למשל, \num{0.73} = הסתברות לקטגוריה \num{1}). חישוב $SS_{\text{res}}$ לא משקף את דיוק הסיווג.
+
+\textbf{מדדים נכונים לסיווג:}
+
+\begin{hebrewtable}[H]
+\caption{מדדי הערכה למשימות שונות}
+\centering
+\begin{rtltabular}{|l|l|p{6cm}|}
+\hline
+\textbf{\hebcell{משימה}} & \textbf{\hebcell{מדד}} & \textbf{\hebcell{הסבר}} \\
+\hline
+\hebcell{רגרסיה} & \en{\Rsquared{}, RMSE, MAE} & \hebcell{\Rsquared{} מודד שיעור שונות מוסברת} \\
+\hline
+\hebcell{סיווג} & \mixedcell{\en{Accuracy, Precision, Recall, F1}} & \hebcell{מודדים אחוז סיווגים נכונים} \\
+\hline
+\hebcell{סיווג (התפלגות)} & \en{Log-Loss, AUC-ROC} & \hebcell{מודדים איכות הסתברויות} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\hebrewsubsection{קשר לאלגברה ליניארית: הקרנות}
+
+ניתן לראות רגרסיה ליניארית כ\textbf{הטלה} של $\vec{y}$ על המרחב שנפרש על ידי עמודות המטריצה $\mathbf{X}$.
+
+\textbf{נוסחת הרגרסיה במטריצות:}
+
+\begin{equation}
+\vec{\hat{y}} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\vec{y} = \mathbf{P}\vec{y}
+\end{equation}
+
+כאשר $\mathbf{P} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T$ היא \textbf{מטריצת ההטלה} \en{(Projection Matrix)}.
+
+\textbf{משמעות גיאומטרית של \Rsquared{}:}
+
+\[
+R^2 = \frac{\|\vec{\hat{y}} - \bar{y}\vec{1}\|^2}{\|\vec{y} - \bar{y}\vec{1}\|^2} = \cos^2(\theta)
+\]
+
+כאשר $\theta$ היא הזווית בין $\vec{y} - \bar{y}\vec{1}$ (הנתונים הממורכזים) ל\en{-}$\vec{\hat{y}} - \bar{y}\vec{1}$ (החיזוי הממורכז).
+
+\textbf{פרשנות:} \Rsquared{} הוא ריבוע הקוסינוס של הזווית בין הנתונים לחיזוי במרחב הממורכז – \textbf{מדד גיאומטרי של התאמה}.
+
+\hebrewsubsection{תרגיל תכנות עצמי \num{3.1} – חישוב \Rsquared{} ידני}
+
+\textbf{מטרה:} להבין את המשמעות של \Rsquared{} על ידי חישוב ידני.
+
+\textbf{משימה:}
+
+\begin{enumerate}
+\item צרו נתונים סינתטיים: $y = \num{3}x + \num{5} + \text{רעש}$
+\item אמנו מודל רגרסיה ליניארית
+\item חשבו את \Rsquared{} בשלוש דרכים:
+\begin{itemize}
+\item נוסחה ישירה: $1 - SS_{\text{res}}/SS_{\text{tot}}$
+\item באמצעות קורלציה: $r^2$
+\item באמצעות \en{sklearn}
+\end{itemize}
+\item השוו את התוצאות (צריכות להיות זהות!)
+\end{enumerate}
+
+\textbf{פסאודו-קוד מלא:}
+
+\begin{pythonbox}[חישוב \Rsquared{} בשלוש דרכים]
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+
+# 1. יצירת נתונים
+np.random.seed(42)
+n = 100
+X = np.random.rand(n, 1) * 10  # X בין 0 ל-10
+y = 3 * X.flatten() + 5 + np.random.randn(n) * 2  # y = 3x + 5 + רעש
+
+# 2. אימון מודל
+model = LinearRegression()
+model.fit(X, y)
+y_pred = model.predict(X)
+
+print(f"המודל שנלמד: y = {model.coef_[0]:.3f}x + {model.intercept_:.3f}")
+
+# 3. דרך 1: נוסחה ישירה
+y_mean = np.mean(y)
+SS_tot = np.sum((y - y_mean)**2)
+SS_res = np.sum((y - y_pred)**2)
+r2_manual = 1 - (SS_res / SS_tot)
+
+print(f"\nדרך 1 (נוסחה ישירה):")
+print(f"  SS_tot = {SS_tot:.2f}")
+print(f"  SS_res = {SS_res:.2f}")
+print(f"  R² = {r2_manual:.6f}")
+
+# 4. דרך 2: קורלציה בריבוע (רק לרגרסיה פשוטה!)
+correlation = np.corrcoef(X.flatten(), y)[0, 1]
+r2_from_corr = correlation**2
+
+print(f"\nדרך 2 (קורלציה):")
+print(f"  r = {correlation:.6f}")
+print(f"  R² = r² = {r2_from_corr:.6f}")
+
+# 5. דרך 3: sklearn
+r2_sklearn = r2_score(y, y_pred)
+
+print(f"\nדרך 3 (sklearn):")
+print(f"  R² = {r2_sklearn:.6f}")
+
+# 6. השוואה
+print(f"\nהכל זהה? {np.allclose([r2_manual, r2_from_corr, r2_sklearn], r2_sklearn)}")
+\end{pythonbox}
+
+\textbf{תוצאה צפויה:} כל שלוש השיטות יתנו $R^2 \approx \num{0.95}$ (תלוי ברעש).
+
+\hebrewsubsection{תרגיל תכנות עצמי \num{3.2} – השוואת \Rsquared{} ו\en{-}Adjusted \Rsquared{}}
+
+\textbf{מטרה:} להמחיש את ההבדל בין \Rsquared{} ל\en{-}Adjusted \Rsquared{} כאשר מוסיפים תכונות.
+
+\textbf{משימה:}
+
+\begin{enumerate}
+\item צרו נתונים עם תכונה אחת רלוונטית
+\item הוסיפו בהדרגה תכונות אקראיות (רעש)
+\item עקבו אחרי \Rsquared{} ו\en{-}Adjusted \Rsquared{} כפונקציה של מספר התכונות
+\item הציגו גרף: ציר X = מספר תכונות, ציר Y = ציון
+\end{enumerate}
+
+\begin{pythonbox}[\Rsquared{} מול \en{Adjusted \Rsquared{}} – גרף השוואה]
+import matplotlib.pyplot as plt
+
+def adjusted_r2(r2, n, p):
+    return 1 - (1 - r2) * (n - 1) / (n - p - 1)
+
+# נתונים
+np.random.seed(42)
+n = 100
+X_real = np.random.rand(n, 1)
+y = 2 * X_real.flatten() + np.random.randn(n) * 0.5
+
+# מעקב
+num_features_list = []
+r2_list = []
+adj_r2_list = []
+
+for num_random in range(0, 51):
+    # הוספת תכונות אקראיות
+    if num_random == 0:
+        X_combined = X_real
+    else:
+        X_random = np.random.randn(n, num_random)
+        X_combined = np.hstack([X_real, X_random])
+    
+    # אימון
+    model = LinearRegression()
+    model.fit(X_combined, y)
+    y_pred = model.predict(X_combined)
+    
+    # חישוב
+    r2 = r2_score(y, y_pred)
+    p = X_combined.shape[1]
+    adj_r2 = adjusted_r2(r2, n, p)
+    
+    num_features_list.append(p)
+    r2_list.append(r2)
+    adj_r2_list.append(adj_r2)
+
+# גרף
+plt.figure(figsize=(10, 6))
+plt.plot(num_features_list, r2_list, label='R²', marker='o', markersize=3)
+plt.plot(num_features_list, adj_r2_list, label='Adjusted R²', marker='s', markersize=3)
+plt.xlabel('Number of Features')
+plt.ylabel('Score')
+plt.title('R² vs Adjusted R²: Adding Random Features')
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.show()
+\end{pythonbox}
+
+\textbf{תוצאה צפויה:} \Rsquared{} עולה בהתמדה, אך \en{Adjusted \Rsquared{}} יורד אחרי כמה תכונות.
+
+\hebrewsubsection{מקרי קצה: מתי \Rsquared{} מטעה?}
+
+\textbf{מקרה \num{1}: יחסים לא-ליניאריים}
+
+אם הקשר בין $X$ ל\en{-}$Y$ הוא לא-ליניארי (למשל, ריבועי), רגרסיה ליניארית תיכשל ו\en{-}\Rsquared{} יהיה נמוך – אך זה לא אומר שאין קשר!
+
+\textbf{דוגמה:} $y = x^2$
+
+רגרסיה ליניארית תיתן \Rsquared{} נמוך, אך הקשר מושלם (רק לא ליניארי).
+
+\textbf{פתרון:} השתמש ב\textbf{פולינומים} או מודלים לא-ליניאריים (כמו רשתות נוירונים).
+
+\textbf{מקרה \num{2}: \en{Outliers} (ערכי חריגים)}
+
+ערך חריג אחד יכול להוריד דרמטית את \Rsquared{}, גם אם המודל טוב ל\en{-}\percent{99} מהנתונים.
+
+\textbf{פתרון:} זהה וטפל ב\en{-}Outliers לפני אימון (באמצעות \en{Z-score, IQR}, או שיטות עמידות כמו \en{RANSAC}).
+
+\textbf{מקרה \num{3}: מתאם אינו סיבתיות}
+
+\Rsquared{} גבוה לא אומר ש\en{-}$X$ \textit{גורם} ל\en{-}$Y$. ייתכן שיש משתנה שלישי $Z$ שגורם לשניהם.
+
+\textbf{דוגמה קלאסית:} צריכת גלידה וטביעות מים מתואמות – לא כי גלידה גורמת לטביעות, אלא כי \textbf{קיץ} גורם לשניהם.
+
+\hebrewsubsection{סיכום ומבט קדימה}
+
+\textbf{מה למדנו בפרק זה?}
+
+\begin{enumerate}
+\item \textbf{\Rsquared{} מודד שיעור שונות מוסברת} – מספר יחיד שמסכם את איכות המודל
+\item \textbf{תחום: \num{0} עד \num{1}} – הוכחנו מתמטית למה זה תמיד נכון (לרגרסיה עם \en{intercept})
+\item \textbf{קשר לקורלציה} – ברגרסיה פשוטה, $R^2 = r^2$
+\item \textbf{בעיה: עולה תמיד} – הוספת תכונות מעלה את \Rsquared{} גם אם הן חסרות תועלת
+\item \textbf{פתרון: \en{Adjusted \Rsquared{}}} – מנרמל לפי מספר התכונות ומונע \en{Overfitting}
+\item \textbf{לא לסיווג!} – \Rsquared{} מיועד לרגרסיה, לא לסיווג
+\item \textbf{מגבלות} – מתאם אינו סיבתיות, רגיש ל\en{-}Outliers, מניח ליניאריות
+\end{enumerate}
+
+\textbf{מבט קדימה – פרק \num{4}:}
+
+בפרק הבא נעבור מהערכת מודלים למדידת \textbf{קשרים בין משתנים}. נחקור:
+
+\begin{itemize}
+\item \textbf{קו-ווריאנס} \en{(Covariance)} – מדד גולמי של קשר ליניארי
+\item \textbf{קורלציה} \en{(Correlation)} – הגרסה המנורמלת של קו-ווריאנס
+\item \textbf{ייצוג אלגברי ליניארי} – קו-ווריאנס כמכפלה סקלרית, קורלציה כ\en{-}Cosine Similarity
+\item \textbf{סכנות} – \en{"Correlation is not Causation"}, קורלציות מזויפות
+\item \textbf{מטריצת קורלציה} – כלי לזיהוי \en{Multicollinearity}
+\end{itemize}
+
+\textbf{שאלת מחשבה לסיום:}
+
+אם שני משתנים $X$ ו\en{-}$Y$ בעלי קורלציה $r = \num{0}$ (אורתוגונליים), האם זה אומר שהם בלתי תלויים סטטיסטית?
+
+רמז: התשובה היא \textbf{לא}! קורלציה אפס משמעה רק \textit{אין קשר ליניארי}, אך עדיין יכול להיות קשר לא-ליניארי (למשל, $Y = X^2$).
+
+\subsection*{מטלות וקריאה מורחבת}
+
+\textbf{תרגיל \num{3.1}:} חשבו \Rsquared{} ידנית בשלוש דרכים (ראו פסאודו-קוד).
+
+\textbf{תרגיל \num{3.2}:} השוו \Rsquared{} ו\en{-}Adjusted \Rsquared{} עם תכונות אקראיות (ראו פסאודו-קוד).
+
+\textbf{תרגיל \num{3.3}:} הוכיחו בעצמכם שברגרסיה פשוטה $R^2 = r^2$.
+
+רמז: התחילו מהביטוי $SS_{\text{reg}} = \sum (\hat{y}_i - \bar{y})^2$ והשתמשו ב\en{-}$\hat{y}_i = a + bx_i$.
+
+\textbf{קריאה מורחבת:}
+
+\begin{itemize}
+\item \cite{galton1886} – \en{"Regression towards Mediocrity in Hereditary Stature"}: המאמר המקורי של \en{Galton}
+\item \cite{pearson1896} – \en{"Mathematical Contributions to the Theory of Evolution"}: \en{Pearson} על קורלציה
+\item \cite{fisher1925} – \en{"Statistical Methods for Research Workers"}: \en{Fisher} על ניתוח שונות
+\item \cite{wright1921} – \en{"Correlation and Causation"}: \en{Wright} טובע את \Rsquared{}
+\item \cite{hastie2009} – \en{The Elements of Statistical Learning}, פרק \num{3}: רגרסיה ליניארית ברזולוציה גבוהה
+\end{itemize}
+
+\textbf{שאלות להעמקה:}
+
+\begin{enumerate}
+\item למה \en{Adjusted \Rsquared{}} יכול להיות שלילי, אך \Rsquared{} לא?
+\item מה יקרה ל\en{-}\Rsquared{} אם ננרמל את $X$ ו\en{-}$Y$ (נחסיר ממוצע ונחלק בסטיית תקן)?
+\item איך \Rsquared{} מתייחס למודלים לא-ליניאריים (כמו רשתות נוירונים)?
+\end{enumerate}
+
+\textbf{סיום פרק \num{3}}

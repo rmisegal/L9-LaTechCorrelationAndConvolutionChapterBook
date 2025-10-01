@@ -1,0 +1,541 @@
+% l9-ch01.tex
+% פרק 1: מבוא והשקפה וקטורית
+% מחבר: ד"ר יורם סגל
+% תאריך: ספטמבר 2025
+
+\hebrewsection{מבוא: עולמו הנסתר של הווקטור}
+
+\noindent\textbf{\en{Introduction: The Hidden World of the Vector}}
+
+\vspace{0.5cm}
+
+בפרק זה נחקור את הבסיס הפילוסופי והמתמטי של הייצוג הווקטורי בבינה מלאכותית. נראה כיצד כל יחידת מידע – תמונה, מילה, או חולה במרפאה – הופכת לנקודה במרחב רב-ממדי, וכיצד מושג זה מהווה את היסוד של כל \en{AI} מודרני.
+
+\hebrewsubsection{מבט ראשון: מה רואים כשמביטים בתמונה?}
+
+כשאתם מביטים בתמונה של חתול, מה המוח שלכם באמת רואה? האם הוא רואה יצור פרוותי חמוד עם שפם? או שמא הוא רואה משהו עמוק יותר – רשת מורכבת של \num{1000000} נקודות אור, כל אחת מהן נושאת מספר המייצג עוצמת בהירות?
+
+זוהי השאלה המרכזית שמניעה את כל תחום הבינה המלאכותית המודרני: \textbf{כיצד ניתן להפוך מידע לווקטור, ואיך ווקטורים הופכים למשמעות?}
+
+\hebrewsubsection{דקארט והמצאת השפה המספרית של המרחב}
+
+ב\en{-}\hebyear{1637}, כשרנה דקארט \en{(René Descartes)} פרסם את ספרו \en{"La Géométrie"}, הוא לא יכול היה לדמיין שהרעיון הפשוט שלו – לייצג נקודה במרחב באמצעות מספרים – יהפוך ליסוד של מהפכה טכנולוגית שתגיע \num{400} שנה מאוחר יותר \cite{strang2019}.
+
+דקארט המציא את מערכת הצירים הקרטזית, ועמה את הרעיון המהפכני שכל נקודה במרחב ניתנת לתיאור מספרי. אך רק במאה ה\en{-}\num{20}, כשמדעני המחשב החלו לחשוב על דרכים לייצג מידע, הבינו שהרעיון של דקארט הוא לא רק כלי גיאומטרי – \textbf{הוא שפה אוניברסלית לתיאור המציאות}.
+
+\textbf{שאלה למחשבה:} אם דקארט יכול היה לייצג נקודה במרחב תלת-ממדי עם \num{3} מספרים, כמה מספרים נדרשים כדי לייצג תמונת חתול?
+
+\hebrewsubsection{הווקטור: לא רק חץ במרחב}
+
+בקורסים מתמטיים מסורתיים, וקטור מוגדר לרוב כ\en{"חץ במרחב"} – יש לו כיוון ואורך. אך בעולם מדעי הנתונים ולמידת המכונה, הווקטור הוא משהו עמוק יותר בהרבה: \textbf{הוא ייצוג של ישות במרחב מופשט} \cite{strang2019}.
+
+\textbf{דוגמה מהחיים – חולה במרפאה:}
+
+אם נתון לכם חולה במרפאה, איך תתארו אותו כווקטור? התשובה: כל תכונה נמדדת של החולה – גיל, משקל, לחץ דם, רמת סוכר, טמפרטורה – הופכת ל\en{-}component אחד בווקטור. אם יש לנו \num{50} תכונות נמדדות, החולה מיוצג כנקודה במרחב בעל \num{50} ממדים:
+
+\[
+\vec{p}_{\text{patient}} = \begin{bmatrix}
+\text{age} \\
+\text{weight} \\
+\text{blood\_pressure} \\
+\text{glucose} \\
+\vdots \\
+\text{feature}_{50}
+\end{bmatrix} \in \mathbb{R}^{50}
+\]
+
+הסימון $\mathbb{R}^{50}$ משמעותו \en{"מרחב אוקלידי של \num{50} ממדים"} – מרחב שבו כל נקודה מוגדרת על ידי \num{50} מספרים ממשיים. זהו המרחב שבו \textbf{כל החולים שלנו חיים}, במובן מתמטי.
+
+\hebrewsubsection{מתמונת חתול לווקטור: תהליך הוקטוריזציה}
+
+כפי שהדגיש ד"ר יורם סגל בהרצאתו, תמונה של $\num{1000} \times \num{1000}$ פיקסלים בצבע \en{RGB} מכילה $\num{3} \times \num{10}^6$ ערכים מספריים (כל פיקסל מיוצג על ידי \num{3} ערכים: אדום, ירוק, כחול).
+
+\textbf{המתמטיקה מאחורי הוקטוריזציה:}
+
+כדי להפוך אותה לייצוג וקטורי הניתן לניתוח על ידי מודל למידת מכונה, אנו מבצעים תהליך של \en{"Flattening"} (השטחה). המטריצה המבנית מפורקת לרצף של מספרים, היוצר וקטור באורך של שלושה מיליון.
+
+אם $\mathbf{I} \in \mathbb{R}^{h \times w \times c}$ היא תמונה בגובה $h$, רוחב $w$ ו\en{-}$c$ ערוצי צבע, אזי הוקטוריזציה מוגדרת כ:
+
+\begin{equation}
+\text{vec}(\mathbf{I}) = \mathbf{v} \in \mathbb{R}^{h \cdot w \cdot c}
+\end{equation}
+
+כאשר $\mathbf{v} = [I_{1,1,1}, I_{1,1,2}, \ldots, I_{h,w,c}]^T$ – רצף של כל הפיקסלים בזה אחר זה.
+
+\textbf{משמעות עמוקה:} תמונת החתול הפכה לנקודה \textit{אחת ויחידה} במרחב בעל שלושה מיליון ממדים. כל תמונה שונה במעט תהיה נקודה אחרת באותו מרחב עצום.
+
+\hebrewsubsection{מכפלה סקלרית: מדד הדמיון האולטימטיבי}
+
+אחת הפעולות החשובות ביותר על וקטורים היא \textbf{מכפלה סקלרית} \en{(Dot Product, Inner Product)}. היא מוגדרת כך:
+
+\textbf{הגדרה \num{1.1} – מכפלה סקלרית (אלגברית):}
+\begin{equation}
+\langle \vec{u}, \vec{v} \rangle = \sum_{i=1}^{n} u_i v_i = u_1 v_1 + u_2 v_2 + \cdots + u_n v_n
+\end{equation}
+
+\textbf{שאלה מהותית שהעלה המרצה:} מה משמעות המכפלה הסקלרית? למה היא כל כך חשובה?
+
+התשובה מגיעה מנוסחה חלופית, גיאומטרית, שגילה המתמטיקאי הגרמני \en{Hermann von Helmholtz} במאה ה\en{-}\num{19}:
+
+\begin{equation}
+\langle \vec{u}, \vec{v} \rangle = \|\vec{u}\| \cdot \|\vec{v}\| \cdot \cos(\theta)
+\end{equation}
+
+כאשר $\theta$ היא הזווית בין שני הווקטורים, ו\en{-}$\|\vec{u}\|$ היא \textbf{הנורמה} \en{(Norm)} או אורך הווקטור:
+
+\begin{equation}
+\|\vec{u}\| = \sqrt{u_1^2 + u_2^2 + \cdots + u_n^2} = \sqrt{\sum_{i=1}^{n} u_i^2}
+\end{equation}
+
+\hebrewsubsection{הוכחה: שתי ההגדרות זהות}
+
+\textbf{משפט \num{1.1}:} ההגדרה האלגברית (משוואה \num{1.2}) וההגדרה הגיאומטרית (משוואה \num{1.3}) של מכפלה סקלרית שוות.
+
+\textbf{הוכחה:}
+
+\textit{צעד 1: משפט הקוסינוסים.}
+
+במשולש עם צלעות $\|\vec{u}\|$, $\|\vec{v}\|$ וזווית $\theta$ ביניהן, הצלע השלישית היא $\|\vec{u} - \vec{v}\|$. לפי משפט הקוסינוסים:
+
+\[
+\|\vec{u} - \vec{v}\|^2 = \|\vec{u}\|^2 + \|\vec{v}\|^2 - \num{2}\|\vec{u}\|\|\vec{v}\|\cos(\theta)
+\]
+
+\textit{צעד 2: פיתוח אלגברי של האגף השמאלי.}
+
+נפתח את $\|\vec{u} - \vec{v}\|^2$ באמצעות ההגדרה הא לגברית:
+
+\begin{align}
+\|\vec{u} - \vec{v}\|^2 &= \sum_{i=1}^{n}(u_i - v_i)^2 \nonumber \\
+&= \sum_{i=1}^{n}(u_i^2 - \num{2}u_i v_i + v_i^2) \nonumber \\
+&= \sum_{i=1}^{n} u_i^2 + \sum_{i=1}^{n} v_i^2 - \num{2}\sum_{i=1}^{n} u_i v_i \nonumber \\
+&= \|\vec{u}\|^2 + \|\vec{v}\|^2 - \num{2}\langle \vec{u}, \vec{v} \rangle
+\end{align}
+
+\textit{צעד 3: השוואת הביטויים.}
+
+מצעד \num{1}: $\|\vec{u} - \vec{v}\|^2 = \|\vec{u}\|^2 + \|\vec{v}\|^2 - \num{2}\|\vec{u}\|\|\vec{v}\|\cos(\theta)$
+
+מצעד \num{2}: $\|\vec{u} - \vec{v}\|^2 = \|\vec{u}\|^2 + \|\vec{v}\|^2 - \num{2}\langle \vec{u}, \vec{v} \rangle$
+
+ביטול $\|\vec{u}\|^2 + \|\vec{v}\|^2$ משני האגפים מוביל ל:
+
+\[
+\num{2}\langle \vec{u}, \vec{v} \rangle = \num{2}\|\vec{u}\| \cdot \|\vec{v}\| \cdot \cos(\theta)
+\]
+
+חלוקה ב\en{-}\num{2} נותנת:
+
+\[
+\langle \vec{u}, \vec{v} \rangle = \|\vec{u}\| \cdot \|\vec{v}\| \cdot \cos(\theta) \quad \blacksquare
+\]
+
+\textbf{משמעות עמוקה:} מכפלה סקלרית היא \textbf{מדד דמיון גיאומטרי}.
+
+\begin{itemize}
+\item אם $\theta = \num{0}°$ (וקטורים באותו כיוון): $\cos(\theta) = \num{1}$ והמכפלה מקסימלית → \textbf{דמיון מלא}
+\item אם $\theta = \num{90}°$ (וקטורים אורתוגונליים): $\cos(\theta) = \num{0}$ והמכפלה מתאפסת → \textbf{אין דמיון כלל}
+\item אם $\theta = \num{180}°$ (וקטורים מנוגדים): $\cos(\theta) = \num{-1}$ והמכפלה מינימלית → \textbf{ניגוד מלא}
+\end{itemize}
+
+\hebrewsubsection{קשר ל\en{-}AI: \en{Cosine Similarity} ומנועי חיפוש}
+
+מנועי חיפוש מודרניים כמו \en{Google} ומערכות המלצה כמו \en{Netflix} משתמשים בווריאציה על מכפלה סקלרית שנקראת \textbf{\en{Cosine Similarity}} – דמיון קוסינוס:
+
+\begin{equation}
+\text{similarity}(\vec{u}, \vec{v}) = \frac{\langle \vec{u}, \vec{v} \rangle}{\|\vec{u}\| \cdot \|\vec{v}\|} = \cos(\theta)
+\end{equation}
+
+חישוב זה \textbf{מנרמל} את המכפלה הסקלרית כך שהתוצאה תמיד בין $\num{-1}$ ל\en{-}$\num{+1}$, ללא תלות באורכי הווקטורים.
+
+\textbf{למה נורמליזציה חשובה?}
+
+בלי נורמליזציה, וקטור ארוך יקבל מכפלה סקלרית גדולה יותר רק בגלל האורך, לא בגלל הדמיון. \en{Cosine Similarity} פותר זאת על ידי מדידת \textit{הזווית בלבד}.
+
+\textbf{דוגמה מהחיים – מנוע חיפוש:}
+
+כשאתם מקלידים שאילתה \en{"machine learning tutorial"}, מנוע החיפוש:
+
+\begin{enumerate}
+\item \textbf{ממיר את השאילתה לווקטור} $\vec{q}$: כל מילה מקבלת משקל (למשל, באמצעות \en{TF-IDF} או \en{Word2Vec} \cite{mikolov2013})
+\item \textbf{משווה את} $\vec{q}$ \textbf{לכל מסמך} $\vec{d}_i$ במאגר באמצעות \en{Cosine Similarity}
+\item \textbf{מחזיר את המסמכים} עם הדמיון הגבוה ביותר (ציון קוסינוס הכי קרוב ל\en{-}\num{1})
+\end{enumerate}
+
+\textbf{פונקציות \en{NumPy} למכפלה סקלרית ונורמה:}
+
+\begin{hebrewtable}[H]
+\caption{פונקציות \en{NumPy} למכפלה סקלרית, נורמה ו\en{-}Cosine Similarity}
+\centering
+\begin{rtltabular}{|l|l|p{5.5cm}|}
+\hline
+\textbf{\en{Function}} & \textbf{\hebcell{תפקיד}} & \textbf{\hebcell{שימוש והסבר}} \\
+\hline
+\en{np.dot(u, v)} & \hebcell{מכפלה סקלרית} & \hebcell{מחשבת $\sum u_i v_i$ – הליבה של כל חישוב דמיון} \\
+\hline
+\en{np.linalg.norm(u)} & \hebcell{נורמה \en{(L2)}} & \hebcell{מחשבת $\sqrt{\sum u_i^2}$ – אורך הווקטור} \\
+\hline
+\en{@} (אופרטור) & \hebcell{מכפלת מטריצות} & \hebcell{תחביר קצר: \en{u @ v} זהה ל\en{-}np.dot(u, v)} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\textbf{הערה חשובה:} פונקציות אלה הן הבסיס של כל אלגוריתם \en{AI}. נשתמש בהן שוב ושוב לאורך הספר.
+
+\textbf{פסאודו-קוד – \en{Cosine Similarity}:}
+
+\begin{pythonbox}[\en{Cosine Similarity} – מימוש ממוקד]
+import numpy as np
+
+def cosine_similarity(u, v):
+    """
+    מחשבת Cosine Similarity בין שני וקטורים.
+    
+    Args:
+        u, v: וקטורי NumPy בעלי אותו אורך
+        
+    Returns:
+        float: ציון דמיון בין -1 ל-1
+    """
+    # מכפלה סקלרית - מונה
+    dot_product = np.dot(u, v)
+    
+    # נורמות - מכנה
+    norm_u = np.linalg.norm(u)
+    norm_v = np.linalg.norm(v)
+    
+    # Cosine Similarity
+    return dot_product / (norm_u * norm_v)
+
+# דוגמה: שני מסמכים (ווקטורי TF-IDF מדומים)
+doc1 = np.array([1, 2, 3, 0, 0])
+doc2 = np.array([1, 1, 0, 4, 5])
+
+print(f"Similarity: {cosine_similarity(doc1, doc2):.3f}")
+# תוצאה: 0.277 - דמיון חלש
+\end{pythonbox}
+
+\hebrewsubsection{\en{Word Embeddings}: המהפכה של \en{Word2Vec}}
+
+אחת ההצלחות המרשימות ביותר של ייצוג וקטורי היא \textbf{\en{Word2Vec}}, שפותחה על ידי \en{Tomas Mikolov} ועמיתיו ב\en{-}Google ב\en{-}\hebyear{2013} \cite{mikolov2013}.
+
+\textbf{הרעיון המהפכני:} לייצג כל מילה בשפה כווקטור בן $\sim\num{300}$ ממדים, כך ש\textbf{מילים דומות במשמעות יהיו קרובות במרחב הווקטורי}.
+
+\textbf{הפלא המתמטי של \en{Word2Vec}:}
+
+אחד הממצאים המפורסמים ביותר הוא שחישובים אריתמטיים על וקטורי מילים מניבים תוצאות משמעותיות סמנטית:
+
+\[
+\vec{\text{king}} - \vec{\text{man}} + \vec{\text{woman}} \approx \vec{\text{queen}}
+\]
+
+\textbf{שאלה שמעלה פלא:} איך זה אפשרי? איך חיבור וחיסור של מספרים יכול לבטא יחסים סמנטיים?
+
+\textbf{התשובה:} הווקטורים לומדים \textbf{יחסים}. הווקטור $\vec{\text{king}} - \vec{\text{man}}$ מייצג את המושג המופשט \en{"מלכות זכרית"}, וכשמוסיפים $\vec{\text{woman}}$ מקבלים \en{"מלכות נשית"} = $\vec{\text{queen}}$.
+
+זה עובד בגלל \textbf{הנחת הדיסטריבוציה} \en{(Distributional Hypothesis)} שניסח הבלשן \en{Zellig Harris} ב\en{-}\hebyear{1954} \cite{harris1954}:
+
+\begin{quote}
+\textit{\en{"Words that occur in similar contexts tend to have similar meanings"}}
+
+"מילים שמופיעות בהקשרים דומים נוטות לשאת משמעות דומה"
+\end{quote}
+
+אלגוריתם \en{Word2Vec} לומד וקטורים שמנבאים את הקונטקסט של מילה, ובכך \textbf{מקודדים משמעות סמנטית כמרחק גיאומטרי}.
+
+\hebrewsubsection{תרגיל תכנות עצמי \num{1.1} – חיפוש מילים דומות}
+
+\textbf{מטרה:} להבין איך \en{Cosine Similarity} משמש למציאת מילים דומות במודל \en{Word2Vec}.
+
+\textbf{משימה:}
+\begin{enumerate}
+\item טענו וקטורי \en{Word2Vec} מוכנים (למשל, מ\en{-}Gensim או מודל \en{GloVe})
+\item בחרו מילה (למשל, \en{"computer"})
+\item חשבו \en{Cosine Similarity} בינה לבין כל המילים האחרות במאגר
+\item הציגו את \num{10} המילים הדומות ביותר
+\end{enumerate}
+
+\textbf{פסאודו-קוד:}
+
+\begin{pythonbox}[חיפוש מילים דומות ב\en{-}Word2Vec]
+from gensim.models import KeyedVectors
+
+# טעינת מודל Word2Vec מוכן (להוריד מהאינטרנט)
+model = KeyedVectors.load_word2vec_format(
+    'GoogleNews-vectors-negative300.bin', 
+    binary=True
+)
+
+# מציאת מילים דומות - הפונקציה משתמשת ב-Cosine Similarity
+similar_words = model.most_similar('computer', topn=10)
+
+# הדפסה
+print("המילים הדומות ביותר ל-'computer':")
+for word, similarity in similar_words:
+    print(f"  {word}: {similarity:.3f}")
+\end{pythonbox}
+
+\textbf{תוצאה צפויה:}
+\begin{itemize}
+\item \en{laptop}: \num{0.82}
+\item \en{software}: \num{0.78}
+\item \en{technology}: \num{0.75}
+\item \en{hardware}: \num{0.72}
+\item \en{PC}: \num{0.70}
+\end{itemize}
+
+\hebrewsubsection{אזהרה: הסכנה בווקטורים – \en{Bias} ודעות קדומות}
+
+ב\en{-}\hebyear{2016}, חוקרים מאוניברסיטת \en{Princeton} גילו תופעה מדאיגה: מודלי \en{Word2Vec} שאומנו על טקסטים מהאינטרנט הטמיעו \textbf{דעות קדומות חברתיות} \cite{caliskan2017}.
+
+\textbf{דוגמאות להטיות שנמצאו:}
+
+\begin{itemize}
+\item $\vec{\text{man}} : \vec{\text{programmer}}$ כמו $\vec{\text{woman}} : \vec{\text{homemaker}}$
+\item $\vec{\text{man}} : \vec{\text{doctor}}$ כמו $\vec{\text{woman}} : \vec{\text{nurse}}$
+\item קשרים חזקים יותר בין שמות אירופאים למילים חיוביות לעומת שמות אפרו-אמריקאים
+\end{itemize}
+
+המודל למד שגברים קשורים למקצועות טכנולוגיים, ונשים למקצועות ביתיים – לא משום שזו אמת, אלא כי \textbf{כך התייחסו הטקסטים שממנו למד}.
+
+\textbf{שאלה מוסרית שהעלה ד"ר סגל:} אם \en{AI} לומד מהעולם, והעולם מוטה – האם \en{AI} מחזק את המוטיות?
+
+\textbf{התשובה המחקרית:} כן, אלא אם כן מתערבים באופן פעיל. זו אחת המשימות המרכזיות של תחום \textbf{\en{Fairness in AI}}. חוקרים כמו \en{Tolga Bolukbasi} ועמיתיו פיתחו שיטות ל\textbf{ניטרול הטיות} \en{(Debiasing)} בווקטורי מילים \cite{bolukbasi2016}.
+
+\textbf{שיטת הניטרול:}
+
+השיטה מבוססת על זיהוי \textbf{כיווני הטיה} במרחב הווקטורי. למשל, הכיוון $\vec{d}_{\text{gender}} = \vec{\text{he}} - \vec{\text{she}}$ מייצג את ממד המגדר. לאחר מכן, מסירים את המרכיב הזה ממילים שאמורות להיות ניטרליות:
+
+\[
+\vec{\text{doctor}}_{\text{debiased}} = \vec{\text{doctor}} - \text{proj}_{\vec{d}_{\text{gender}}}(\vec{\text{doctor}})
+\]
+
+כאשר $\text{proj}_{\vec{d}}(\vec{v})$ היא ההטלה של $\vec{v}$ על הכיוון $\vec{d}$.
+
+\textbf{מסקנה:} ייצוג וקטורי הוא כלי עוצמתי, אך הוא משקף את הנתונים שממנו למד. \textbf{אחריות החוקר היא להבטיח שהמודל לא מנציח אפליה}.
+
+\hebrewsubsection{מרחבים וקטוריים: הפורמליזם המתמטי}
+
+עד כה דיברנו על וקטורים בצורה אינטואיטיבית. אך מה באמת הופך אוסף של מספרים לווקטור? התשובה מגיעה מ\textbf{תורת המרחבים הווקטוריים} \en{(Vector Space Theory)}, שפותחה במאה ה\en{-}\num{19} על ידי מתמטיקאים כמו \en{Hermann Grassmann} (\hebyear{1844}) ו\en{-}Giuseppe Peano (\hebyear{1888}).
+
+\textbf{הגדרה \num{1.2} – מרחב וקטורי:}
+
+מרחב וקטורי $V$ מעל שדה $\mathbb{F}$ (בדרך כלל $\mathbb{R}$ או $\mathbb{C}$) הוא קבוצה עם שתי פעולות:
+
+\begin{enumerate}
+\item \textbf{חיבור וקטורים:} $\vec{u} + \vec{v} \in V$ לכל $\vec{u}, \vec{v} \in V$
+\item \textbf{כפל בסקלר:} $\alpha \vec{u} \in V$ לכל $\alpha \in \mathbb{F}$ ו\en{-}$\vec{u} \in V$
+\end{enumerate}
+
+שמקיימות \num{8} אקסיומות:
+
+\begin{hebrewtable}[H]
+\caption{אקסיומות מרחב וקטורי}
+\centering
+\begin{rtltabular}{|r|p{10cm}|}
+\hline
+\textbf{\hebcell{אקסיומה}} & \textbf{\hebcell{תכונה}} \\
+\hline
+\num{1} & \hebcell{קומוטטיביות: $\vec{u} + \vec{v} = \vec{v} + \vec{u}$} \\
+\hline
+\num{2} & \hebcell{אסוציאטיביות: $(\vec{u} + \vec{v}) + \vec{w} = \vec{u} + (\vec{v} + \vec{w})$} \\
+\hline
+\num{3} & \hebcell{קיום איבר אפס: קיים $\vec{0}$ כך ש\en{-}$\vec{u} + \vec{0} = \vec{u}$} \\
+\hline
+\num{4} & \hebcell{קיום איבר נגדי: לכל $\vec{u}$ קיים $-\vec{u}$ כך ש\en{-}$\vec{u} + (-\vec{u}) = \vec{0}$} \\
+\hline
+\num{5} & \hebcell{כפל באחד: $\num{1} \cdot \vec{u} = \vec{u}$} \\
+\hline
+\num{6} & \hebcell{דיסטריבוטיביות: $\alpha(\vec{u} + \vec{v}) = \alpha\vec{u} + \alpha\vec{v}$} \\
+\hline
+\num{7} & \hebcell{דיסטריבוטיביות: $(\alpha + \beta)\vec{u} = \alpha\vec{u} + \beta\vec{u}$} \\
+\hline
+\num{8} & \hebcell{אסוציאטיביות כפל: $(\alpha\beta)\vec{u} = \alpha(\beta\vec{u})$} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\textbf{למה זה חשוב ל\en{-}AI?}
+
+ברגע שהוכחנו שאוסף של ישויות (תמונות, מסמכים, חולים) יוצר מרחב וקטורי, אנחנו יכולים להשתמש ב\textbf{כל הכלים של אלגברה ליניארית}:
+
+\begin{itemize}
+\item פירוק \en{SVD (Singular Value Decomposition)}
+\item ערכים עצמיים \en{(Eigenvalues)} ווקטורים עצמיים \en{(Eigenvectors)}
+\item הטלות \en{(Projections)} והטרנספורמציות ליניאריות
+\item \en{PCA (Principal Component Analysis)} להפחתת ממדיות
+\end{itemize}
+
+כל אלו הם כלים שנשתמש בהם לאורך הספר לניתוח ועיבוד נתונים.
+
+\hebrewsubsection{המעבר למימד גבוה: ברכה או קללה?}
+
+ב\en{-}\hebyear{1961}, הסטטיסטיקאי והמתמטיקאי \en{Richard Bellman} טבע את המונח המפורסם \textbf{\en{"Curse of Dimensionality"}} – קללת המימדיות \cite{bellman1957}.
+
+\textbf{הבעיה המתמטית:}
+
+\en{Bellman} הבין שככל שמוסיפים תכונות (ממדים) לנתונים, \textbf{נפח המרחב גדל באופן אקספוננציאלי}, והנתונים הופכים ספרסיים \en{(Sparse)} יותר ויותר.
+
+\textbf{דוגמה מספרית שהדגים המרצה:}
+
+נניח שאנחנו רוצים לדגום \num{10} נקודות לאורך כל ממד כדי לכסות את המרחב בצפיפות סבירה:
+
+\begin{itemize}
+\item ב\en{-}\num{1} ממד: $\num{10}^1 = \num{10}$ נקודות
+\item ב\en{-}\num{2} ממדים: $\num{10}^2 = \num{100}$ נקודות
+\item ב\en{-}\num{3} ממדים: $\num{10}^3 = \num{1000}$ נקודות
+\item ב\en{-}\num{10} ממדים: $\num{10}^{10} = \num{10000000000}$ נקודות (עשרה מיליארד!)
+\item ב\en{-}\num{100} ממדים: $\num{10}^{100}$ – מספר גדול יותר מכמות האטומים ביקום!
+\end{itemize}
+
+\textbf{שאלת המפתח שהעלה ד"ר סגל:}
+
+אם יש לנו תמונת חתול $\num{1000} \times \num{1000}$ פיקסלים (מיליון תכונות), כמה דוגמאות אימון נדרשות כדי לאמן מודל \en{Brute Force}?
+
+\textbf{התשובה המתמטית:}
+
+לפי כלל האצבע שנידון בהרצאה:
+\begin{itemize}
+\item \textbf{למידת מכונה קלאסית:} מינימום \num{30} דוגמאות לכל תכונה
+\item \textbf{למידה עמוקה:} מינימום \num{100} דוגמאות לכל תכונה
+\end{itemize}
+
+עבור מיליון תכונות: $\num{100} \times \num{10}^6 = \num{100000000}$ דוגמאות (מאה מיליון!)
+
+\textbf{הפתרון – רשתות \en{CNN}:}
+
+זו הסיבה שרשתות \en{Convolutional Neural Networks (CNN)} חיוניות \cite{lecun1998, krizhevsky2012}. הן מפחיתות באופן דרמטי את מספר הפרמטרים באמצעות:
+
+\begin{enumerate}
+\item \textbf{שיתוף משקלים} \en{(Weight Sharing)}: אותו פילטר משמש בכל התמונה
+\item \textbf{קישוריות מקומית} \en{(Local Connectivity)}: כל נוירון מחובר רק לאזור קטן
+\item \textbf{הירארכיה של תכונות:} למידה הדרגתית מתכונות פשוטות (קצוות) למורכבות (פנים)
+\end{enumerate}
+
+\textbf{הישג מפורסם:} רשת \en{AlexNet} של \en{Krizhevsky, Sutskever} ו\en{-}Hinton (\hebyear{2012}) אימנה על \num{1.2} מיליון תמונות עם $\sim\num{60}$ מיליון פרמטרים, והשיגה פריצת דרך בסיווג תמונות \cite{krizhevsky2012}.
+
+זו תהיה נקודת המוצא לפרק הבא, שבו נצלול לעומקה של קללת המימדיות ונראה כיצד היא משפיעה על כל אלגוריתם למידה.
+
+\hebrewsubsection{תרגיל תכנות עצמי \num{1.2} – השוואת מרחקים בממדים שונים}
+
+\textbf{מטרה:} להמחיש את קללת המימדיות באופן מעשי.
+
+\textbf{משימה:}
+
+\begin{enumerate}
+\item צרו \num{100} נקודות אקראיות במרחבים בממדים שונים: \num{2}, \num{10}, \num{100}, \num{1000}
+\item חשבו את המרחק האוקלידי בין כל זוג נקודות
+\item חשבו את ממוצע המרחקים ואת סטיית התקן
+\item הציגו גרף: ציר X = מימד, ציר Y = יחס סטיית תקן/ממוצע
+\end{enumerate}
+
+\textbf{פסאודו-קוד:}
+
+\begin{pythonbox}[המחשת קללת המימדיות]
+import numpy as np
+import matplotlib.pyplot as plt
+
+def curse_of_dimensionality_demo(dims, n_points=100):
+    """
+    ממחיש את קללת המימדיות על ידי חישוב מרחקים.
+    """
+    results = []
+    
+    for d in dims:
+        # יצירת נקודות אקראיות
+        points = np.random.rand(n_points, d)
+        
+        # חישוב כל המרחקים
+        distances = []
+        for i in range(n_points):
+            for j in range(i+1, n_points):
+                dist = np.linalg.norm(points[i] - points[j])
+                distances.append(dist)
+        
+        # סטטיסטיקות
+        mean_dist = np.mean(distances)
+        std_dist = np.std(distances)
+        ratio = std_dist / mean_dist  # כשזה שואף ל-0, הקללה חזקה
+        
+        results.append(ratio)
+        print(f"Dim={d}: Mean={mean_dist:.3f}, Std={std_dist:.3f}, Ratio={ratio:.3f}")
+    
+    return results
+
+# הרצה
+dimensions = [2, 5, 10, 50, 100, 500, 1000]
+ratios = curse_of_dimensionality_demo(dimensions)
+
+# גרף
+plt.plot(dimensions, ratios, marker='o')
+plt.xlabel('Number of Dimensions')
+plt.ylabel('Std/Mean Ratio')
+plt.title('Curse of Dimensionality')
+plt.grid(True)
+plt.show()
+\end{pythonbox}
+
+\textbf{תוצאה צפויה:} היחס שואף ל\en{-}\num{0} ככל שהממד גדל – כל הנקודות נעשות "באותו מרחק" זו מזו, ומדדי מרחק מאבדים משמעות.
+
+\hebrewsubsection{סיכום ומבט קדימה}
+
+\textbf{מה למדנו בפרק זה?}
+
+\begin{enumerate}
+\item \textbf{וקטור הוא ייצוג מופשט} – לא רק חץ, אלא כל ישות הניתנת לתיאור מספרי (תמונה, מילה, חולה)
+\item \textbf{מכפלה סקלרית היא מדד דמיון גיאומטרי} – הבסיס לחיפוש, המלצות, ו\en{-}NLP
+\item \textbf{\en{Cosine Similarity} הוא הכלי המרכזי} – מנרמל מרחקים ומודד זווית בלבד
+\item \textbf{\en{Word2Vec} הוא דוגמה מבריקה} – מילים הופכות לווקטורים והסמנטיקה הופכת לגיאומטריה
+\item \textbf{הטיות ב\en{-}AI הן בעיה אמיתית} – מודלים לומדים מהעולם, כולל דעות קדומות
+\item \textbf{מרחבים וקטוריים הם הפורמליזם} – מבטיחים שנוכל להשתמש באלגברה ליניארית
+\item \textbf{ממד גבוה = אתגר עצום} – קללת המימדיות דורשת ארכיטקטורות חכמות כמו \en{CNN}
+\end{enumerate}
+
+\textbf{מבט קדימה – פרק \num{2}:}
+
+בפרק הבא נצלול לעומק \textbf{הדיכוטומיה של המידע} – מדוע יותר תכונות לא תמיד טוב יותר, ואיך להתמודד עם מרחבים בעלי ממד גבוה. נראה:
+
+\begin{itemize}
+\item הוכחה מתמטית מלאה של קללת המימדיות
+\item השפעה על אלגוריתמים: \en{K-Nearest Neighbors, SVM, Decision Trees}
+\item יחס פיצ'ר-דגימה: כמה נתונים באמת צריך?
+\item פתרונות: \en{Feature Selection, PCA, Regularization}
+\end{itemize}
+
+\textbf{שאלת מחשבה לסיום:}
+
+אם תמונת חתול $\num{1000} \times \num{1000}$ היא נקודה במרחב מיליון-ממדי, וכמעט כל "הזזה" קטנה היא אקסטרפולציה – איך מודלים גנרטיביים כמו \en{DALL-E} מצליחים ליצור תמונות חדשות שנראות הגיוניות?
+
+התשובה תחכה לפרק \num{5} על קונוולוציה ורשתות \en{CNN}.
+
+\subsection*{מטלות וקריאה מורחבת}
+
+\textbf{תרגיל \num{1.1}:} מצאו מילים דומות באמצעות \en{Word2Vec} (ראו פסאודו-קוד).
+
+\textbf{תרגיל \num{1.2}:} המחישו את קללת המימדיות (ראו פסאודו-קוד).
+
+\textbf{תרגיל \num{1.3}:} חשבו ידנית מכפלה סקלרית, נורמה, ו\en{-}Cosine Similarity בין:
+\[
+\vec{u} = [\num{1}, \num{2}, \num{3}], \quad \vec{v} = [\num{4}, \num{5}, \num{6}]
+\]
+
+פתרון: $\langle \vec{u}, \vec{v} \rangle = \num{32}$, $\|\vec{u}\| = \sqrt{\num{14}}$, $\|\vec{v}\| = \sqrt{\num{77}}$, דמיון $= \num{0.975}$
+
+\textbf{קריאה מורחבת:}
+
+\begin{itemize}
+\item \cite{strang2019} – \en{Linear Algebra and Learning from Data}, פרקים \num{1-2}: יסודות אלגברה ליניארית
+\item \cite{mikolov2013} – המאמר המקורי על \en{Word2Vec}: \en{"Efficient Estimation of Word Representations in Vector Space"}
+\item \cite{caliskan2017} – מחקר על הטיות במודלי שפה: \en{"Semantics Derived Automatically from Language Corpora Contain Human-like Biases"}
+\item \cite{goodfellow2016} – \en{Deep Learning}, פרק \num{5}: למידת מכונה בסיסית
+\end{itemize}
+
+\textbf{שאלות להעמקה:}
+
+\begin{enumerate}
+\item מדוע \en{Cosine Similarity} עדיף על מרחק אוקלידי במרחבים רב-ממדיים?
+\item האם ניתן להסיר לחלוטין הטיות ממודלי \en{Word2Vec}? מה המחיר?
+\item איך רשתות \en{CNN} "מרמות" את קללת המימדיות?
+\end{enumerate}
+
+\textbf{סיום פרק \num{1}}

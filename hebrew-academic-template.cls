@@ -59,6 +59,9 @@
 \RequirePackage{array}
 \RequirePackage{booktabs}
 
+% TikZ packages for diagrams
+\RequirePackage{tikz-cd}
+
 % Hyperref for PDF bookmarks and links
 \RequirePackage[unicode, pdfencoding=auto, bookmarks=true, colorlinks=true, linkcolor=blue, citecolor=red, urlcolor=blue]{hyperref}
 
@@ -520,11 +523,6 @@
 % Use \Rsquared instead of R² in Hebrew text
 \newcommand{\Rsquared}{%
   \ensuremath{R^2}%
-}
-
-% Fix for ≠ (not equal) character
-\newcommand{\neq}{%
-  \ensuremath{\neq}%
 }
 
 % Fix for → (right arrow) character

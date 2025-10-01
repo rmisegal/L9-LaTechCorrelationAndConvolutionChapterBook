@@ -28,10 +28,12 @@ This academic book chapter explores fundamental concepts in linear algebra, corr
    - Statistical validation methods
    - Connection to correlation and linear algebra
 
-4. **Correlation and Covariance** (Placeholder)
+4. **Correlation and Covariance** - מתאם ושונות משותפת
    - Linear relationships between variables
-   - Correlation matrices and multicollinearity
-   - Geometric interpretation of correlation
+   - Covariance and correlation coefficient (Pearson's r)
+   - Partial correlation and confounding variables
+   - Spurious correlations and causation
+   - Causal inference basics
 
 5. **Convolution and Pattern Recognition** (Placeholder)
    - Convolution operations in signal processing
@@ -226,9 +228,11 @@ X_reduced = pca.fit_transform(X)
 \percent{80}     % אーוזים
 ```
 
-### פונקציה מיוחדת למקדם הקביעה
+### פונקציות מיוחדות לתווים שאינם נתמכים בפונט העברי
 ```latex
 \Rsquared{}      % מציג R² בצורה נכונה (במקום \en{R²})
+\rarrow{}        % מציג → (חץ ימינה) בצורה נכונה
+$\neq$           % מציג ≠ (לא שווה) - השתמש ב-math mode
 ```
 
 ### טבלאות עבריות
@@ -304,8 +308,12 @@ import numpy as np
 
 ### בעיות עם תווים מיוחדים
 1. השתמש ב-`\Rsquared{}` במקום `R²`
-2. השתמש ב-`\num{}` למספרים
-3. השתמש ב-`\percent{}` לאחוזים
+2. השתמש ב-`\rarrow{}` במקום `→`
+3. השתמש ב-`$\neq$` במקום `≠`
+4. השתמש ב-`\num{}` למספרים
+5. השתמש ב-`\percent{}` לאחוזים
+
+**הסבר:** הפונט העברי David CLM אינו תומך בכל התווים המיוחדים Unicode. התבנית כוללת פקודות מיוחדות שעוקפות בעיה זו על ידי שימוש במצב מתמטי או בפונטים אלטרנטיביים.
 
 ## תמיכה
 

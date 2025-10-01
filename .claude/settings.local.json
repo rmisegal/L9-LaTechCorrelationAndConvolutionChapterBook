@@ -8,7 +8,9 @@
       "Bash(git commit:*)",
       "Bash(git remote add:*)",
       "Bash(git branch:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(Select-String -Pattern \"(Missing character|Error|Warning: Float|pages,.*bytes)\")",
+      "Bash(Select-Object -Last 20)"
     ],
     "deny": [],
     "ask": []

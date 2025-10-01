@@ -525,9 +525,9 @@
   \ensuremath{R^2}%
 }
 
-% Fix for → (right arrow) character
+% Fix for → (right arrow) character - LTR direction to prevent reversal in RTL
 \newcommand{\rarrow}{%
-  \ensuremath{\rightarrow}%
+  \textenglish{$\rightarrow$}%
 }
 
 % Alternative: for inline text (not in math mode)

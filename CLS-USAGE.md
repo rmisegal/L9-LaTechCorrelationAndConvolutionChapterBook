@@ -259,49 +259,57 @@ $\neq$                         % Not equal (≠)
 
 ## Tables with RTL Support
 
-### Basic Hebrew Table
+### Table Cell Functions (NEW - 2025)
+
+The CLS provides specialized functions for table cells with automatic vertical padding and proper RTL/LTR alignment:
+
+| Function | Usage | Purpose |
+|----------|-------|---------|
+| `\hebheader{}` | Headers | Hebrew RTL header (vertically centered, supports mixed content) |
+| `\enheader{}` | Headers | English LTR header (vertically centered) |
+| `\hebcell{}` | Data cells | Hebrew RTL data cell (with vertical padding, supports mixed content) |
+| `\encell{}` | Data cells | English LTR data cell (with vertical padding) |
+
+**Vertical Padding:** All functions automatically add vertical spacing:
+- Headers: 0.5ex top and bottom
+- Data cells: 0.2×baselineskip + 0.5ex top, 0.5ex bottom
+
+### Complete Table Example (Recommended Pattern)
 
 ```latex
 \begin{hebrewtable}[H]
-\caption{כותרת הטבלה}
+\caption{פונקציות \en{NumPy} למכפלה סקלרית, נורמה ו\en{-Cosine Similarity}}
 \centering
-\begin{rtltabular}{|r|r|r|}
+\begin{rtltabular}{|m{5.5cm}|m{2cm}|m{3cm}|}
 \hline
-\textbf{\hebcell{עמודה 1}} & \textbf{\hebcell{עמודה 2}} & \textbf{\hebcell{עמודה 3}} \\
+\textbf{\hebheader{שימוש והסבר}} & \textbf{\hebheader{תפקיד}} & \textbf{\enheader{Function}} \\
 \hline
-\num{1} & \num{0.85} & \hebcell{ערך גבוה} \\
+\hebcell{מחשבת \en{$\sum u_i v_i$ –} הליבה של כל חישוב דמיון} & \hebcell{מכפלה סקלרית} & \encell{np.dot(u, v)} \\
 \hline
-\num{2} & \num{0.72} & \hebcell{ערך בינוני} \\
+\hebcell{מחשבת \en{$\sqrt{\sum u_i^2}$ –} אורך הווקטור} & \hebcell{נורמה \en{(L2)}} & \encell{np.linalg.norm(u)} \\
+\hline
+\hebcell{תחביר קצר: \en{u @ v} זהה ל\en{-np.dot(u, v)}} & \hebcell{מכפלת מטריצות} & \hebcell{\en{@} (אופרטור)} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}
 ```
 
-### Table Functions
+### Key Table Principles
 
-| Function | Purpose | Example |
-|----------|---------|---------|
-| `\hebcell{text}` | Hebrew RTL cell | `\hebcell{טקסט עברי}` |
-| `\mixedcell{text}` | Mixed Hebrew-English cell | `\mixedcell{Hebrew \en{English}}` |
-| `\num{}` in cells | LTR numbers | `\num{123}` |
+✅ **DO:**
+1. Use `m{width}` column type for ALL columns (vertical centering)
+2. Write columns in REVERSE visual order (RTL): rightmost column first in code
+3. Headers: `\textbf{\hebheader{...}}` for Hebrew, `\textbf{\enheader{...}}` for English
+4. Data cells: `\hebcell{...}` for Hebrew, `\encell{...}` for English
+5. Mixed content: `\hebcell{Hebrew \en{English/formulas} more Hebrew}`
+6. NO spaces inside `\en{}`: use `\en{$x$}` not `\en{ $x$ }`
+7. Hyphen+English: `\en{-word}` not `\en{-}word`
 
-### Mixed Content Table Example
-
-```latex
-\begin{hebrewtable}[H]
-\caption{השוואת אלגוריתמים}
-\centering
-\begin{rtltabular}{|r|c|c|c|}
-\hline
-\textbf{\hebcell{אלגוריתם}} & \textbf{\hebcell{דיוק}} & \textbf{\hebcell{זמן}} & \textbf{\hebcell{מורכבות}} \\
-\hline
-\hebcell{\en{K-NN}} & \num{0.92} & \num{10} \hebcell{שניות} & $O(n)$ \\
-\hline
-\hebcell{\en{SVM}} & \num{0.95} & \num{30} \hebcell{שניות} & $O(n^2)$ \\
-\hline
-\end{rtltabular}
-\end{hebrewtable}
-```
+❌ **DON'T:**
+- Use `p{width}` or `l`/`r` column types (breaks vertical centering)
+- Use `\hebcell{}` in headers (causes vertical misalignment)
+- Put spaces inside `\en{}` commands
+- Mix column types in same table
 
 ---
 

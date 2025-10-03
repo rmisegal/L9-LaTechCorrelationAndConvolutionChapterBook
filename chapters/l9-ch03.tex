@@ -91,17 +91,17 @@ R^2 = 1 - \frac{\hebmath{שגיאת המודל שלנו}}{\hebmath{שגיאת מ
 \begin{hebrewtable}[H]
 \caption{דוגמה: חישוב \Rsquared{} למחירי דירות}
 \centering
-\begin{rtltabular}{|r|r|r|r|r|}
+\begin{rtltabular}{|m{2cm}|m{2.5cm}|m{2.5cm}|m{3.5cm}|m{3.5cm}|}
 \hline
-\textbf{\hebcell{תצפית}} & \textbf{\hebcell{$y_i$ (אמיתי)}} & \textbf{\hebcell{$\hat{y}_i$ (חזוי)}} & \textbf{\hebcell{$(y_i - \bar{y})^2$}} & \textbf{\hebcell{$(y_i - \hat{y}_i)^2$}} \\
+\textbf{\hebheader{תצפית}} & \textbf{\hebheader{$y_i$ (אמיתי)}} & \textbf{\hebheader{$\hat{y}_i$ (חזוי)}} & \textbf{\hebheader{$(y_i - \bar{y})^2$}} & \textbf{\hebheader{$(y_i - \hat{y}_i)^2$}} \\
 \hline
-\num{1} & \num{600000} & \num{580000} & \num{10000000000} & \num{400000000} \\
+\encell{\num{1}} & \encell{\num{600000}} & \encell{\num{580000}} & \encell{\num{10000000000}} & \encell{\num{400000000}} \\
 \hline
-\num{2} & \num{450000} & \num{470000} & \num{2500000000} & \num{400000000} \\
+\encell{\num{2}} & \encell{\num{450000}} & \encell{\num{470000}} & \encell{\num{2500000000}} & \encell{\num{400000000}} \\
 \hline
-\num{3} & \num{700000} & \num{680000} & \num{40000000000} & \num{400000000} \\
+\encell{\num{3}} & \encell{\num{700000}} & \encell{\num{680000}} & \encell{\num{40000000000}} & \encell{\num{400000000}} \\
 \hline
-\textbf{\hebcell{סה"כ}} & & & \mixedcell{$SS_{\text{tot}} = \num{52500000000}$} & \mixedcell{$SS_{\text{res}} = \num{1200000000}$} \\
+\textbf{\hebheader{סה"כ}} & & & \mixedcell{$SS_{\text{tot}} = \num{52500000000}$} & \mixedcell{$SS_{\text{res}} = \num{1200000000}$} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}
@@ -270,21 +270,21 @@ for num_random_features in [0, 1, 5, 10, 20, 50]:
 \begin{hebrewtable}[H]
 \caption{עליית \Rsquared{} עם הוספת תכונות אקראיות}
 \centering
-\begin{rtltabular}{|r|r|}
+\begin{rtltabular}{|m{4cm}|m{4cm}|}
 \hline
-\textbf{\hebcell{מספר תכונות}} & \textbf{\hebcell{\Rsquared{} (אימון)}} \\
+\textbf{\hebheader{מספר תכונות}} & \textbf{\hebheader{\Rsquared{} (אימון)}} \\
 \hline
-\num{1} & \num{0.850} \\
+\encell{\num{1}} & \encell{\num{0.850}} \\
 \hline
-\num{2} & \num{0.852} \\
+\encell{\num{2}} & \encell{\num{0.852}} \\
 \hline
-\num{6} & \num{0.870} \\
+\encell{\num{6}} & \encell{\num{0.870}} \\
 \hline
-\num{11} & \num{0.895} \\
+\encell{\num{11}} & \encell{\num{0.895}} \\
 \hline
-\num{21} & \num{0.930} \\
+\encell{\num{21}} & \encell{\num{0.930}} \\
 \hline
-\num{51} & \num{0.975} \\
+\encell{\num{51}} & \encell{\num{0.975}} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}
@@ -361,21 +361,21 @@ for i, num_random in enumerate([0, 1, 5, 10, 20, 50]):
 \begin{hebrewtable}[H]
 \caption{השוואה: \Rsquared{} מול \en{Adjusted \Rsquared{}}}
 \centering
-\begin{rtltabular}{|r|r|r|}
+\begin{rtltabular}{|m{3cm}|m{3cm}|m{4.5cm}|}
 \hline
-\textbf{\hebcell{תכונות}} & \textbf{\hebcell{\Rsquared{}}} & \textbf{\hebcell{\en{Adjusted \Rsquared{}}}} \\
+\textbf{\hebheader{תכונות}} & \textbf{\hebheader{\Rsquared{}}} & \textbf{\enheader{Adjusted \Rsquared{}}} \\
 \hline
-\num{1} & \num{0.850} & \num{0.849} \\
+\encell{\num{1}} & \encell{\num{0.850}} & \encell{\num{0.849}} \\
 \hline
-\num{2} & \num{0.852} & \num{0.849} \\
+\encell{\num{2}} & \encell{\num{0.852}} & \encell{\num{0.849}} \\
 \hline
-\num{6} & \num{0.870} & \num{0.862} \\
+\encell{\num{6}} & \encell{\num{0.870}} & \encell{\num{0.862}} \\
 \hline
-\num{11} & \num{0.895} & \num{0.880} \\
+\encell{\num{11}} & \encell{\num{0.895}} & \encell{\num{0.880}} \\
 \hline
-\num{21} & \num{0.930} & \num{0.900} \\
+\encell{\num{21}} & \encell{\num{0.930}} & \encell{\num{0.900}} \\
 \hline
-\num{51} & \num{0.975} & \num{0.895} \\
+\encell{\num{51}} & \encell{\num{0.975}} & \encell{\num{0.895}} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}
@@ -395,15 +395,15 @@ for i, num_random in enumerate([0, 1, 5, 10, 20, 50]):
 \begin{hebrewtable}[H]
 \caption{מדדי הערכה למשימות שונות}
 \centering
-\begin{rtltabular}{|l|l|p{6cm}|}
+\begin{rtltabular}{|m{3cm}|m{4cm}|m{6cm}|}
 \hline
-\textbf{\hebcell{משימה}} & \textbf{\hebcell{מדד}} & \textbf{\hebcell{הסבר}} \\
+\textbf{\hebheader{משימה}} & \textbf{\hebheader{מדד}} & \textbf{\hebheader{הסבר}} \\
 \hline
-\hebcell{רגרסיה} & \en{\Rsquared{}, RMSE, MAE} & \hebcell{\Rsquared{} מודד שיעור שונות מוסברת} \\
+\hebcell{רגרסיה} & \encell{\Rsquared{}, RMSE, MAE} & \hebcell{\Rsquared{} מודד שיעור שונות מוסברת} \\
 \hline
-\hebcell{סיווג} & \mixedcell{\en{Accuracy, Precision, Recall, F1}} & \hebcell{מודדים אחוז סיווגים נכונים} \\
+\hebcell{סיווג} & \mixedcell{Accuracy, Precision, Recall, F1} & \hebcell{מודדים אחוז סיווגים נכונים} \\
 \hline
-\hebcell{סיווג (התפלגות)} & \en{Log-Loss, AUC-ROC} & \hebcell{מודדים איכות הסתברויות} \\
+\hebcell{סיווג (התפלגות)} & \encell{Log-Loss, AUC-ROC} & \hebcell{מודדים איכות הסתברויות} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}

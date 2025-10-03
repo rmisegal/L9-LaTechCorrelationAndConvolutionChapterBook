@@ -56,15 +56,15 @@
 \begin{hebrewtable}[H]
 \caption{פרשנות הסימן של קו-ווריאנס}
 \centering
-\begin{rtltabular}{|c|p{10cm}|}
+\begin{rtltabular}{|m{4cm}|m{10cm}|}
 \hline
-\textbf{\hebcell{ערך}} & \textbf{\hebcell{משמעות}} \\
+\textbf{\hebheader{ערך}} & \textbf{\hebheader{משמעות}} \\
 \hline
-$\text{Cov}(X,Y) > 0$ & \hebcell{קשר חיובי: כאשר $X$ גדל, $Y$ נוטה לגדול} \\
+\mixedcell{$\text{Cov}(X,Y) > 0$} & \hebcell{קשר חיובי: כאשר $X$ גדל, $Y$ נוטה לגדול} \\
 \hline
-$\text{Cov}(X,Y) = 0$ & \hebcell{אין קשר ליניארי (לא בהכרח בלתי תלויים!)} \\
+\mixedcell{$\text{Cov}(X,Y) = 0$} & \hebcell{אין קשר ליניארי (לא בהכרח בלתי תלויים!)} \\
 \hline
-$\text{Cov}(X,Y) < 0$ & \hebcell{קשר שלילי: כאשר $X$ גדל, $Y$ נוטה לקטון} \\
+\mixedcell{$\text{Cov}(X,Y) < 0$} & \hebcell{קשר שלילי: כאשר $X$ גדל, $Y$ נוטה לקטון} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}
@@ -76,21 +76,21 @@ $\text{Cov}(X,Y) < 0$ & \hebcell{קשר שלילי: כאשר $X$ גדל, $Y$ נ�
 \begin{hebrewtable}[H]
 \caption{דוגמה: גובה ומשקל}
 \centering
-\begin{rtltabular}{|r|r|r|}
+\begin{rtltabular}{|m{3cm}|m{3.5cm}|m{3.5cm}|}
 \hline
-\textbf{\hebcell{אדם}} & \textbf{\hebcell{גובה (ס"מ)}} & \textbf{\hebcell{משקל (ק"ג)}} \\
+\textbf{\hebheader{אדם}} & \textbf{\hebheader{גובה (ס"מ)}} & \textbf{\hebheader{משקל (ק"ג)}} \\
 \hline
-\num{1} & \num{160} & \num{55} \\
+\encell{\num{1}} & \encell{\num{160}} & \encell{\num{55}} \\
 \hline
-\num{2} & \num{170} & \num{65} \\
+\encell{\num{2}} & \encell{\num{170}} & \encell{\num{65}} \\
 \hline
-\num{3} & \num{180} & \num{75} \\
+\encell{\num{3}} & \encell{\num{180}} & \encell{\num{75}} \\
 \hline
-\num{4} & \num{175} & \num{70} \\
+\encell{\num{4}} & \encell{\num{175}} & \encell{\num{70}} \\
 \hline
-\num{5} & \num{165} & \num{60} \\
+\encell{\num{5}} & \encell{\num{165}} & \encell{\num{60}} \\
 \hline
-\textbf{\hebcell{ממוצע}} & \num{170} & \num{65} \\
+\textbf{\hebheader{ממוצע}} & \encell{\num{170}} & \encell{\num{65}} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}
@@ -412,9 +412,9 @@ if high_corr.any().any():
 \begin{hebrewtable}[H]
 \caption{דוגמאות לקורלציות מזויפות}
 \centering
-\begin{rtltabular}{|p{4cm}|p{4cm}|p{4cm}|}
+\begin{rtltabular}{|m{4cm}|m{4cm}|m{4cm}|}
 \hline
-\textbf{\hebcell{משתנה \en{X}}} & \textbf{\hebcell{משתנה \en{Y}}} & \textbf{\hebcell{משתנה מבלבל \en{Z}}} \\
+\textbf{\hebheader{משתנה \en{X}}} & \textbf{\hebheader{משתנה \en{Y}}} & \textbf{\hebheader{משתנה מבלבל \en{Z}}} \\
 \hline
 \hebcell{צריכת גלידה} & \hebcell{מספר טביעות מים} & \hebcell{חום הקיץ} \\
 \hline
@@ -422,7 +422,7 @@ if high_corr.any().any():
 \hline
 \hebcell{גודל נעליים} & \hebcell{יכולת קריאה} & \hebcell{גיל (ילדים)} \\
 \hline
-\hebcell{מכירות \en{Nicolas Cage}} & \hebcell{טביעות בבריכות} & \hebcell{מקריות סטטיסטית} \\
+\mixedcell{מכירות Nicolas Cage} & \hebcell{טביעות בבריכות} & \hebcell{מקריות סטטיסטית} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}
@@ -452,9 +452,9 @@ if high_corr.any().any():
 \begin{hebrewtable}[H]
 \caption{קריטריונים לזיהוי סיבתיות}
 \centering
-\begin{rtltabular}{|l|p{8cm}|}
+\begin{rtltabular}{|m{4cm}|m{8cm}|}
 \hline
-\textbf{\hebcell{קריטריון}} & \textbf{\hebcell{הסבר}} \\
+\textbf{\hebheader{קריטריון}} & \textbf{\hebheader{הסבר}} \\
 \hline
 \hebcell{חוזק} & \hebcell{קורלציה חזקה יותר מרמזת על סיבתיות} \\
 \hline
@@ -629,19 +629,19 @@ plt.show()
 \begin{hebrewtable}[H]
 \caption{מדדי תלות: פרמטריים ולא-פרמטריים}
 \centering
-\begin{rtltabular}{|l|l|p{6cm}|}
+\begin{rtltabular}{|m{6cm}|m{3cm}|m{3cm}|}
 \hline
-\textbf{\hebcell{מדד}} & \textbf{\hebcell{סוג}} & \textbf{\hebcell{מה הוא מודד}} \\
+\textbf{\hebheader{מה הוא מודד}} & \textbf{\hebheader{סוג}} & \textbf{\hebheader{מדד}} \\
 \hline
-\hebcell{קורלציה של פירסון} & \hebcell{פרמטרי} & \hebcell{קשר ליניארי בלבד} \\
+\hebcell{קשר ליניארי בלבד} & \hebcell{פרמטרי} & \hebcell{קורלציה של פירסון} \\
 \hline
-\hebcell{קורלציה של ספירמן} & \hebcell{לא-פרמטרי} & \hebcell{קשר מונוטוני (לא בהכרח ליניארי)} \\
+\hebcell{קשר מונוטוני (לא בהכרח ליניארי)} & \hebcell{לא-פרמטרי} & \hebcell{קורלציה של ספירמן} \\
 \hline
-\hebcell{קורלציה של קנדל} & \hebcell{לא-פרמטרי} & \hebcell{קשר מונוטוני (עמיד יותר ל\en{-}outliers)} \\
+\hebcell{קשר מונוטוני (עמיד יותר ל\en{-}outliers)} & \hebcell{לא-פרמטרי} & \hebcell{קורלציה של קנדל} \\
 \hline
-\hebcell{\en{Distance Correlation}} & \hebcell{לא-פרמטרי} & \hebcell{כל סוג תלות (כולל לא-מונוטונית)} \\
+\hebcell{כל סוג תלות (כולל לא-מונוטונית)} & \hebcell{לא-פרמטרי} & \hebcell{\en{Distance Correlation}} \\
 \hline
-\hebcell{\en{Mutual Information}} & \hebcell{תאוריית מידע} & \hebcell{כל סוג תלות (גם לא-דטרמיניסטית)} \\
+\hebcell{כל סוג תלות (גם לא-דטרמיניסטית)} & \hebcell{תאוריית מידע} & \hebcell{\en{Mutual Information}} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}

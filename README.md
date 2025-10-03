@@ -6,7 +6,7 @@
 **Author:** Dr. Yoram Segal
 **Language:** Hebrew (RTL) with English (LTR) technical terms
 **Date:** September 2025
-**Pages:** 96
+**Pages:** 100
 **Copyright:** © 2025 Dr. Yoram Segal. All rights reserved.
 
 ---

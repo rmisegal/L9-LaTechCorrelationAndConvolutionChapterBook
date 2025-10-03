@@ -32,21 +32,21 @@
 \begin{hebrewtable}[H]
 \caption{מספר הנקודות הנדרש לכיסוי מרחב \en{[0,1]} בצפיפות $\epsilon = \num{0.1}$}
 \centering
-\begin{rtltabular}{|r|r|r|}
+\begin{rtltabular}{|m{3cm}|m{4cm}|m{2cm}|}
 \hline
-\textbf{\hebcell{ממד}} & \textbf{\hebcell{נקודות נדרשות}} & \textbf{\hebcell{סדר גודל}} \\
+\textbf{\hebheader{סדר גודל}} & \textbf{\hebheader{נקודות נדרשות}} & \textbf{\hebheader{ממד}} \\
 \hline
-\num{1} & $\num{10}^1 = \num{10}$ & \hebcell{עשרות} \\
+\hebcell{עשרות} & \encell{$\num{10}^1 = \num{10}$} & \encell{\num{1}} \\
 \hline
-\num{2} & $\num{10}^2 = \num{100}$ & \hebcell{מאות} \\
+\hebcell{מאות} & \encell{$\num{10}^2 = \num{100}$} & \encell{\num{2}} \\
 \hline
-\num{3} & $\num{10}^3 = \num{1000}$ & \hebcell{אלפים} \\
+\hebcell{אלפים} & \encell{$\num{10}^3 = \num{1000}$} & \encell{\num{3}} \\
 \hline
-\num{10} & $\num{10}^{10}$ & \hebcell{עשרה מיליארד} \\
+\hebcell{עשרה מיליארד} & \encell{$\num{10}^{10}$} & \encell{\num{10}} \\
 \hline
-\num{100} & $\num{10}^{100}$ & \hebcell{גוגול (יותר מאטומי היקום)} \\
+\hebcell{גוגול (יותר מאטומי היקום)} & \encell{$\num{10}^{100}$} & \encell{\num{100}} \\
 \hline
-\num{1000000} & $\num{10}^{1000000}$ & \hebcell{בלתי נתפס} \\
+\hebcell{בלתי נתפס} & \encell{$\num{10}^{1000000}$} & \encell{\num{1000000}} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}
@@ -81,19 +81,19 @@ V_d(r) = \frac{\pi^{d/2}}{\Gamma(d/2 + \num{1})} r^d
 \begin{hebrewtable}[H]
 \caption{יחס הנפח הפנימי (\percent{90} מהרדיוס) לנפח המלא}
 \centering
-\begin{rtltabular}{|r|r|r|}
+\begin{rtltabular}{|m{3cm}|m{3cm}|m{2.5cm}|}
 \hline
-\textbf{\hebcell{ממד \en{d}}} & \textbf{\hebcell{$(\num{0.9})^d$}} & \textbf{\hebcell{אחוז מהנפח}} \\
+\textbf{\hebheader{אחוז מהנפח}} & \textbf{\hebheader{$(\num{0.9})^d$}} & \textbf{\hebheader{ממד \en{d}}} \\
 \hline
-\num{2} & \num{0.81} & \percent{81} \\
+\encell{\percent{81}} & \encell{\num{0.81}} & \encell{\num{2}} \\
 \hline
-\num{3} & \num{0.729} & \percent{73} \\
+\encell{\percent{73}} & \encell{\num{0.729}} & \encell{\num{3}} \\
 \hline
-\num{10} & \num{0.349} & \percent{35} \\
+\encell{\percent{35}} & \encell{\num{0.349}} & \encell{\num{10}} \\
 \hline
-\num{100} & $\num{2.66} \times \num{10}^{-5}$ & \percent{0.003} \\
+\encell{\percent{0.003}} & \encell{$\num{2.66} \times \num{10}^{-5}$} & \encell{\num{100}} \\
 \hline
-\num{1000} & $\sim \num{10}^{-46}$ & \hebcell{כמעט אפס} \\
+\hebcell{כמעט אפס} & \encell{$\sim \num{10}^{-46}$} & \encell{\num{1000}} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}
@@ -273,15 +273,15 @@ n_{\text{samples}} \geq \num{100} \times n_{\text{features}}
 \begin{hebrewtable}[H]
 \caption{השוואת מספר פרמטרים: \en{Fully Connected} מול \en{CNN}}
 \centering
-\begin{rtltabular}{|l|r|r|}
+\begin{rtltabular}{|m{5cm}|m{3.5cm}|m{3cm}|}
 \hline
-\textbf{\hebcell{ארכיטקטורה}} & \textbf{\hebcell{מספר פרמטרים}} & \textbf{\hebcell{דגימות נדרשות (כלל \num{2})}} \\
+\textbf{\hebheader{דגימות נדרשות (כלל \num{2})}} & \textbf{\hebheader{מספר פרמטרים}} & \textbf{\hebheader{ארכיטקטורה}} \\
 \hline
-\hebcell{\en{Fully Connected}} & $\sim \num{10}^{12}$ & \mixedcell{$\num{10}^{14}$ (בלתי אפשרי)} \\
+\hebcell{$\num{10}^{14}$ (בלתי אפשרי)} & \encell{$\sim \num{10}^{12}$} & \hebcell{\en{Fully Connected}} \\
 \hline
-\hebcell{\en{CNN (AlexNet)}} & $\sim \num{60} \times \num{10}^6$ & $\num{6} \times \num{10}^9$ \\
+\encell{$\num{6} \times \num{10}^9$} & \encell{$\sim \num{60} \times \num{10}^6$} & \hebcell{\en{CNN (AlexNet)}} \\
 \hline
-\hebcell{\en{CNN (ResNet-50)}} & $\sim \num{25} \times \num{10}^6$ & $\num{2.5} \times \num{10}^9$ \\
+\encell{$\num{2.5} \times \num{10}^9$} & \encell{$\sim \num{25} \times \num{10}^6$} & \hebcell{\en{CNN (ResNet-50)}} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}

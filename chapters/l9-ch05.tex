@@ -95,17 +95,17 @@
 \begin{hebrewtable}[H]
 \caption{השוואת עונשים: \en{MAE} מול \en{MSE}}
 \centering
-\begin{rtltabular}{|r|r|r|}
+\begin{rtltabular}{|m{3cm}|m{3.5cm}|m{3.5cm}|}
 \hline
-\textbf{\hebcell{שגיאה}} & \textbf{\hebcell{\en{MAE} ($|e|$)}} & \textbf{\hebcell{\en{MSE} ($e^2$)}} \\
+\textbf{\hebheader{\en{MSE} ($e^2$)}} & \textbf{\hebheader{\en{MAE} ($|e|$)}} & \textbf{\hebheader{שגיאה}} \\
 \hline
-\num{1} & \num{1} & \num{1} \\
+\encell{\num{1}} & \encell{\num{1}} & \encell{\num{1}} \\
 \hline
-\num{2} & \num{2} & \num{4} \\
+\encell{\num{4}} & \encell{\num{2}} & \encell{\num{2}} \\
 \hline
-\num{5} & \num{5} & \num{25} \\
+\encell{\num{25}} & \encell{\num{5}} & \encell{\num{5}} \\
 \hline
-\num{10} & \num{10} & \num{100} \\
+\encell{\num{100}} & \encell{\num{10}} & \encell{\num{10}} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}
@@ -191,15 +191,15 @@ L(w_0, w_1) = \prod_{i=1}^{n} p(y_i | x_i, w_0, w_1)
 \begin{hebrewtable}[H]
 \caption{כללי גזירה חלקית}
 \centering
-\begin{rtltabular}{|l|l|}
+\begin{rtltabular}{|m{5cm}|m{5cm}|}
 \hline
-\textbf{\hebcell{פונקציה}} & \textbf{\hebcell{נגזרת חלקית לפי \en{x}}} \\
+\textbf{\hebheader{נגזרת חלקית לפי \en{x}}} & \textbf{\hebheader{פונקציה}} \\
 \hline
-$f(x,y) = x^2 + y^2$ & $\frac{\partial f}{\partial x} = 2x$ \\
+\encell{$\frac{\partial f}{\partial x} = 2x$} & \encell{$f(x,y) = x^2 + y^2$} \\
 \hline
-$f(x,y) = xy$ & $\frac{\partial f}{\partial x} = y$ \\
+\encell{$\frac{\partial f}{\partial x} = y$} & \encell{$f(x,y) = xy$} \\
 \hline
-$f(x,y) = x^2y + xy^2$ & $\frac{\partial f}{\partial x} = 2xy + y^2$ \\
+\encell{$\frac{\partial f}{\partial x} = 2xy + y^2$} & \encell{$f(x,y) = x^2y + xy^2$} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}
@@ -517,15 +517,15 @@ $\alpha$ אופטימלי \rarrow{} התכנסות מהירה ויציבה
 \begin{hebrewtable}[H]
 \caption{השפעת \en{learning rate}}
 \centering
-\begin{rtltabular}{|l|p{8cm}|}
+\begin{rtltabular}{|m{8cm}|m{4cm}|}
 \hline
-\textbf{\hebcell{\en{Learning Rate}}} & \textbf{\hebcell{התנהגות}} \\
+\textbf{\hebheader{התנהגות}} & \textbf{\hebheader{\en{Learning Rate}}} \\
 \hline
-\hebcell{קטן מדי ($\alpha = 10^{-6}$)} & \hebcell{התכנסות איטית מאוד, דורש אלפי איטרציות} \\
+\hebcell{התכנסות איטית מאוד, דורש אלפי איטרציות} & \hebcell{קטן מדי ($\alpha = 10^{-6}$)} \\
 \hline
-\hebcell{אופטימלי ($\alpha = 10^{-2}$)} & \hebcell{התכנסות מהירה ויציבה} \\
+\hebcell{התכנסות מהירה ויציבה} & \hebcell{אופטימלי ($\alpha = 10^{-2}$)} \\
 \hline
-\hebcell{גדול מדי ($\alpha = 10^{1}$)} & \hebcell{קפיצות, חוסר התכנסות, פיצוץ לאינסוף} \\
+\hebcell{קפיצות, חוסר התכנסות, פיצוץ לאינסוף} & \hebcell{גדול מדי ($\alpha = 10^{1}$)} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}
@@ -593,15 +593,15 @@ def gradient_descent(X, y, alpha=0.01, max_iters=1000, tol=1e-6):
 \begin{hebrewtable}[H]
 \caption{השוואת שיטות \en{Gradient Descent}}
 \centering
-\begin{rtltabular}{|l|r|l|l|}
+\begin{rtltabular}{|m{3.5cm}|m{2.5cm}|m{2.5cm}|m{3cm}|}
 \hline
-\textbf{\hebcell{שיטה}} & \textbf{\hebcell{\en{Batch Size}}} & \textbf{\hebcell{יתרונות}} & \textbf{\hebcell{חסרונות}} \\
+\textbf{\hebheader{חסרונות}} & \textbf{\hebheader{יתרונות}} & \textbf{\hebheader{\en{Batch Size}}} & \textbf{\hebheader{שיטה}} \\
 \hline
-\hebcell{\en{Batch GD}} & $n$ & \hebcell{יציב, מדויק} & \hebcell{איטי, דורש זיכרון רב} \\
+\hebcell{איטי, דורש זיכרון רב} & \hebcell{יציב, מדויק} & \encell{$n$} & \hebcell{\en{Batch GD}} \\
 \hline
-\hebcell{\en{SGD}} & \num{1} & \hebcell{מהיר מאוד} & \hebcell{רועש, לא מתכנס למדויק} \\
+\hebcell{רועש, לא מתכנס למדויק} & \hebcell{מהיר מאוד} & \encell{\num{1}} & \hebcell{\en{SGD}} \\
 \hline
-\hebcell{\en{Mini-Batch}} & \num{32-256} & \hebcell{איזון טוב} & \hebcell{צריך לכוונן גודל} \\
+\hebcell{צריך לכוונן גודל} & \hebcell{איזון טוב} & \encell{\num{32-256}} & \hebcell{\en{Mini-Batch}} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}
@@ -768,15 +768,15 @@ for _ in range(1000):
 \begin{hebrewtable}[H]
 \caption{השוואת ביצועים (אומדן)}
 \centering
-\begin{rtltabular}{|l|r|r|r|}
+\begin{rtltabular}{|m{2.5cm}|m{2.5cm}|m{2.5cm}|m{3.5cm}|}
 \hline
-\textbf{\hebcell{שיטה}} & \textbf{\hebcell{$d=10$}} & \textbf{\hebcell{$d=100$}} & \textbf{\hebcell{$d=500$}} \\
+\textbf{\hebheader{$d=500$}} & \textbf{\hebheader{$d=100$}} & \textbf{\hebheader{$d=10$}} & \textbf{\hebheader{שיטה}} \\
 \hline
-\hebcell{\en{Normal Eq}} & \num{0.001}s & \num{0.01}s & \num{0.5}s \\
+\encell{\num{0.5}s} & \encell{\num{0.01}s} & \encell{\num{0.001}s} & \hebcell{\en{Normal Eq}} \\
 \hline
-\hebcell{\en{GD (1000 iter)}} & \num{0.02}s & \num{0.2}s & \num{1.0}s \\
+\encell{\num{1.0}s} & \encell{\num{0.2}s} & \encell{\num{0.02}s} & \hebcell{\en{GD (1000 iter)}} \\
 \hline
-\hebcell{\en{sklearn}} & \num{0.001}s & \num{0.008}s & \num{0.3}s \\
+\encell{\num{0.3}s} & \encell{\num{0.008}s} & \encell{\num{0.001}s} & \hebcell{\en{sklearn}} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}

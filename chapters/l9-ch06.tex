@@ -41,17 +41,17 @@
 \begin{hebrewtable}[H]
 \caption{רגרסיה ליניארית לסיווג - הבעיה}
 \centering
-\begin{rtltabular}{|r|r|l|}
+\begin{rtltabular}{|m{4cm}|m{3.5cm}|m{3cm}|}
 \hline
-\textbf{\hebcell{שעות לימוד}} & \textbf{\hebcell{חיזוי ליניארי}} & \textbf{\hebcell{בעיה}} \\
+\textbf{\hebheader{בעיה}} & \textbf{\hebheader{חיזוי ליניארי}} & \textbf{\hebheader{שעות לימוד}} \\
 \hline
-\num{1} & \num{-0.5} & \hebcell{הסתברות שלילית?!} \\
+\hebcell{הסתברות שלילית?!} & \encell{\num{-0.5}} & \encell{\num{1}} \\
 \hline
-\num{3} & \num{0.3} & \hebcell{סביר} \\
+\hebcell{סביר} & \encell{\num{0.3}} & \encell{\num{3}} \\
 \hline
-\num{5} & \num{0.7} & \hebcell{סביר} \\
+\hebcell{סביר} & \encell{\num{0.7}} & \encell{\num{5}} \\
 \hline
-\num{10} & \num{1.5} & \hebcell{הסתברות מעל \num{1}?!} \\
+\hebcell{הסתברות מעל \num{1}?!} & \encell{\num{1.5}} & \encell{\num{10}} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}
@@ -162,19 +162,19 @@ P(y=1|\vec{x}) = \sigma(z) = \frac{1}{1 + e^{-\vec{w}^T\vec{x}}}
 \begin{hebrewtable}[H]
 \caption{חיזוי עבירת מבחן}
 \centering
-\begin{rtltabular}{|r|r|r|r|}
+\begin{rtltabular}{|m{3cm}|m{2.5cm}|m{2.5cm}|m{2.5cm}|}
 \hline
-\textbf{\hebcell{שעות}} & \textbf{\hebcell{\en{z}}} & \textbf{\hebcell{\en{σ(z)}}} & \textbf{\hebcell{החלטה}} \\
+\textbf{\hebheader{החלטה}} & \textbf{\hebheader{\en{σ(z)}}} & \textbf{\hebheader{\en{z}}} & \textbf{\hebheader{שעות}} \\
 \hline
-\num{1} & $-4$ & \num{0.018} & \hebcell{נכשל} \\
+\hebcell{נכשל} & \encell{\num{0.018}} & \encell{$-4$} & \encell{\num{1}} \\
 \hline
-\num{3} & $-2$ & \num{0.119} & \hebcell{נכשל} \\
+\hebcell{נכשל} & \encell{\num{0.119}} & \encell{$-2$} & \encell{\num{3}} \\
 \hline
-\num{5} & $0$ & \num{0.500} & \hebcell{על הגבול} \\
+\hebcell{על הגבול} & \encell{\num{0.500}} & \encell{$0$} & \encell{\num{5}} \\
 \hline
-\num{7} & $2$ & \num{0.881} & \hebcell{עבר} \\
+\hebcell{עבר} & \encell{\num{0.881}} & \encell{$2$} & \encell{\num{7}} \\
 \hline
-\num{10} & $5$ & \num{0.993} & \hebcell{עבר (בטוח)} \\
+\hebcell{עבר (בטוח)} & \encell{\num{0.993}} & \encell{$5$} & \encell{\num{10}} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}
@@ -549,13 +549,13 @@ w_0 + w_1 x_1 + w_2 x_2 = 0
 \begin{hebrewtable}[H]
 \caption{מטריצת בלבול}
 \centering
-\begin{rtltabular}{|l|c|c|}
+\begin{rtltabular}{|m{3.5cm}|m{3.5cm}|m{3.5cm}|}
 \hline
-& \textbf{\hebcell{חזוי: \num{0}}} & \textbf{\hebcell{חזוי: \num{1}}} \\
+\textbf{\hebheader{חזוי: \num{1}}} & \textbf{\hebheader{חזוי: \num{0}}} & \\
 \hline
-\textbf{\hebcell{אמיתי: \num{0}}} & \hebcell{\en{True Negative (TN)}} & \hebcell{\en{False Positive (FP)}} \\
+\hebcell{\en{True Positive (TP)}} & \hebcell{\en{False Negative (FN)}} & \textbf{\hebcell{אמיתי: \num{1}}} \\
 \hline
-\textbf{\hebcell{אמיתי: \num{1}}} & \hebcell{\en{False Negative (FN)}} & \hebcell{\en{True Positive (TP)}} \\
+\hebcell{\en{False Positive (FP)}} & \hebcell{\en{True Negative (TN)}} & \textbf{\hebcell{אמיתי: \num{0}}} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}
@@ -593,13 +593,13 @@ F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \te
 \begin{hebrewtable}[H]
 \caption{דוגמה: אבחון סרטן}
 \centering
-\begin{rtltabular}{|l|c|c|}
+\begin{rtltabular}{|m{3cm}|m{3cm}|m{3.5cm}|}
 \hline
-& \textbf{\hebcell{חזוי: בריא}} & \textbf{\hebcell{חזוי: חולה}} \\
+\textbf{\hebheader{חזוי: חולה}} & \textbf{\hebheader{חזוי: בריא}} & \\
 \hline
-\textbf{\hebcell{אמיתי: בריא}} & \num{94} & \num{1} \\
+\encell{\num{3}} & \encell{\num{2}} & \textbf{\hebcell{אמיתי: חולה}} \\
 \hline
-\textbf{\hebcell{אמיתי: חולה}} & \num{2} & \num{3} \\
+\encell{\num{1}} & \encell{\num{94}} & \textbf{\hebcell{אמיתי: בריא}} \\
 \hline
 \end{rtltabular}
 \end{hebrewtable}

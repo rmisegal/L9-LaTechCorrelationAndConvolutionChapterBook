@@ -293,28 +293,152 @@
   \end{table}%
 }
 
-% RTL tabular environment - back to simple version
+% RTL tabular environment - for Hebrew tables with RTL column order
+% IMPORTANT: Columns must be written in REVERSE order (right-to-left)
+% Example for 3-column table:
+%   Visual RTL order: [Col3] [Col2] [Col1]
+%   LaTeX code order: Col3 & Col2 & Col1 \\
+%   (rightmost column first, leftmost column last)
+%
+% USAGE PATTERN:
+%   - Use m{width} column type for vertical centering (not p{width})
+%   - Hebrew cells: wrap with \hebcell{Hebrew text \en{English/formulas} more Hebrew}
+%   - English cells: use \en{English text} directly without \hebcell{}
+%   - Formulas in Hebrew cells: \hebcell{Hebrew \en{$formula$} Hebrew}
+%   - No spaces inside \en{}: use \en{$formula$} not \en{ $formula$ }
+%
+% Example column spec: {|m{5.5cm}|m{2cm}|m{3cm}|}
+%   - All columns use m{} for vertical centering
+%   - Hebrew columns will be right-aligned via \hebcell{}
+%   - English columns will be left-aligned via \en{}
 \newenvironment{rtltabular}[1]{%
   \begin{tabular}{#1}%
 }{%
   \end{tabular}%
 }
 
-% Dedicated function for Hebrew RTL cells with mixed language support
+% \hebcell{} - Hebrew RTL table cell with mixed language support
+%
+% PURPOSE: Creates right-aligned RTL cells that support mixed Hebrew/English content
+%
+% FEATURES:
+%   - Forces RTL (right-to-left) text direction for entire cell
+%   - Right-aligns Hebrew text automatically
+%   - Supports nested \en{} for English/formulas (remain LTR inline)
+%   - Removes leading/trailing whitespace (no empty lines)
+%   - Adds vertical padding: 0.5ex top and bottom (~half font height)
+%   - Works with m{} column type for vertical centering
+%
+% USAGE:
+%   \hebcell{Hebrew text}                           % Pure Hebrew
+%   \hebcell{Hebrew \en{English} more Hebrew}       % Mixed content
+%   \hebcell{Hebrew \en{$formula$} explanation}     % With formulas
+%   \hebcell{\en{Symbol} Hebrew explanation}        % English symbol + Hebrew
+%
+% IMPORTANT:
+%   - Always use with m{width} column type (not p{width}) for vertical centering
+%   - Never put spaces inside \en{}: use \en{text} not \en{ text }
+%   - For pure English cells, use \en{} directly without \hebcell{}
+%
 \newcommand{\hebcell}[1]{%
-  \begingroup%
-  \setRTL%
-  \texthebrew{#1}%
-  \endgroup%
+  \bgroup%
+  \textdir TRT\pardir TRT%
+  \everypar{\textdir TRT\pardir TRT}%
+  \selectlanguage{hebrew}%
+  \rightskip=0pt\leftskip=0pt plus 1fil\relax%
+  \mbox{}\par\vspace{+0.2\baselineskip}\vspace{0.5ex}%
+  \ignorespaces#1\unskip%
+  \vspace*{0.5ex}%
+  \egroup%
 }
 
-% Function for mixed Hebrew/English cell content
-\newcommand{\mixedcell}[1]{%
-  \begingroup%
-  \setRTL%
+% \encell{} - English LTR table cell with vertical padding
+%
+% PURPOSE: Creates left-aligned LTR cells for pure English content
+%
+% FEATURES:
+%   - Left-aligns English text automatically
+%   - Adds vertical padding (0.5ex top and bottom)
+%   - For pure English cells (no Hebrew content)
+%
+% USAGE:
+%   \encell{English text}          % Pure English cell
+%   \encell{np.dot(u, v)}          % Function names
+%   \encell{$formula$}             % English formulas
+%
+\newcommand{\encell}[1]{%
+  \bgroup%
+  \mbox{}\par\vspace{+0.2\baselineskip}\vspace{0.5ex}%
   #1%
-  \endgroup%
+  \vspace*{0.5ex}%
+  \egroup%
 }
+
+% \hebheader{} - Hebrew RTL table header cell (for single-line headers)
+% For use in table column headers - supports mixed Hebrew/English/formulas
+% Usage: \textbf{\hebheader{Hebrew title \en{English} more Hebrew}}
+% Note: No top padding line (\mbox{}\par) to keep headers vertically centered
+\newcommand{\hebheader}[1]{%
+  \bgroup%
+  \textdir TRT\pardir TRT%
+  \everypar{\textdir TRT\pardir TRT}%
+  \selectlanguage{hebrew}%
+  \rightskip=0pt\leftskip=0pt plus 1fil\relax%
+  \vspace*{0.5ex}%
+  \ignorespaces#1\unskip%
+  \vspace*{0.5ex}%
+  \egroup%
+}
+
+% \enheader{} - English LTR table header cell (for single-line headers)
+% For use in table column headers - pure English content
+% Usage: \textbf{\enheader{English Title}}
+\newcommand{\enheader}[1]{%
+  \bgroup%
+  \vspace*{0.5ex}%
+  #1%
+  \vspace*{0.5ex}%
+  \egroup%
+}
+
+% \mixedcell{} - Deprecated, use \hebcell{} instead
+% Kept for backward compatibility with existing tables
+\newcommand{\mixedcell}[1]{\hebcell{#1}}
+
+%% ==================== RTL TABLE COMPLETE EXAMPLE ====================
+%
+% COMPLETE WORKING EXAMPLE:
+%
+% \begin{hebrewtable}[H]
+% \caption{פונקציות \en{NumPy} למכפלה סקלרית, נורמה ו\en{-Cosine Similarity}}
+% \centering
+% \begin{rtltabular}{|m{5.5cm}|m{2cm}|m{3cm}|}
+% \hline
+% \textbf{\hebheader{שימוש והסבר}} & \textbf{\hebheader{תפקיד}} & \textbf{\enheader{Function}} \\
+% \hline
+% \hebcell{מחשבת \en{$\sum u_i v_i$ –} הליבה של כל חישוב דמיון} & \hebcell{מכפלה סקלרית} & \encell{np.dot(u, v)} \\
+% \hline
+% \hebcell{מחשבת \en{$\sqrt{\sum u_i^2}$ –} אורך הווקטור} & \hebcell{נורמה \en{(L2)}} & \encell{np.linalg.norm(u)} \\
+% \hline
+% \hebcell{תחביר קצר: \en{u @ v} זהה ל\en{-np.dot(u, v)}} & \hebcell{מכפלת מטריצות} & \hebcell{\en{@} (אופרטור)} \\
+% \hline
+% \end{rtltabular}
+% \end{hebrewtable}
+%
+% KEY PRINCIPLES:
+%   1. Column spec uses m{width} for ALL columns (vertical centering)
+%   2. Columns are written in REVERSE visual order (RTL):
+%      - First column in code = rightmost visually (שימוש והסבר)
+%      - Last column in code = leftmost visually (Function)
+%   3. Table headers: use \hebheader{} and \enheader{} with \textbf{}
+%   4. Hebrew data cells: wrap with \hebcell{} for RTL + right-alignment + padding
+%   5. English data cells: wrap with \encell{} for LTR + left-alignment + padding
+%   6. Mixed cells: \hebcell{Hebrew \en{English/formulas} more Hebrew}
+%   7. NO SPACES inside \en{}: \en{$x$} not \en{ $x$ }
+%   8. Hyphen+English: \en{-word} not \en{-}word
+%   9. Vertical padding: automatic (0.2*baselineskip + 0.5ex top, 0.5ex bottom)
+%
+%% ====================================================================
 
 %% ==================== BIBLIOGRAPHY SETUP ====================
 

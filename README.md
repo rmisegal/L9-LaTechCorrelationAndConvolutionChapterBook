@@ -1,378 +1,335 @@
-# Dimension, Correlation, and Pattern – Linear Foundations for Artificial Intelligence
+# Chapter 9: Dimension, Correlation, and Pattern
+## Linear Foundations for Artificial Intelligence
 
 **Hebrew Title:** פרק 9: מימד, קשר ותבנית – יסודות ליניאריים לאינטליגנציה מלאכותית
 
+**Author:** Dr. Yoram Segal
+**Language:** Hebrew (RTL) with English (LTR) technical terms
+**Date:** September 2025
+**Pages:** 96
 **Copyright:** © 2025 Dr. Yoram Segal. All rights reserved.
+
+---
+
+## Table of Contents
+
+1. [Introduction: The Hidden World of the Vector](#chapter-1)
+2. [The Information Dichotomy: Curse of Dimensionality](#chapter-2)
+3. [Model Evaluation: The Coefficient of Determination R²](#chapter-3)
+4. [Covariance and Correlation: Measuring Relationships Between Variables](#chapter-4)
+5. [Linear Regression: The Line That Shaped Modernity](#chapter-5)
+6. [Logistic Regression: From Predicting Numbers to Predicting Classes](#chapter-6)
+
+---
 
 ## Book Abstract
 
-This book is part of a comprehensive series on artificial intelligence and machine learning, focusing on the mathematical foundations that underpin modern AI systems. Chapter 9 bridges classical linear algebra with contemporary machine learning applications, exploring how fundamental mathematical concepts—from vector spaces to correlation analysis—form the theoretical backbone of artificial intelligence. Beginning with Gauss's revolutionary work on least squares regression in 1801, the text traces the evolution of linear methods through to their modern applications in neural networks and deep learning. The chapter addresses critical challenges in high-dimensional data analysis, including the curse of dimensionality and dimensionality reduction techniques like PCA. It provides rigorous mathematical proofs alongside practical Python implementations, demonstrating how abstract linear algebra concepts translate into working AI systems. From correlation analysis and causal inference to linear and logistic regression, each topic is presented with historical context, mathematical rigor, and real-world applications. This bilingual Hebrew-English text serves both as a theoretical foundation and a practical guide for students, researchers, and practitioners seeking to understand the linear algebraic principles that make artificial intelligence possible.
+This comprehensive textbook explores the mathematical and philosophical foundations of modern artificial intelligence through the lens of linear algebra, statistics, and machine learning. Written in Hebrew with integrated English technical terminology, it bridges classical mathematical concepts with contemporary AI applications.
 
-## About This Book
+Beginning with Descartes' invention of the Cartesian coordinate system in 1637 and Gauss's revolutionary 1801 work on least squares regression, the text traces how fundamental mathematical concepts evolved into the theoretical backbone of modern AI. The book addresses critical challenges in high-dimensional data analysis, including the curse of dimensionality discovered by Richard Bellman in 1957, and explores dimensionality reduction techniques like PCA.
 
-This academic book chapter explores fundamental concepts in linear algebra, correlation, and regression that form the mathematical foundations for artificial intelligence and machine learning. The work covers:
+Each chapter combines rigorous mathematical proofs with practical Python implementations, demonstrating how abstract concepts translate into working AI systems. From vector spaces and correlation analysis to linear and logistic regression, topics are presented with historical context, mathematical rigor, and real-world applications in medicine, astronomy, finance, and machine learning.
 
-### Chapter Contents
+This bilingual Hebrew-English text serves as both a theoretical foundation and a practical guide for advanced undergraduate and graduate students in computer science, data science, and applied mathematics, as well as researchers and practitioners seeking to understand the linear algebraic principles that make artificial intelligence possible.
 
-1. **Introduction: The Hidden World of Vectors** - מבוא: עולמו הנסתר של הווקטור
-   - Vector spaces and their geometric interpretation
-   - Mathematical foundations for AI representation
-   - The philosophical perspective on vector representation
+---
 
-2. **The Information Dichotomy: The Curse of Dimensionality** - הדיכוטומיה של המידע: קללת המימדיות
-   - High-dimensional data challenges
-   - PCA (Principal Component Analysis) and dimensionality reduction
-   - Regularization techniques (Ridge, Lasso)
-   - Feature selection and engineering
+## Chapter Summaries
 
-3. **Model Evaluation: The Coefficient of Determination R²** - הערכת מודלים: מקדם הקביעה R²
-   - Understanding R² as a quality metric
-   - Proof: Why R² is always between 0 and 1
-   - The danger of adding features: Adjusted R²
-   - Statistical validation methods
-   - Connection to correlation and linear algebra
+### <a name="chapter-1"></a>Chapter 1: Introduction – The Hidden World of the Vector
+**Hebrew:** מבוא: עולמו הנסתר של הווקטור
 
-4. **Correlation and Covariance** - מתאם ושונות משותפת
-   - Linear relationships between variables
-   - Covariance and correlation coefficient (Pearson's r)
-   - Partial correlation and confounding variables
-   - Spurious correlations and causation
-   - Causal inference basics
-   - Connection to cosine similarity in vector spaces
+This foundational chapter introduces the vectorial representation paradigm in artificial intelligence. Beginning with René Descartes' invention of the Cartesian coordinate system in 1637, it traces how mathematical abstraction became the universal language for representing reality in AI systems. The chapter explores how any information unit—an image, word, or patient record—transforms into a point in high-dimensional space.
 
-5. **Linear Regression: The Line That Shaped Modernity** - רגרסיה ליניארית: הקו שעצב את המודרניות
-   - Historical context: Gauss and Legendre's least squares method
-   - Mathematical foundations of linear regression
-   - Loss functions and optimization
-   - Gradient descent algorithm
-   - Multiple linear regression and matrix formulation
-   - Practical Python implementations
-   - Connection to modern AI and neural networks
+**Key Topics:**
+- Philosophical foundations of vector representation
+- From Descartes to modern AI vectorization
+- Vector spaces and dimensionality ($\mathbb{R}^n$)
+- Distance metrics: Euclidean, Manhattan, Cosine similarity
+- Dot products and normalization
+- Practical examples: medical diagnosis, image recognition, word embeddings
 
-6. **Logistic Regression: From Numbers to Classes** - רגרסיה לוגיסטית: מחיזוי מספרים למחלקות
-   - Binary classification fundamentals
-   - The sigmoid (logistic) function
-   - Maximum likelihood estimation
-   - Cross-entropy loss function
-   - Decision boundaries and probability interpretation
-   - Multi-class classification (softmax regression)
-   - Applications in medical diagnosis and predictive analytics
+**Learning Outcomes:** Readers learn the fundamental concept that underlies all modern AI—vectorization—the process of converting real-world entities into numerical representations that machines can process.
+
+---
+
+### <a name="chapter-2"></a>Chapter 2: The Information Dichotomy – Curse of Dimensionality
+**Hebrew:** הדיכוטומיה של המידע: קללת המימדיות
+
+This chapter examines one of machine learning's most challenging paradoxes: adding more features (information) can weaken models instead of strengthening them. Building on Richard Bellman's 1957 discovery, it explores the mathematical foundations of the curse of dimensionality.
+
+**Key Topics:**
+- Bellman's curse of dimensionality (1957)
+- Exponential growth of space: $(1/\epsilon)^d$ points needed
+- Volume calculations in high-dimensional hypercubes and hyperspheres
+- Concentration of measure phenomena
+- Sparsity in high dimensions: data becomes "lonely"
+- K-Nearest Neighbors fails in high dimensions
+- Dimensionality reduction: PCA (Principal Component Analysis)
+- Feature selection and regularization techniques
+
+**Mathematical Proofs:**
+- Why space "inflates" exponentially as dimensions increase
+- Why $k$-NN distance becomes meaningless in high dimensions
+- Volume ratios: hypersphere vs. hypercube as $d \to \infty$
+
+**Learning Outcomes:** Students understand when dimensionality becomes a curse versus a blessing, with applications in medical diagnosis (1000+ biochemical features), image processing (megapixel images), and genomics (thousands of genes).
+
+---
+
+### <a name="chapter-3"></a>Chapter 3: Model Evaluation – The Coefficient of Determination R²
+**Hebrew:** הערכת מודלים: מקדם הקביעה R²
+
+This chapter investigates the coefficient of determination (R²), one of the most fundamental metrics for evaluating regression models. It traces R²'s historical development and provides complete mathematical proofs of its properties.
+
+**Historical Development:**
+- Francis Galton: regression towards mediocrity (1886)
+- Karl Pearson: correlation coefficient $r$ (1896)
+- Ronald Fisher: multiple regression and variance decomposition (1925)
+- Sewall Wright: R² notation (1921)
+
+**Key Topics:**
+- Definition: $R^2 = 1 - \frac{SS_{res}}{SS_{tot}}$ (explained variance ratio)
+- Mathematical proof: why $0 \leq R^2 \leq 1$
+- Relationship to correlation: $R^2 = r^2$ (simple regression)
+- Three computational methods: direct formula, correlation-based, sklearn
+- Edge cases where R² misleads: nonlinear relationships, outliers, overfitting
+- Adjusted R²: penalizing excessive features with $\bar{R}^2 = 1 - (1-R^2)\frac{n-1}{n-p-1}$
+
+**Python Implementations:**
+- Manual R² calculation from residuals
+- Comparison of R² computation methods
+- Adjusted R² vs. R² with increasing feature count
+
+**Learning Outcomes:** Students learn to evaluate regression model quality, understand when R² is appropriate, and recognize when it can be misleading.
+
+---
+
+### <a name="chapter-4"></a>Chapter 4: Covariance and Correlation – Measuring Relationships Between Variables
+**Hebrew:** קו-ווריאנס וקורלציה: מדידת קשרים בין משתנים
+
+This chapter develops the mathematical tools for quantifying relationships between variables, emphasizing the critical principle: **correlation does not imply causation**.
+
+**Key Topics:**
+- Covariance: $\text{Cov}(X,Y) = E[(X-\mu_X)(Y-\mu_Y)]$
+- Pearson correlation: $r = \frac{\text{Cov}(X,Y)}{\sigma_X \sigma_Y}$ (normalized to [-1, +1])
+- Geometric interpretation: correlation as cosine of angle between centered vectors
+- Connection to linear algebra: dot products and projections
+- Covariance matrices for multivariate data
+- Partial correlation: controlling for confounding variables
+- Spurious correlations: ice cream sales vs. drowning rates (temperature as confounder)
+- Causal inference basics: correlation ≠ causation
+
+**Mathematical Proofs:**
+- Why correlation is bounded: $-1 \leq r \leq 1$
+- Relationship between covariance and dot product
+- Geometric interpretation via vector projections
+
+**Python Implementations:**
+- Manual correlation calculation (three methods)
+- Spurious correlation detection and visualization
+- Partial correlation for confounder analysis
+- Scatter plots with correlation coefficients
+
+**Learning Outcomes:** Students learn to quantify relationships rigorously, interpret correlation correctly, and understand the dangers of inferring causation from correlation alone.
+
+---
+
+### <a name="chapter-5"></a>Chapter 5: Linear Regression – The Line That Shaped Modernity
+**Hebrew:** רגרסיה ליניארית: הקו שעצב את המודרניות
+
+This chapter tells the remarkable story of linear regression, from Gauss's 1801 prediction of the dwarf planet Ceres to modern Google search algorithms.
+
+**Historical Narrative:**
+- 1801: Giuseppe Piazzi discovers Ceres, loses track after 41 observations
+- Carl Friedrich Gauss (age 24) predicts its return using least squares method
+- Priority dispute: Gauss vs. Legendre over who invented least squares
+- Evolution from astronomy to modern AI/ML
+
+**Key Topics:**
+- Ordinary Least Squares (OLS): minimizing $\sum_{i=1}^n (y_i - \hat{y}_i)^2$
+- Three derivations of the solution:
+  1. Geometric: orthogonal projection onto column space
+  2. Calculus: setting gradient $\nabla_w \text{MSE} = 0$
+  3. Linear algebra: normal equations $\mathbf{w} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}$
+- Computational complexity: $O(d^3)$ for matrix inversion vs. $O(nd)$ per iteration for gradient descent
+- Gradient descent algorithm: $w \leftarrow w - \alpha \nabla_w \text{MSE}$
+- Bias-variance trade-off
+- Regularization: Ridge (L2) and Lasso (L1) for preventing overfitting
+
+**Mathematical Proofs:**
+- Why squared error is optimal under Gaussian noise (maximum likelihood)
+- Derivation of closed-form solution via calculus
+- Convergence proof for gradient descent
+
+**Python Implementations:**
+- Gradient descent from scratch with visualization
+- Comparison: normal equations vs. gradient descent
+- Ridge and Lasso regression with cross-validation
+
+**Learning Outcomes:** Students understand the mathematical foundations of regression, implement optimization algorithms, and recognize when to use different solution methods.
+
+---
+
+### <a name="chapter-6"></a>Chapter 6: Logistic Regression – From Predicting Numbers to Predicting Classes
+**Hebrew:** רגרסיה לוגיסטית: מחיזוי מספרים למחלקות
+
+This chapter extends linear regression to classification tasks, beginning with John Snow's 1854 cholera investigation as an early example of binary classification.
+
+**Historical Opening:**
+- 1854: London cholera epidemic
+- John Snow's spatial mapping: distance from Broad Street well
+- Binary classification: Will a person at distance $x$ contract cholera? (yes/no)
+- From numbers to probabilities to categories
+
+**Key Topics:**
+- Why linear regression fails for classification: $\hat{y}$ can be $< 0$ or $> 1$
+- Sigmoid (logistic) function: $\sigma(z) = \frac{1}{1+e^{-z}}$ maps $\mathbb{R} \to (0,1)$
+- Logistic regression model: $P(y=1|x) = \sigma(w^Tx)$
+- Maximum likelihood estimation (MLE) for parameter learning
+- Cross-entropy loss: $\mathcal{L} = -\frac{1}{n}\sum_{i=1}^n [y_i \log(\hat{y}_i) + (1-y_i)\log(1-\hat{y}_i)]$
+- Why cross-entropy is superior to squared error for classification
+- Decision boundaries and threshold selection
+- ROC curves and AUC for model evaluation
+- Multi-class extension: Softmax regression (multinomial logistic regression)
+- Class imbalance handling: oversampling, undersampling, weighted loss
+
+**Mathematical Proofs:**
+- Derivation of cross-entropy loss from MLE
+- Gradient of logistic loss function
+- Why sigmoid derivative is $\sigma'(z) = \sigma(z)(1-\sigma(z))$
+- Softmax function properties and derivation
+
+**Python Implementations:**
+- Binary logistic regression from scratch
+- ROC curve visualization with AUC calculation
+- Softmax regression on Iris dataset (3-class)
+- Threshold tuning for precision-recall trade-off
+
+**Learning Outcomes:** Students learn to extend linear methods to classification, understand probabilistic interpretation of predictions, evaluate classifiers properly, and handle multi-class problems.
+
+---
+
+## Key Features
+
+✅ **Bilingual Approach:** Hebrew explanations with English technical terminology
+✅ **Historical Context:** Mathematical concepts traced from their origins (Descartes 1637, Gauss 1801, Bellman 1957)
+✅ **Rigorous Proofs:** Complete mathematical derivations with step-by-step explanations
+✅ **Practical Code:** Python implementations using NumPy, scikit-learn, Matplotlib
+✅ **Visual Learning:** TikZ diagrams, plots, and visualizations throughout
+✅ **Real-World Applications:** Examples from medicine, astronomy, finance, and AI
+✅ **Self-Contained:** Each chapter builds on previous ones but can be studied independently
+
+---
 
 ## Technical Implementation
 
-This LaTeX project demonstrates advanced bilingual typesetting with proper Hebrew (RTL) and English (LTR) text direction handling, mathematical formulas, code blocks, and academic formatting using LuaLaTeX.
+- **LaTeX Engine:** LuaLaTeX (required for bidirectional Hebrew RTL + English LTR)
+- **Document Class:** `hebrew-academic-template.cls` (custom bilingual class)
+- **Bibliography:** BibLaTeX with IEEE style, automated Hebrew/English categorization
+- **Code Listings:** Custom `pythonbox` and `pythonbox*` environments with:
+  - Black bold titles on light gray background (RTL Hebrew support)
+  - Syntax highlighting for Python code
+  - Non-floating (`pythonbox*`) for long code blocks spanning pages
+- **Math Typesetting:** Full Unicode math support with proper RTL/LTR handling
+- **Packages:** polyglossia, luabidi, tcolorbox, tikz-cd, fancyhdr
 
 ---
 
-# מדריך טכני לשימוש בתבנית האקדמית העברית
-
-## סקירה כללית
-
-פרויקט LaTeX זה מתחיל עם הקובץ הראשי `l9-main.tex` וכולל מספר קבצי פרק נפרדים. אנו משתמשים ב-PowerShell בסביבת Windows 11 עם LuaLaTeX ו-MiKTeX. חובה להקפיד על השימוש בתבנית `hebrew-academic-template.cls` ובפונקציות שלה.
-
-## דרישות מערכת
-
-- **מערכת הפעלה:** Windows 11
-- **סביבת פיתוח:** PowerShell
-- **מנוע LaTeX:** LuaLaTeX
-- **הפצת LaTeX:** MiKTeX
-- **תבנית:** hebrew-academic-template.cls (חובה!)
-
-## מבנה הפרויקט
+## Project Structure
 
 ```
 L9-CorrelationConvolution/
-├── l9-main.tex                    # קובץ ראשי
-├── hebrew-academic-template.cls   # תבנית אקדמית עברית
-├── global.bib                     # קובץ ביבליוגרפיה
+├── L9-main.tex                      # Main document file
+├── hebrew-academic-template.cls     # Custom bilingual LaTeX class
+├── global.bib                       # Bibliography database
+├── README.md                        # This file: book overview
+├── CLS-USAGE.md                     # Detailed CLS usage instructions
+├── CLS-CHANGES-README.md            # Recent CLS modifications
 ├── chapters/
-│   ├── l9-ch01.tex               # פרק 1: מבוא - עולמו הנסתר של הווקטור
-│   ├── l9-ch02.tex               # פרק 2: קללת המימדיות
-│   ├── l9-ch03.tex               # פרק 3: מקדם הקביעה R²
-│   ├── l9-ch04.tex               # פרק 4: מתאם ושונות משותפת
-│   ├── l9-ch05.tex               # פרק 5: רגרסיה ליניארית
-│   └── l9-ch06.tex               # פרק 6: רגרסיה לוגיסטית
+│   ├── l9-ch01.tex                 # Chapter 1: Vector Introduction
+│   ├── l9-ch02.tex                 # Chapter 2: Curse of Dimensionality
+│   ├── l9-ch03.tex                 # Chapter 3: R² Coefficient
+│   ├── l9-ch04.tex                 # Chapter 4: Correlation
+│   ├── l9-ch05.tex                 # Chapter 5: Linear Regression
+│   └── l9-ch06.tex                 # Chapter 6: Logistic Regression
 └── Notepad++UserDefinLang/
-    ├── Readme.txt                 # הוראות שימוש
-    └── LaTeX-HebrewTemplate.udl.xml  # הגדרת syntax highlighting
+    ├── Readme.txt                   # Syntax highlighting instructions
+    └── LaTeX-HebrewTemplate.udl.xml # Notepad++ custom syntax
 ```
-
-## הוראות עבודה עם GitHub
-
-### הורדת הפרויקט (פעם אחת)
-```powershell
-git clone https://github.com/rmisegal/L9-LaTechCorrelationAndConvolutionChapterBook.git
-cd L9-LaTechCorrelationAndConvolutionChapterBook
-```
-
-### עדכון מ-GitHub
-```powershell
-git pull
-```
-
-### שליחת שינויים ל-GitHub
-```powershell
-git add .
-git commit -m "תיאור השינויים"
-git push
-```
-
-## קומפילציה
-
-### תהליך קומפילציה מלא
-```powershell
-lualatex l9-main.tex
-biber l9-main
-lualatex l9-main.tex
-lualatex l9-main.tex
-```
-
-### קומפילציה מהירה (ללא ביבליוגרפיה)
-```powershell
-lualatex l9-main.tex
-```
-
-## Notepad++ Syntax Highlighting
-
-The project includes a custom User Defined Language (UDL) file for Notepad++ with LaTeX syntax highlighting optimized for the Hebrew template.
-
-### Installation Instructions:
-
-1. **Save the UDL file**:
-   - Copy `Notepad++UserDefinLang/LaTeX-HebrewTemplate.udl.xml`
-   - Save to: `C:\Users\[YourUsername]\AppData\Roaming\Notepad++\userDefineLangs`
-
-2. **Import into Notepad++**:
-   - Open Notepad++
-   - Go to: `Language → User Defined Language → Define your language...`
-   - Click `Import...`
-   - Select the `LaTeX-HebrewTemplate.udl.xml` file
-   - Restart Notepad++
-
-3. **Apply to your files**:
-   - Open any `.tex`, `.cls`, `.bib`, or `.sty` file
-   - Go to: `Language → YoramLaTeX`
-
-The syntax highlighting is designed for the Vim Dark Blue theme and includes special support for Hebrew-English mixed content, mathematical formulas, and custom template commands.
-
-## כללי עיצוב וכיוון טקסט
-
-### חובה להקפיד על כיווני הטקסט במקומות הבאים:
-
-#### 1. כותרות וכותרות משנה
-- **מספור פרק:** LTR (שמאל לימין)
-- **שם הפרק בעברית:** RTL (ימין לשמאל)
-- **טקסט אנגלי:** LTR (שמאל לימין)
-
-**דוגמה:**
-```latex
-\hebrewsection{מבוא: עולמו הנסתר של הווקטור}
-\hebrewsubsection{מושגי יסוד}
-```
-
-#### 2. מספור בתוך גוף הטקסט
-- **מספרים בעברית:** השתמש ב-`\num{}`
-- **רשימות ממוספרות:** LTR
-- **נקודות (BULLETS):** שמירה על כיוון נכון של עברית, אנגלית ומספרים
-
-**דוגמה:**
-```latex
-\begin{enumerate}
-\item פריט ראשון בעברית - English explanation
-\item פריט שני עם מספרים \num{123}
-\end{enumerate}
-```
-
-#### 3. נוסחאות מתמטיות
-- **כיוון נכון:** LTR תמיד
-- **הסבר בעברית:** RTL
-- **משתנים ופונקציות:** LTR
-
-**דוגמה:**
-```latex
-\begin{equation}
-R^2 = 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}}
-\end{equation}
-כאשר $SS_{\text{res}}$ הוא סכום ריבועי השאריות
-```
-
-#### 4. קוד Python
-- **כיוון קוד:** LTR חובה
-- **רקע:** אפור בהיר
-- **הערות:** אסור בעברית בתוך הקוד!
-
-**דוגמה:**
-```latex
-\begin{pythonbox}[תיאור בעברית]
-import numpy as np
-from sklearn.decomposition import PCA
-
-# Reduce dimensionality
-pca = PCA(n_components=2)
-X_reduced = pca.fit_transform(X)
-\end{pythonbox}
-```
-
-#### 5. מספור עמודים
-- **כיוון:** LTR תמיד
-- **מיקום:** לפי התבנית
-
-#### 6. רשימת מקורות
-- **שפה:** אנגלית בלבד
-- **כיוון:** LTR
-- **יישור:** שמאל
-- **כותרת:** "English References"
-
-## פונקציות התבנית העיקריות
-
-### טקסט בעברית
-```latex
-\hebrewsection{כותרת פרק}
-\hebrewsubsection{כותרת תת-פרק}
-```
-
-### טקסט באנגלית
-```latex
-\en{English text}
-\textenglish{English text in Hebrew context}
-```
-
-### מספרים
-```latex
-\num{123}        % מספרים רגילים
-\num{0.95}       % מספרים עשרוניים
-\percent{80}     % אーוזים
-```
-
-### פונקציות מיוחדות לתווים שאינם נתמכים בפונט העברי
-
-**תווים מיוחדים שאסור להשתמש בהם ישירות בטקסט עברי:**
-
-```latex
-% ❌ לעולם אל תשתמש ישירות:
-R²              % תו ² לא נתמך בפונט עברי
-→               % חץ unicode לא נתמך בפונט עברי
-©               % סימן copyright לא נתמך בפונט עברי
-
-% ✅ השתמש בפקודות המיוחדות של התבנית:
-\Rsquared{}                % מציג R² בצורה נכונה (math mode)
-\Rtwo{}                    % אלטרנטיבה: R\textsuperscript{2}
-\rarrow{}                  % מציג חץ לוגי "גורר" בטקסט עברי
-\textenglish{©}            % מציג © בכיוון LTR
-$\neq$                     % מציג ≠ (לא שווה) - math mode
-```
-
-**הערות חשובות:**
-
-1. **R² (ריבוע):**
-   - השתמש ב-`\Rsquared{}` במקום `R²` בטקסט עברי
-   - התבנית מגדירה: `\newcommand{\Rsquared}{\ensuremath{R^2}}`
-   - גם בתוך קוד Python: `R²` בתגובות/מחרוזות זה בסדר, אך בטקסט LaTeX העברי השתמש ב-`\Rsquared{}`
-
-2. **חצים בעברית (→):**
-   - בטקסט RTL עברי, חץ לוגי "גורר" (implies) צריך להצביע שמאלה (←)
-   - השתמש ב-`\rarrow{}` במקום התו `→`
-   - הפקודה `\rarrow{}` משתמשת ב-`$\leftarrow$` כדי להציג את הכיוון הנכון בעברית
-   - דוגמה: `אם $x > 5$ \rarrow{} המודל יחזה \num{1}` מציג את החץ בכיוון הנכון
-
-3. **סימן Copyright (©):**
-   - השתמש ב-`\textenglish{©}` במקום `©` ישירות
-   - זה מבטיח שהתו יוצג בכיוון LTR עם פונט שתומך בו
-   - דוגמה: `כל הזכויות שמורות \textenglish{©}`
-
-4. **קוד Python:**
-   - כל ההערות והתיעוד בקוד Python חייבות להיות באנגלית LTR
-   - ❌ אסור: `# יצירת מטריצה`
-   - ✅ נכון: `# Create matrix`
-   - הקוד עצמו תמיד LTR, ללא תווים עבריים
-
-### טבלאות עבריות
-```latex
-\begin{hebrewtable}[H]
-\caption{כותרת הטבלה}
-\centering
-\begin{rtltabular}{|r|r|r|}
-\hline
-\textbf{\hebcell{עמודה 1}} & \textbf{\hebcell{עמודה 2}} \\
-\hline
-\num{1} & \num{0.85} \\
-\hline
-\end{rtltabular}
-\end{hebrewtable}
-```
-
-### בלוקי קוד
-```latex
-\begin{pythonbox}[תיאור הקוד]
-import numpy as np
-# Your Python code here
-\end{pythonbox}
-```
-
-## דוגמאות לערבוב עברית-אנגלית
-
-### דוגמה 1: הסבר טכני
-```latex
-האלגוריתם \en{Gradient Descent} משתמש בנגזרת של פונקציית העלות
-\en{Cost Function} כדי למצוא את המינימום הגלובלי.
-```
-
-### דוגמה 2: רשימה מעורבת
-```latex
-\begin{itemize}
-\item למידת מכונה (\en{Machine Learning}) - תחום במדעי המחשב
-\item \en{Deep Learning} - רשתות נוירונים עמוקות
-\item רגרסיה לינארית - \en{Linear Regression}
-\end{itemize}
-```
-
-### דוגמה 3: נוסחה עם הסבר
-```latex
-המודל הלינארי מוגדר כ:
-\begin{equation}
-\mathbf{y} = \mathbf{X}\boldsymbol{\beta} + \boldsymbol{\varepsilon}
-\end{equation}
-כאשר $\mathbf{y}$ הוא וקטור התוצאות, $\mathbf{X}$
-היא מטריצת העיצוב (\en{Design Matrix}), ו-$\boldsymbol{\beta}$
-הוא וקטור הפרמטרים.
-```
-
-## פתרון בעיות נפוצות
-
-### בעיית קומפילציה
-1. ודא שכל הקבצים קיימים
-2. בדוק שהתבנית `hebrew-academic-template.cls` במקום הנכון
-3. הרץ את תהליך הקומפילציה המלא
-4. ודא שמותקן LuaLaTeX (לא pdflatex או xelatex)
-
-### בעיות כיוון טקסט
-1. השתמש בפונקציות התבנית בלבד
-2. אל תערבב פקודות RTL/LTR ידנית
-3. עקוב אחר הדוגמאות בפרקים הקיימים
-4. השתמש ב-`\en{}` לטקסט אנגלי קצר
-
-### בעיות ביבליוגרפיה
-1. ודא שהקובץ `global.bib` תקין
-2. הרץ `biber` לפני הקומפילציה הסופית
-3. בדוק שכל הציטוטים קיימים
-4. השתמש ב-`\cite{}` לציטוט
-
-### בעיות עם תווים מיוחדים
-1. השתמש ב-`\Rsquared{}` במקום `R²`
-2. השתמש ב-`\rarrow{}` במקום `→`
-3. השתמש ב-`$\neq$` במקום `≠`
-4. השתמש ב-`\num{}` למספרים
-5. השתמש ב-`\percent{}` לאחוזים
-
-**הסבר:** הפונט העברי David CLM אינו תומך בכל התווים המיוחדים Unicode. התבנית כוללת פקודות מיוחדות שעוקפות בעיה זו על ידי שימוש במצב מתמטי או בפונטים אלטרנטיביים.
-
-## תמיכה
-
-לבעיות טכניות או שאלות, עיין בדוגמאות בקבצי הפרקים הקיימים או פנה לתיעוד הרשמי של MiKTeX ו-LuaLaTeX.
 
 ---
 
+## Compilation
+
+### Full Compilation (with bibliography)
+```bash
+lualatex L9-main.tex
+biber L9-main
+lualatex L9-main.tex
+lualatex L9-main.tex
+```
+
+### Quick Compilation (without bibliography)
+```bash
+lualatex L9-main.tex
+```
+
+**Note:** Must use **LuaLaTeX** (not pdflatex or xelatex) for proper bidirectional text support.
+
+---
+
+## For Authors and Contributors
+
+For detailed instructions on writing mixed Hebrew-English academic documents using the `hebrew-academic-template.cls` class, including:
+- All CLS functions and commands
+- Hebrew/English text mixing guidelines
+- Table formatting with RTL support
+- Python code blocks with proper RTL titles
+- Special character handling (R², →, ©)
+- Troubleshooting common issues
+
+See **[CLS-USAGE.md](CLS-USAGE.md)** for complete documentation.
+
+---
+
+## Recent Changes
+
+For documentation of recent modifications to the CLS class, including:
+- Python code title color fix (black on gray background)
+- Overflow prevention guidelines for long code blocks
+- Summary of CLS functions for code listings
+
+See **[CLS-CHANGES-README.md](CLS-CHANGES-README.md)** for details.
+
+---
+
+## GitHub Repository
+
+```bash
+# Clone repository
+git clone https://github.com/rmisegal/L9-LaTechCorrelationAndConvolutionChapterBook.git
+
+# Update from remote
+git pull
+
+# Push changes
+git add .
+git commit -m "Description of changes"
+git push
+```
+
+---
+
+## License
+
+© 2025 Dr. Yoram Segal. All rights reserved.
+
+---
+
+## Support
+
+For technical issues, refer to examples in existing chapter files or consult MiKTeX and LuaLaTeX official documentation.
+
 **Author:** Dr. Yoram Segal
-**Institution:** [Your Institution]
 **Year:** 2025
-**License:** All rights reserved © 2025 Dr. Yoram Segal

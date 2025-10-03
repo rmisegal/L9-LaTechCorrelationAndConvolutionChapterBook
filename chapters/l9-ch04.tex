@@ -303,58 +303,26 @@ plt.show()
 \item השוו את כל התוצאות
 \end{enumerate}
 
-\begin{pythonbox}[חישוב קורלציה וקו-ווריאנס ידני]
+\begin{pythonbox*}[חישוב קורלציה וקו-ווריאנס ידני]
 import numpy as np
 
-# Data
 x = np.array([160, 170, 180, 175, 165])
 y = np.array([55, 65, 75, 70, 60])
 
-print("=== Method 1: Direct formula ===")
-# Means
-x_mean = np.mean(x)
-y_mean = np.mean(y)
+# Method 1: Direct formula
+x_c = x - np.mean(x)
+y_c = y - np.mean(y)
+cov_manual = np.mean(x_c * y_c)
+r_manual = cov_manual / (np.std(x) * np.std(y))
 
-# Covariance
-cov_manual = np.mean((x - x_mean) * (y - y_mean))
-print(f"Cov(X,Y) = {cov_manual:.2f}")
-
-# Standard deviations
-sigma_x = np.std(x)
-sigma_y = np.std(y)
-
-# Correlation
-r_manual = cov_manual / (sigma_x * sigma_y)
-print(f"r = {r_manual:.4f}")
-
-print("\n=== Method 2: Linear algebra ===")
-# Centered vectors
-x_c = x - x_mean
-y_c = y - y_mean
-
-# Covariance as dot product
-cov_dot = np.dot(x_c, y_c) / len(x)
-print(f"Cov(X,Y) = {cov_dot:.2f}")
-
-# Correlation as Cosine Similarity
+# Method 2: Cosine similarity (centered vectors)
 r_cosine = np.dot(x_c, y_c) / (np.linalg.norm(x_c) * np.linalg.norm(y_c))
-print(f"r = {r_cosine:.4f}")
 
-print("\n=== Method 3: NumPy ===")
-# Covariance matrix
-cov_matrix = np.cov(x, y, ddof=0)  # ddof=0 for division by n
-cov_numpy = cov_matrix[0, 1]
-print(f"Cov(X,Y) = {cov_numpy:.2f}")
+# Method 3: NumPy
+r_numpy = np.corrcoef(x, y)[0, 1]
 
-# Correlation matrix
-corr_matrix = np.corrcoef(x, y)
-r_numpy = corr_matrix[0, 1]
-print(f"r = {r_numpy:.4f}")
-
-print("\n=== Comparison ===")
-print(f"Cov - All methods identical? {np.allclose([cov_manual, cov_dot, cov_numpy], cov_manual)}")
-print(f"r - All methods identical? {np.allclose([r_manual, r_cosine, r_numpy], r_manual)}")
-\end{pythonbox}
+# All methods give same result: r ≈ 0.99
+\end{pythonbox*}
 
 \textbf{תוצאה צפויה:} כל השיטות יתנו אותה תוצאה, מה שמדגים את הקשר העמוק בין קורלציה ומכפלה סקלרית.
 
@@ -735,67 +703,32 @@ print(f"Spearman: {r_spearman_exp:.4f}")
 \item נסו עם משתנים מבלבלים שונים
 \end{enumerate}
 
-\begin{pythonbox}[סימולציה: גילוי קורלציות מזויפות]
+\begin{pythonbox*}[סימולציה: גילוי קורלציות מזויפות]
+import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+from sklearn.linear_model import LinearRegression
 
-# Parameters
-np.random.seed(42)
-n = 200
+# Confounding variable: temperature
+temperature = np.random.uniform(15, 35, 200)
+ice_cream = 2 * temperature + np.random.randn(200) * 5
+drownings = 1.5 * temperature + np.random.randn(200) * 3
 
-# Confounding variable: summer heat
-temperature = np.random.uniform(15, 35, n)  # Temperature in Celsius
+# Naive correlation (spurious)
+r_naive = np.corrcoef(ice_cream, drownings)[0, 1]
 
-# Ice cream depends on heat + noise
-ice_cream = 2 * temperature + np.random.randn(n) * 5
-
-# Drownings depend on heat + noise
-drownings = 1.5 * temperature + np.random.randn(n) * 3
-
-# Correlations
-r_naive, _ = pearsonr(ice_cream, drownings)
-r_partial = partial_correlation(ice_cream, drownings, temperature)
-
-print(f"Naive correlation (without control): {r_naive:.3f}")
-print(f"Partial correlation (controlling for heat): {r_partial:.3f}")
+# Partial correlation (after removing temperature)
+ice_res = ice_cream - LinearRegression().fit(temperature.reshape(-1, 1), ice_cream).predict(temperature.reshape(-1, 1))
+drown_res = drownings - LinearRegression().fit(temperature.reshape(-1, 1), drownings).predict(temperature.reshape(-1, 1))
+r_partial = np.corrcoef(ice_res, drown_res)[0, 1]
 
 # Visualization
-fig = plt.figure(figsize=(15, 5))
-
-# Plot 1: Naive correlation
-ax1 = fig.add_subplot(131)
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 ax1.scatter(ice_cream, drownings, c=temperature, cmap='hot', alpha=0.6)
-ax1.set_xlabel('Ice Cream Sales')
-ax1.set_ylabel('Drownings')
-ax1.set_title(f'Naive Correlation: r = {r_naive:.3f}')
-ax1.grid(True, alpha=0.3)
-
-# Plot 2: 3D - shows the confounder
-ax2 = fig.add_subplot(132, projection='3d')
-ax2.scatter(temperature, ice_cream, drownings, c=temperature, cmap='hot', alpha=0.6)
-ax2.set_xlabel('Temperature')
-ax2.set_ylabel('Ice Cream')
-ax2.set_zlabel('Drownings')
-ax2.set_title('True Relationship (3D)')
-
-# Plot 3: After removing confounder (residuals)
-from sklearn.linear_model import LinearRegression
-model_ice = LinearRegression().fit(temperature.reshape(-1, 1), ice_cream)
-model_drown = LinearRegression().fit(temperature.reshape(-1, 1), drownings)
-
-ice_residuals = ice_cream - model_ice.predict(temperature.reshape(-1, 1))
-drown_residuals = drownings - model_drown.predict(temperature.reshape(-1, 1))
-
-ax3 = fig.add_subplot(133)
-ax3.scatter(ice_residuals, drown_residuals, alpha=0.6)
-ax3.set_xlabel('Ice Cream (residuals)')
-ax3.set_ylabel('Drownings (residuals)')
-ax3.set_title(f'After Removing Temperature: r = {r_partial:.3f}')
-ax3.grid(True, alpha=0.3)
-
-plt.tight_layout()
+ax1.set_title(f'Naive: r = {r_naive:.3f}')
+ax2.scatter(ice_res, drown_res, alpha=0.6)
+ax2.set_title(f'After Control: r = {r_partial:.3f}')
 plt.show()
-\end{pythonbox}
+\end{pythonbox*}
 
 \textbf{תוצאה צפויה:} הגרף השמאלי מראה קורלציה חזקה, אך הגרף הימני (אחרי שליטה) מראה שאין קשר אמיתי.
 

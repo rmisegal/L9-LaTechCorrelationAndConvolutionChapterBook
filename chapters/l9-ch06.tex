@@ -629,71 +629,27 @@ F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \te
 \item \en{AUC} > \num{0.8}: מודל טוב מאוד
 \end{itemize}
 
-\begin{pythonbox}[חישוב מדדי הערכה ועקומת \en{ROC}]
-from sklearn.metrics import confusion_matrix, classification_report, roc_curve, auc
+\begin{pythonbox*}[חישוב מדדי הערכה ועקומת \en{ROC}]
+from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
 
-def evaluate_classification(y_true, y_pred_proba, threshold=0.5):
-    """
-    Comprehensive evaluation of classification model.
-    """
-    # Decision by threshold
-    y_pred = (y_pred_proba >= threshold).astype(int)
-
-    # Confusion matrix
-    cm = confusion_matrix(y_true, y_pred)
-    print("Confusion Matrix:")
-    print(cm)
-
-    # Detailed report
-    print("\nClassification Report:")
-    print(classification_report(y_true, y_pred))
-
-    # ROC curve
-    fpr, tpr, thresholds = roc_curve(y_true, y_pred_proba)
+def evaluate_classification(y_true, y_pred_proba):
+    fpr, tpr, _ = roc_curve(y_true, y_pred_proba)
     roc_auc = auc(fpr, tpr)
-    
-    plt.figure(figsize=(10, 5))
-    
-    # ROC Curve
-    plt.subplot(1, 2, 1)
-    plt.plot(fpr, tpr, linewidth=2, label=f'ROC (AUC = {roc_auc:.3f})')
+
+    # ROC Curve visualization
+    plt.figure(figsize=(8, 4))
+    plt.plot(fpr, tpr, label=f'AUC = {roc_auc:.3f}')
     plt.plot([0, 1], [0, 1], 'k--', label='Random')
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('ROC Curve')
+    plt.xlabel('FPR')
+    plt.ylabel('TPR')
     plt.legend()
-    plt.grid(True, alpha=0.3)
-    
-    # Precision-Recall Trade-off
-    plt.subplot(1, 2, 2)
-    precisions = []
-    recalls = []
-    for thresh in np.linspace(0, 1, 100):
-        y_pred_temp = (y_pred_proba >= thresh).astype(int)
-        tn, fp, fn, tp = confusion_matrix(y_true, y_pred_temp).ravel()
-        if tp + fp > 0:
-            precisions.append(tp / (tp + fp))
-        else:
-            precisions.append(0)
-        recalls.append(tp / (tp + fn) if (tp + fn) > 0 else 0)
-    
-    plt.plot(recalls, precisions, linewidth=2)
-    plt.xlabel('Recall')
-    plt.ylabel('Precision')
-    plt.title('Precision-Recall Trade-off')
-    plt.grid(True, alpha=0.3)
-    
-    plt.tight_layout()
     plt.show()
-    
+
     return roc_auc
 
-# Usage
-# y_true = ...  # true labels
-# y_pred_proba = ...  # predicted probabilities
-# evaluate_classification(y_true, y_pred_proba)
-\end{pythonbox}
+# Usage: auc_score = evaluate_classification(y_true, y_pred_proba)
+\end{pythonbox*}
 
 \hebrewsubsection{הכללה למרובה מחלקות: \en{Multiclass Classification}}
 
@@ -760,87 +716,30 @@ P(y=k|\vec{x}) = \frac{e^{\vec{w}_k^T\vec{x}}}{\sum_{j=1}^{K} e^{\vec{w}_j^T\vec
 
 במקרה של שתי מחלקות ($K=2$), \en{Softmax} מצטמצם ל\en{Sigmoid}! זו הצדקה יפה לכך שהכללנו נכון.
 
-\begin{pythonbox}[דוגמה: \en{Softmax Regression}]
+\begin{pythonbox*}[דוגמה: \en{Softmax Regression}]
 import numpy as np
 
 def softmax(z):
-    """
-    Softmax function.
-
-    Args:
-        z: matrix (n, K) of logits
-
-    Returns:
-        probabilities (n, K)
-    """
-    # Subtract maximum for numerical stability
-    z_shifted = z - np.max(z, axis=1, keepdims=True)
-    exp_z = np.exp(z_shifted)
+    exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
     return exp_z / np.sum(exp_z, axis=1, keepdims=True)
 
 def softmax_regression(X, y, K, alpha=0.01, max_iters=1000):
-    """
-    Softmax Regression for multi-class.
-
-    Args:
-        X: feature matrix (n, d)
-        y: labels (n,) - numbers between 0 and K-1
-        K: number of classes
-
-    Returns:
-        W: weight matrix (d+1, K)
-    """
-    # Add intercept
     X_with_intercept = np.column_stack([np.ones(len(X)), X])
     n, d = X_with_intercept.shape
-
-    # One-hot encoding of y
     Y_onehot = np.zeros((n, K))
     Y_onehot[np.arange(n), y] = 1
-
-    # Weight initialization
     W = np.random.randn(d, K) * 0.01
 
     for iteration in range(max_iters):
-        # Forward pass
         logits = X_with_intercept @ W
         probs = softmax(logits)
-
-        # Loss
-        loss = -np.mean(np.sum(Y_onehot * np.log(probs + 1e-15), axis=1))
-
-        # Gradient
         gradient = (1/n) * X_with_intercept.T @ (probs - Y_onehot)
-
-        # Update
         W = W - alpha * gradient
-
-        if iteration % 100 == 0:
-            print(f"Iteration {iteration}, Loss: {loss:.4f}")
 
     return W
 
-# Example: Iris dataset (3 classes)
-from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split
-
-iris = load_iris()
-X_train, X_test, y_train, y_test = train_test_split(
-    iris.data, iris.target, test_size=0.3, random_state=42
-)
-
-# Training
-W = softmax_regression(X_train, y_train, K=3, alpha=0.1, max_iters=500)
-
-# Evaluation
-X_test_with_intercept = np.column_stack([np.ones(len(X_test)), X_test])
-logits_test = X_test_with_intercept @ W
-probs_test = softmax(logits_test)
-y_pred = np.argmax(probs_test, axis=1)
-
-accuracy = np.mean(y_pred == y_test)
-print(f"\nAccuracy on test set: {accuracy:.3f}")
-\end{pythonbox}
+# Usage: W = softmax_regression(X_train, y_train, K=3, alpha=0.1)
+\end{pythonbox*}
 
 \hebrewsubsection{תרגיל תכנות עצמי \num{6.1} - רגרסיה לוגיסטית מאפס}
 

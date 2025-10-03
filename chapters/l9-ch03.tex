@@ -232,7 +232,7 @@ R^2_{p+1} = 1 - \frac{SS_{\text{res}}^{(p+1)}}{SS_{\text{tot}}} \geq 1 - \frac{S
 
 \textbf{דוגמה מספרית – סימולציה:}
 
-\begin{pythonbox}[הדגמת בעיית \Rsquared{} עם תכונות אקראיות]
+\begin{pythonbox*}[הדגמת בעיית \Rsquared{} עם תכונות אקראיות]
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
@@ -263,7 +263,7 @@ for num_random_features in [0, 1, 5, 10, 20, 50]:
     print(f"Num features: {1 + num_random_features}, R²: {r2:.4f}")
 
 # Result: R² increases with each feature, even if it's noise!
-\end{pythonbox}
+\end{pythonbox*}
 
 \textbf{תוצאה צפויה:}
 
@@ -334,7 +334,7 @@ R^2_{\text{adj}} = 1 - (1 - R^2) \cdot \frac{n - 1}{n - p - 1}
 
 \textbf{חזרה על הסימולציה עם \en{Adjusted \Rsquared{}}:}
 
-\begin{pythonbox}[\en{Adjusted \Rsquared{}} – מונע עליה מלאכותית]
+\begin{pythonbox*}[\en{Adjusted \Rsquared{}} – מונע עליה מלאכותית]
 def adjusted_r2(r2, n, p):
     """
     Compute Adjusted R².
@@ -354,7 +354,7 @@ for i, num_random in enumerate([0, 1, 5, 10, 20, 50]):
     adj_r2 = adjusted_r2(r2, n, p)
 
     print(f"Features: {p}, R²: {r2:.4f}, Adj R²: {adj_r2:.4f}")
-\end{pythonbox}
+\end{pythonbox*}
 
 \textbf{תוצאה צפויה:}
 
@@ -450,52 +450,20 @@ R^2 = \frac{\|\vec{\hat{y}} - \bar{y}\vec{1}\|^2}{\|\vec{y} - \bar{y}\vec{1}\|^2
 
 \textbf{פסאודו-קוד מלא:}
 
-\begin{pythonbox}[חישוב \Rsquared{} בשלוש דרכים]
-import numpy as np
-from sklearn.linear_model import LinearRegression
+\begin{pythonbox*}[חישוב \Rsquared{} בשלוש דרכים]
 from sklearn.metrics import r2_score
 
-# 1. Create data
-np.random.seed(42)
-n = 100
-X = np.random.rand(n, 1) * 10  # X between 0 and 10
-y = 3 * X.flatten() + 5 + np.random.randn(n) * 2  # y = 3x + 5 + noise
-
-# 2. Train model
-model = LinearRegression()
-model.fit(X, y)
-y_pred = model.predict(X)
-
-print(f"The learned model: y = {model.coef_[0]:.3f}x + {model.intercept_:.3f}")
-
-# 3. Method 1: direct formula
-y_mean = np.mean(y)
-SS_tot = np.sum((y - y_mean)**2)
+# Method 1: Direct formula
+SS_tot = np.sum((y - np.mean(y))**2)
 SS_res = np.sum((y - y_pred)**2)
 r2_manual = 1 - (SS_res / SS_tot)
 
-print(f"\nMethod 1 (direct formula):")
-print(f"  SS_tot = {SS_tot:.2f}")
-print(f"  SS_res = {SS_res:.2f}")
-print(f"  R² = {r2_manual:.6f}")
+# Method 2: Correlation squared (simple regression)
+r2_from_corr = np.corrcoef(X.flatten(), y)[0, 1]**2
 
-# 4. Method 2: correlation squared (simple regression only!)
-correlation = np.corrcoef(X.flatten(), y)[0, 1]
-r2_from_corr = correlation**2
-
-print(f"\nMethod 2 (correlation):")
-print(f"  r = {correlation:.6f}")
-print(f"  R² = r² = {r2_from_corr:.6f}")
-
-# 5. Method 3: sklearn
+# Method 3: sklearn
 r2_sklearn = r2_score(y, y_pred)
-
-print(f"\nMethod 3 (sklearn):")
-print(f"  R² = {r2_sklearn:.6f}")
-
-# 6. Comparison
-print(f"\nAll identical? {np.allclose([r2_manual, r2_from_corr, r2_sklearn], r2_sklearn)}")
-\end{pythonbox}
+\end{pythonbox*}
 
 \textbf{תוצאה צפויה:} כל שלוש השיטות יתנו $R^2 \approx \num{0.95}$ (תלוי ברעש).
 
@@ -512,56 +480,14 @@ print(f"\nAll identical? {np.allclose([r2_manual, r2_from_corr, r2_sklearn], r2_
 \item הציגו גרף: ציר X = מספר תכונות, ציר Y = ציון
 \end{enumerate}
 
-\begin{pythonbox}[\Rsquared{} מול \en{Adjusted \Rsquared{}} – גרף השוואה]
-import matplotlib.pyplot as plt
-
+\begin{pythonbox*}[\Rsquared{} מול \en{Adjusted \Rsquared{}} – השוואה]
 def adjusted_r2(r2, n, p):
     return 1 - (1 - r2) * (n - 1) / (n - p - 1)
 
-# Data
-np.random.seed(42)
-n = 100
-X_real = np.random.rand(n, 1)
-y = 2 * X_real.flatten() + np.random.randn(n) * 0.5
-
-# Tracking
-num_features_list = []
-r2_list = []
-adj_r2_list = []
-
-for num_random in range(0, 51):
-    # Add random features
-    if num_random == 0:
-        X_combined = X_real
-    else:
-        X_random = np.random.randn(n, num_random)
-        X_combined = np.hstack([X_real, X_random])
-
-    # Train
-    model = LinearRegression()
-    model.fit(X_combined, y)
-    y_pred = model.predict(X_combined)
-
-    # Compute
-    r2 = r2_score(y, y_pred)
-    p = X_combined.shape[1]
-    adj_r2 = adjusted_r2(r2, n, p)
-
-    num_features_list.append(p)
-    r2_list.append(r2)
-    adj_r2_list.append(adj_r2)
-
-# Plot
-plt.figure(figsize=(10, 6))
-plt.plot(num_features_list, r2_list, label='R²', marker='o', markersize=3)
-plt.plot(num_features_list, adj_r2_list, label='Adjusted R²', marker='s', markersize=3)
-plt.xlabel('Number of Features')
-plt.ylabel('Score')
-plt.title('R² vs Adjusted R²: Adding Random Features')
-plt.legend()
-plt.grid(True, alpha=0.3)
-plt.show()
-\end{pythonbox}
+# As features increase: R² rises, Adjusted R² falls
+for p in range(1, 51):
+    adj_r2 = adjusted_r2(r2, 100, p)
+\end{pythonbox*}
 
 \textbf{תוצאה צפויה:} \Rsquared{} עולה בהתמדה, אך \en{Adjusted \Rsquared{}} יורד אחרי כמה תכונות.
 

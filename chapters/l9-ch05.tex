@@ -532,80 +532,27 @@ $\alpha$ אופטימלי \rarrow{} התכנסות מהירה ויציבה
 
 \textbf{פסאודו-קוד - \en{Gradient Descent} מלא:}
 
-\begin{pythonbox}[\en{Gradient Descent} - מימוש מלא]
+\begin{pythonbox*}[\en{Gradient Descent} - מימוש מלא]
 import numpy as np
-import matplotlib.pyplot as plt
 
 def gradient_descent(X, y, alpha=0.01, max_iters=1000, tol=1e-6):
-    """
-    Linear regression using Gradient Descent.
-
-    Args:
-        X: feature matrix (n, d)
-        y: label vector (n,)
-        alpha: learning rate
-        max_iters: maximum number of iterations
-        tol: convergence threshold
-
-    Returns:
-        w: final weights
-        history: loss history
-    """
-    # Add intercept
     X_with_intercept = np.column_stack([np.ones(len(X)), X])
     n, d = X_with_intercept.shape
-
-    # Random initialization
     w = np.random.randn(d) * 0.01
 
-    history = []
-
     for iteration in range(max_iters):
-        # Prediction
         y_pred = X_with_intercept @ w
-
-        # Loss (MSE)
-        mse = np.mean((y - y_pred)**2)
-        history.append(mse)
-
-        # Gradient
         gradient = -2/n * X_with_intercept.T @ (y - y_pred)
-
-        # Update
         w_new = w - alpha * gradient
 
-        # Check convergence
         if np.linalg.norm(w_new - w) < tol:
-            print(f"Converged at iteration {iteration}")
             break
-
         w = w_new
 
-    return w, history
+    return w
 
-# Example
-np.random.seed(42)
-n, d = 100, 3
-X = np.random.randn(n, d)
-true_w = np.array([5, 2, -3, 1])
-y = np.column_stack([np.ones(n), X]) @ true_w + np.random.randn(n) * 0.5
-
-# Run
-w_gd, history = gradient_descent(X, y, alpha=0.01, max_iters=1000)
-
-print("Weights (Gradient Descent):", w_gd)
-print("Weights (true):", true_w)
-
-# Convergence plot
-plt.figure(figsize=(10, 6))
-plt.plot(history)
-plt.xlabel('Iteration')
-plt.ylabel('MSE')
-plt.title('Gradient Descent Convergence')
-plt.yscale('log')
-plt.grid(True, alpha=0.3)
-plt.show()
-\end{pythonbox}
+# Usage: w = gradient_descent(X_train, y_train, alpha=0.01)
+\end{pythonbox*}
 
 \hebrewsubsection{וריאציות מודרניות: מ\en{-}Batch ל\en{-}Stochastic}
 
@@ -798,69 +745,23 @@ for epoch in range(100):
 \item נסו עם $d$ גדל: \num{10}, \num{100}, \num{1000}
 \end{enumerate}
 
-\begin{pythonbox}[השוואת שיטות אופטימיזציה]
+\begin{pythonbox*}[השוואת שיטות אופטימיזציה]
 import numpy as np
-import time
-from sklearn.linear_model import LinearRegression
 
-def compare_methods(n=1000, d=10, noise=0.5):
-    """
-    Compares different methods for linear regression.
-    """
-    # Create data
-    np.random.seed(42)
-    X = np.random.randn(n, d)
-    true_w = np.random.randn(d + 1)
-    X_with_intercept = np.column_stack([np.ones(n), X])
-    y = X_with_intercept @ true_w + np.random.randn(n) * noise
+# Method 1: Normal Equation - O(d^3)
+X_with_intercept = np.column_stack([np.ones(len(X)), X])
+w_normal = np.linalg.solve(X_with_intercept.T @ X_with_intercept,
+                           X_with_intercept.T @ y)
 
-    results = {}
+# Method 2: Gradient Descent - O(nd) per iteration
+w = np.random.randn(d + 1) * 0.01
+alpha = 0.01
+for _ in range(1000):
+    gradient = -2/n * X_with_intercept.T @ (y - X_with_intercept @ w)
+    w = w - alpha * gradient
 
-    # Method 1: Normal Equation
-    start = time.time()
-    XtX = X_with_intercept.T @ X_with_intercept
-    Xty = X_with_intercept.T @ y
-    w_normal = np.linalg.solve(XtX, Xty)
-    time_normal = time.time() - start
-    error_normal = np.linalg.norm(w_normal - true_w)
-    results['Normal Equation'] = (time_normal, error_normal)
-
-    # Method 2: Gradient Descent (simple)
-    start = time.time()
-    w = np.random.randn(d + 1) * 0.01
-    alpha = 0.01
-    for _ in range(1000):
-        gradient = -2/n * X_with_intercept.T @ (y - X_with_intercept @ w)
-        w = w - alpha * gradient
-    time_gd = time.time() - start
-    error_gd = np.linalg.norm(w - true_w)
-    results['Gradient Descent'] = (time_gd, error_gd)
-
-    # Method 3: sklearn (advanced optimization)
-    start = time.time()
-    model = LinearRegression()
-    model.fit(X, y)
-    w_sklearn = np.concatenate([[model.intercept_], model.coef_])
-    time_sklearn = time.time() - start
-    error_sklearn = np.linalg.norm(w_sklearn - true_w)
-    results['sklearn'] = (time_sklearn, error_sklearn)
-
-    # Print results
-    print(f"\n{'='*60}")
-    print(f"n={n}, d={d}, noise={noise}")
-    print(f"{'='*60}")
-    print(f"{'Method':<20} {'Time (s)':<15} {'Error':<15}")
-    print(f"{'-'*60}")
-    for method, (t, e) in results.items():
-        print(f"{method:<20} {t:<15.6f} {e:<15.6f}")
-
-    return results
-
-# Run
-compare_methods(n=1000, d=10)
-compare_methods(n=1000, d=100)
-compare_methods(n=1000, d=500)
-\end{pythonbox}
+# Compare: when d << n use Normal Eq, when d >> n use GD
+\end{pythonbox*}
 
 \textbf{תוצאה צפויה:}
 

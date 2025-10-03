@@ -483,9 +483,47 @@
   top=8pt,
   bottom=8pt,
   fonttitle=\bfseries,
+  coltitle=black,
   title=#1,
   before={\begin{python}\begingroup\selectlanguage{english}\textdir TLT\pardir TLT},
   after={\endgroup\end{python}},
+  listing options={
+    basicstyle=\pythonverbatimformat,
+    tabsize=4,
+    breaklines=true,
+    showspaces=false,
+    showtabs=false,
+    language=Python
+  }
+}
+
+% Non-floating version of pythonbox for long code blocks
+% Use pythonbox* when code is too long and overflows the page
+%
+% IMPORTANT: If pythonbox* code still overflows into footer:
+% SOLUTION - Simplify code to show ONLY core functions:
+%   - Remove: imports of non-core libraries (matplotlib, sklearn examples)
+%   - Remove: print statements, docstrings, example data generation
+%   - Remove: visualization code (UNLESS it IS the main topic)
+%   - Keep: ONLY the core algorithm/function being demonstrated
+% Alternative: Convert to Python pseudocode instead of executable code
+%
+\newtcblisting{pythonbox*}[1][]{
+  listing engine=listings,
+  listing only,
+  colback=codegray,
+  colframe=codegray,
+  arc=2pt,
+  boxrule=0pt,
+  left=8pt,
+  right=8pt,
+  top=8pt,
+  bottom=8pt,
+  fonttitle=\bfseries,
+  coltitle=black,
+  title=#1,
+  before={\begingroup\selectlanguage{english}\textdir TLT\pardir TLT},
+  after={\endgroup},
   listing options={
     basicstyle=\pythonverbatimformat,
     tabsize=4,

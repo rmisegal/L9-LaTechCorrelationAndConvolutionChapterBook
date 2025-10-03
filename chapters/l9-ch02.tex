@@ -168,37 +168,37 @@ from sklearn.model_selection import train_test_split
 
 def knn_curse_demo(dims, n_samples=1000):
     """
-    בוחן ביצועי KNN כפונקציה של מספר הממדים.
+    Examines KNN performance as a function of number of dimensions.
     """
     results = []
-    
+
     for d in dims:
-        # יצירת נתונים סינתטיים
+        # Create synthetic data
         X, y = make_classification(
             n_samples=n_samples,
             n_features=d,
-            n_informative=min(d, 10),  # רק 10 תכונות אינפורמטיביות
+            n_informative=min(d, 10),  # Only 10 informative features
             n_redundant=0,
             random_state=42
         )
-        
+
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.3, random_state=42
         )
-        
-        # אימון KNN
+
+        # Train KNN
         knn = KNeighborsClassifier(n_neighbors=5)
         knn.fit(X_train, y_train)
-        
-        # דיוק
+
+        # Accuracy
         accuracy = knn.score(X_test, y_test)
         results.append(accuracy)
-        
+
         print(f"Dim={d}: Accuracy={accuracy:.3f}")
-    
+
     return results
 
-# הרצה
+# Run
 dimensions = [2, 5, 10, 50, 100, 500, 1000]
 accuracies = knn_curse_demo(dimensions)
 \end{pythonbox}
@@ -336,43 +336,43 @@ import numpy as np
 
 def pca_manual(X, n_components=2):
     """
-    מבצע PCA ידני באמצעות SVD.
-    
+    Performs manual PCA using SVD.
+
     Args:
-        X: מטריצת נתונים (n_samples, n_features)
-        n_components: מספר מרכיבים עיקריים
-        
+        X: data matrix (n_samples, n_features)
+        n_components: number of principal components
+
     Returns:
-        X_reduced: נתונים מופחתים (n_samples, n_components)
-        components: הווקטורים העצמיים
-        explained_var_ratio: שיעור השונות המוסברת
+        X_reduced: reduced data (n_samples, n_components)
+        components: eigenvectors
+        explained_var_ratio: explained variance ratio
     """
-    # ריכוז הנתונים (חיסור ממוצע)
+    # Center the data (subtract mean)
     X_centered = X - np.mean(X, axis=0)
-    
-    # SVD - פירוק לערכים סינגולריים
-    # U: eigenvectors של XX^T
-    # S: ערכים סינגולריים (שורש של eigenvalues)
-    # Vt: eigenvectors של X^TX (מרכיבים עיקריים)
+
+    # Singular Value Decomposition
+    # U: eigenvectors of XX^T
+    # S: singular values (square root of eigenvalues)
+    # Vt: eigenvectors of X^TX (principal components)
     U, S, Vt = np.linalg.svd(X_centered, full_matrices=False)
-    
-    # בחירת k מרכיבים עיקריים
+
+    # Select k principal components
     components = Vt[:n_components]
-    
-    # הקרנה
+
+    # Projection
     X_reduced = X_centered @ components.T
-    
-    # חישוב שונות מוסברת
+
+    # Compute explained variance
     explained_variance = (S**2) / (len(X) - 1)
     explained_var_ratio = explained_variance[:n_components] / np.sum(explained_variance)
-    
+
     print(f"Explained variance ratio: {explained_var_ratio}")
     print(f"Total: {np.sum(explained_var_ratio):.3f}")
-    
+
     return X_reduced, components, explained_var_ratio
 
-# דוגמה
-X = np.random.rand(1000, 100)  # 1000 דגימות, 100 תכונות
+# Example
+X = np.random.rand(1000, 100)  # 1000 samples, 100 features
 X_reduced, components, var_ratio = pca_manual(X, n_components=10)
 print(f"Original shape: {X.shape}, Reduced shape: {X_reduced.shape}")
 \end{pythonbox}
@@ -401,35 +401,35 @@ from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import numpy as np
 
-# טעינת MNIST
+# Load MNIST
 mnist = fetch_openml('mnist_784', version=1, parser='auto')
-X = mnist.data.to_numpy()[:1000]  # 1000 דגימות ראשונות
+X = mnist.data.to_numpy()[:1000]  # First 1000 samples
 y = mnist.target.to_numpy()[:1000]
 
-# נרמול (חשוב!)
+# Normalization (important!)
 X = X / 255.0
 
 print(f"Original shape: {X.shape}")  # (1000, 784)
 
-# PCA להפחתה ל-50 מרכיבים
+# PCA reduction to 50 components
 pca = PCA(n_components=50)
 X_reduced = pca.fit_transform(X)
 
 print(f"Reduced shape: {X_reduced.shape}")  # (1000, 50)
 print(f"Explained variance: {np.sum(pca.explained_variance_ratio_):.3f}")
 
-# שחזור תמונות
+# Reconstruct images
 X_reconstructed = pca.inverse_transform(X_reduced)
 
-# הצגה
+# Display
 fig, axes = plt.subplots(2, 5, figsize=(12, 5))
 for i in range(5):
-    # תמונה מקורית
+    # Original image
     axes[0, i].imshow(X[i].reshape(28, 28), cmap='gray')
     axes[0, i].set_title(f'Original: {y[i]}')
     axes[0, i].axis('off')
-    
-    # תמונה משוחזרת
+
+    # Reconstructed image
     axes[1, i].imshow(X_reconstructed[i].reshape(28, 28), cmap='gray')
     axes[1, i].set_title(f'Reconstructed')
     axes[1, i].axis('off')
@@ -485,11 +485,11 @@ from sklearn.datasets import make_regression
 from sklearn.model_selection import train_test_split
 import numpy as np
 
-# יצירת נתונים סינתטיים: n << d (קללת המימדיות!)
+# Create synthetic data: n << d (curse of dimensionality!)
 X, y = make_regression(
-    n_samples=100,      # 100 דגימות בלבד
-    n_features=500,     # 500 תכונות!
-    n_informative=10,   # רק 10 רלוונטיות
+    n_samples=100,      # Only 100 samples
+    n_features=500,     # 500 features!
+    n_informative=10,   # Only 10 relevant
     noise=10,
     random_state=42
 )
@@ -511,7 +511,7 @@ lasso_score = lasso.score(X_test, y_test)
 print(f"Ridge R²: {ridge_score:.3f}")
 print(f"Lasso R²: {lasso_score:.3f}")
 
-# כמה משקלים Lasso אפס?
+# How many Lasso weights are zero?
 zero_weights = np.sum(np.abs(lasso.coef_) < 1e-5)
 print(f"Lasso zeroed out {zero_weights}/{len(lasso.coef_)} features")
 \end{pythonbox}

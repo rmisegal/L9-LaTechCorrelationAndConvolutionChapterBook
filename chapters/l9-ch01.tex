@@ -189,30 +189,30 @@ import numpy as np
 
 def cosine_similarity(u, v):
     """
-    מחשבת Cosine Similarity בין שני וקטורים.
-    
+    Computes Cosine Similarity between two vectors.
+
     Args:
-        u, v: וקטורי NumPy בעלי אותו אורך
-        
+        u, v: NumPy vectors of the same length
+
     Returns:
-        float: ציון דמיון בין -1 ל-1
+        float: similarity score between -1 and 1
     """
-    # מכפלה סקלרית - מונה
+    # Dot product - numerator
     dot_product = np.dot(u, v)
-    
-    # נורמות - מכנה
+
+    # Norms - denominator
     norm_u = np.linalg.norm(u)
     norm_v = np.linalg.norm(v)
-    
+
     # Cosine Similarity
     return dot_product / (norm_u * norm_v)
 
-# דוגמה: שני מסמכים (ווקטורי TF-IDF מדומים)
+# Example: two documents (simulated TF-IDF vectors)
 doc1 = np.array([1, 2, 3, 0, 0])
 doc2 = np.array([1, 1, 0, 4, 5])
 
 print(f"Similarity: {cosine_similarity(doc1, doc2):.3f}")
-# תוצאה: 0.277 - דמיון חלש
+# Result: 0.277 - weak similarity
 \end{pythonbox}
 
 \hebrewsubsection{\en{Word Embeddings}: המהפכה של \en{Word2Vec}}
@@ -269,8 +269,8 @@ model = KeyedVectors.load_word2vec_format(
 # מציאת מילים דומות - הפונקציה משתמשת ב-Cosine Similarity
 similar_words = model.most_similar('computer', topn=10)
 
-# הדפסה
-print("המילים הדומות ביותר ל-'computer':")
+# Print results
+print("Most similar words to 'computer':")
 for word, similarity in similar_words:
     print(f"  {word}: {similarity:.3f}")
 \end{pythonbox}
@@ -437,36 +437,36 @@ import matplotlib.pyplot as plt
 
 def curse_of_dimensionality_demo(dims, n_points=100):
     """
-    ממחיש את קללת המימדיות על ידי חישוב מרחקים.
+    Demonstrates the curse of dimensionality by computing distances.
     """
     results = []
-    
+
     for d in dims:
-        # יצירת נקודות אקראיות
+        # Create random points
         points = np.random.rand(n_points, d)
-        
-        # חישוב כל המרחקים
+
+        # Compute all distances
         distances = []
         for i in range(n_points):
             for j in range(i+1, n_points):
                 dist = np.linalg.norm(points[i] - points[j])
                 distances.append(dist)
-        
-        # סטטיסטיקות
+
+        # Statistics
         mean_dist = np.mean(distances)
         std_dist = np.std(distances)
-        ratio = std_dist / mean_dist  # כשזה שואף ל-0, הקללה חזקה
-        
+        ratio = std_dist / mean_dist  # When this approaches 0, the curse is strong
+
         results.append(ratio)
         print(f"Dim={d}: Mean={mean_dist:.3f}, Std={std_dist:.3f}, Ratio={ratio:.3f}")
-    
+
     return results
 
-# הרצה
+# Run
 dimensions = [2, 5, 10, 50, 100, 500, 1000]
 ratios = curse_of_dimensionality_demo(dimensions)
 
-# גרף
+# Plot
 plt.plot(dimensions, ratios, marker='o')
 plt.xlabel('Number of Dimensions')
 plt.ylabel('Std/Mean Ratio')

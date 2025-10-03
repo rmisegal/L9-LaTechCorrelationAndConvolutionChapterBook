@@ -1,0 +1,931 @@
+% l9-ch06.tex
+% פרק 6: רגרסיה לוגיסטית - מחיזוי מספרים למחלקות
+% מחבר: ד"ר יורם סגל
+% תאריך: ספטמבר 2025 - שיעור 08
+% כל הזכויות שמורות \textenglish{©}
+
+\hebrewsection{רגרסיה לוגיסטית: מחיזוי מספרים למחלקות}
+
+\noindent\textbf{\en{Logistic Regression: From Predicting Numbers to Predicting Classes}}
+
+\begin{center}
+\textbf{ד"ר יורם סגל}
+
+ספטמבר 2025 - שיעור 08
+
+כל הזכויות שמורות \textenglish{©}
+\end{center}
+
+\vspace{0.5cm}
+
+\hebrewsubsection{פרולוג: החלטה בינארית שהצילה מיליונים}
+
+בשנת \hebyear{1854}, בעיירה \en{Soho} שבלונדון, פרצה מגיפת כולרה שהרגה מאות תושבים תוך ימים ספורים. הרופאים לא הבינו איך המחלה מתפשטת - התאוריה המקובלת טענה ש"אוויר רע" גורם למגיפה. אך הרופא ג'ון סנואו \en{(John Snow)} חשד שהסיבה אחרת.
+
+סנואו עשה משהו מהפכני: הוא מיפה כל מקרה של כולרה על מפת הרובע, וחיפש דפוסים. הוא גילה שכמעט כל החולים התגוררו קרוב לבאר מים מסוימת ברחוב \en{Broad Street}. המסקנה היתה חדה: המים מזוהמים, לא האוויר.
+
+כשהוא הציג את הראיות לרשויות, הם הסירו את ידית המשאבה מהבאר. המגיפה נעצרה כמעט מיד. סנואו הוכיח שהכולרה מתפשטת דרך מים מזוהמים - תובנה שהצילה מיליוני חיים במאה הבאה.
+
+אבל מה הקשר לרגרסיה לוגיסטית?
+
+סנואו ביצע, למעשה, \textbf{סיווג בינארי} \en{(Binary Classification)}: האם אדם שגר במרחק $x$ מטרים מהבאר יחלה בכולרה (כן/לא)? זו בדיוק השאלה שרגרסיה לוגיסטית עונה עליה. היא לא מנבאת מספר (כמו "כמה חולים יהיו"), אלא \textbf{הסתברות לקטגוריה} ("מה ההסתברות שאדם יחלה").
+
+היום, רגרסיה לוגיסטית היא אחד הכלים הנפוצים ביותר ברפואה, פיננסים, ושיווק. האם מטופל יפתח סוכרת? האם לווה יחזיר הלוואה? האם לקוח ילחץ על מודעה? כל אלה הן שאלות של סיווג בינארי, והתשובה היא הסתברות שבין \num{0} ל-\num{1}.
+
+\hebrewsubsection{מרגרסיה ליניארית לרגרסיה לוגיסטית: מדוע הקפיצה?}
+
+בפרק הקודם למדנו על רגרסיה ליניארית - מציאת הקו הטוב ביותר שמנבא ערך מספרי. אבל מה קורה כשאנחנו לא רוצים לנבא מספר, אלא קטגוריה?
+
+נניח שאנחנו רוצים לנבא האם סטודנט יעבור מבחן (עבר/נכשל) על סמך שעות לימוד. אם ננסה להשתמש ברגרסיה ליניארית ישירות, $\hat{y} = w_0 + w_1 x$, נקבל תוצאות אבסורדיות:
+
+\begin{hebrewtable}[H]
+\caption{רגרסיה ליניארית לסיווג - הבעיה}
+\centering
+\begin{rtltabular}{|r|r|l|}
+\hline
+\textbf{\hebcell{שעות לימוד}} & \textbf{\hebcell{חיזוי ליניארי}} & \textbf{\hebcell{בעיה}} \\
+\hline
+\num{1} & \num{-0.5} & \hebcell{הסתברות שלילית?!} \\
+\hline
+\num{3} & \num{0.3} & \hebcell{סביר} \\
+\hline
+\num{5} & \num{0.7} & \hebcell{סביר} \\
+\hline
+\num{10} & \num{1.5} & \hebcell{הסתברות מעל \num{1}?!} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+הבעיה: רגרסיה ליניארית יכולה לתת כל ערך בין $-\infty$ ל- $+\infty$, אבל הסתברות חייבת להיות בין \num{0} ל-\num{1}.
+
+\textbf{הפתרון: פונקציית סיגמואיד.}
+
+\hebrewsubsection{פונקציית \en{Sigmoid}: הגשר בין קו להסתברות}
+
+דמיינו שיש לכם קו ישר שיכול להיות כל מספר, ואתם רוצים "לדחוס" אותו לטווח $[0, 1]$. איך עושים את זה?
+
+התשובה: פונקציית \textbf{\en{Sigmoid}} (נקראת גם \textbf{פונקציה לוגיסטית}):
+
+\begin{equation}
+\sigma(z) = \frac{1}{1 + e^{-z}}
+\end{equation}
+
+\textbf{תכונות מדהימות:}
+
+\begin{enumerate}
+\item $\sigma(z) \in (0, 1)$ לכל $z \in \mathbb{R}$ - תמיד הסתברות חוקית
+\item $\sigma(0) = 0.5$ - סימטרי סביב אפס
+\item $\lim_{z \to \infty} \sigma(z) = 1$ - שואף ל-\num{1} עבור ערכים גדולים
+\item $\lim_{z \to -\infty} \sigma(z) = 0$ - שואף לאפס עבור ערכים קטנים
+\item הנגזרת פשוטה: $\sigma'(z) = \sigma(z)(1 - \sigma(z))$ - יפהפייה לאופטימיזציה
+\end{enumerate}
+
+\textbf{פסאודו-קוד - ויזואליזציה של \en{Sigmoid}:}
+
+\begin{pythonbox}[פונקציית \en{Sigmoid} - ויזואליזציה]
+import numpy as np
+import matplotlib.pyplot as plt
+
+def sigmoid(z):
+    """Sigmoid function"""
+    return 1 / (1 + np.exp(-z))
+
+# Plotting
+z = np.linspace(-10, 10, 1000)
+y = sigmoid(z)
+
+plt.figure(figsize=(10, 6))
+plt.plot(z, y, linewidth=2, label='σ(z) = 1/(1+e^(-z))')
+plt.axhline(y=0.5, color='red', linestyle='--', alpha=0.5, label='Decision Boundary')
+plt.axvline(x=0, color='red', linestyle='--', alpha=0.5)
+plt.xlabel('z')
+plt.ylabel('σ(z)')
+plt.title('Sigmoid Function')
+plt.grid(True, alpha=0.3)
+plt.legend()
+plt.ylim(-0.1, 1.1)
+plt.show()
+
+# Special points
+print(f"σ(-10) = {sigmoid(-10):.6f}  ≈ 0")
+print(f"σ(-2)  = {sigmoid(-2):.6f}")
+print(f"σ(0)   = {sigmoid(0):.6f}   = 0.5")
+print(f"σ(2)   = {sigmoid(2):.6f}")
+print(f"σ(10)  = {sigmoid(10):.6f}  ≈ 1")
+\end{pythonbox}
+
+\textbf{האינטואיציה - עקומת \en{S}:}
+
+הגרף של \en{Sigmoid} נראה כמו אות \en{S} מוחלקת. כשהקלט קטן מאוד (שלילי), הפלט כמעט אפס. כשהקלט גדול מאוד (חיובי), הפלט כמעט אחד. באמצע, סביב אפס, יש מעבר חלק.
+
+זה בדיוק מה שאנחנו רוצים להסתברות: ככל שהראיות חזקות יותר לטובת מחלקה אחת, ההסתברות שואפת ל-\num{1}. ככל שהן חזקות לטובת המחלקה השנייה, ההסתברות שואפת לאפס.
+
+\hebrewsubsection{המודל: שילוב ליניארי עם \en{Sigmoid}}
+
+עכשיו נחבר את שני העולמות: הליניארי והלוגיסטי.
+
+\textbf{צעד \num{1}: חישוב ליניארי}
+
+כמו ברגרסיה ליניארית, נחשב שילוב ליניארי של התכונות:
+
+\begin{equation}
+z = w_0 + w_1 x_1 + w_2 x_2 + \cdots + w_d x_d = \vec{w}^T\vec{x}
+\end{equation}
+
+$z$ נקרא ה\textbf{\en{logit}} או ה\textbf{\en{log-odds}}.
+
+\textbf{צעד \num{2}: החלת \en{Sigmoid}}
+
+נעביר את $z$ דרך \en{Sigmoid} כדי לקבל הסתברות:
+
+\begin{equation}
+P(y=1|\vec{x}) = \sigma(z) = \frac{1}{1 + e^{-\vec{w}^T\vec{x}}}
+\end{equation}
+
+זו ההסתברות שהדגימה $\vec{x}$ שייכת למחלקה \num{1}.
+
+\textbf{צעד \num{3}: החלטה}
+
+כדי לקבל תחזית בינארית (כן/לא), נשתמש בסף (בדרך כלל \num{0.5}):
+
+\begin{equation}
+\hat{y} = \begin{cases}
+1 & \text{if } P(y=1|\vec{x}) \geq 0.5 \\
+0 & \text{otherwise}
+\end{cases}
+\end{equation}
+
+\textbf{דוגמה מספרית:}
+
+נניח $z = w_0 + w_1 \cdot \text{שעות\_לימוד}$, ומצאנו $w_0 = -5, w_1 = 1$.
+
+\begin{hebrewtable}[H]
+\caption{חיזוי עבירת מבחן}
+\centering
+\begin{rtltabular}{|r|r|r|r|}
+\hline
+\textbf{\hebcell{שעות}} & \textbf{\hebcell{\en{z}}} & \textbf{\hebcell{\en{σ(z)}}} & \textbf{\hebcell{החלטה}} \\
+\hline
+\num{1} & $-4$ & \num{0.018} & \hebcell{נכשל} \\
+\hline
+\num{3} & $-2$ & \num{0.119} & \hebcell{נכשל} \\
+\hline
+\num{5} & $0$ & \num{0.500} & \hebcell{על הגבול} \\
+\hline
+\num{7} & $2$ & \num{0.881} & \hebcell{עבר} \\
+\hline
+\num{10} & $5$ & \num{0.993} & \hebcell{עבר (בטוח)} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+שימו לב: ההסתברות תמיד חוקית (בין \num{0} ל-\num{1}), וככל ששעות הלימוד גדלות, ההסתברות להצלחה עולה בצורה חלקה.
+
+\hebrewsubsection{פונקציית ההפסד: למה לא \en{MSE}?}
+
+בפרק הקודם השתמשנו ב\en{MSE} (סכום ריבועי השגיאות). למה לא פשוט להמשיך עם זה?
+
+\textbf{בעיה \num{1} - לא קמורה:}
+
+עם \en{Sigmoid}, הפונקציה $\text{MSE}(w) = \frac{1}{n}\sum (y_i - \sigma(\vec{w}^T\vec{x}_i))^2$ \textit{אינה קמורה} \en{(non-convex)}. יש לה מינימומים מקומיים רבים, ו\en{Gradient Descent} ייתקע בהם.
+
+\textbf{בעיה \num{2} - לא מתאימה להסתברויות:}
+
+\en{MSE} מעניש סטיות ליניארית. אבל בהסתברויות, הפרש בין \num{0.01} ל-\num{0.05} הוא הרבה יותר משמעותי מהפרש בין \num{0.51} ל-\num{0.55}.
+
+\textbf{הפתרון: \en{Cross-Entropy Loss}}
+
+פונקציית \en{Cross-Entropy} (נקראת גם \en{Log-Loss}) מתוכננת במיוחד להסתברויות:
+
+\begin{equation}
+\mathcal{L}(\vec{w}) = -\frac{1}{n}\sum_{i=1}^{n}\left[y_i\log(\hat{p}_i) + (1-y_i)\log(1-\hat{p}_i)\right]
+\end{equation}
+
+כאשר $\hat{p}_i = \sigma(\vec{w}^T\vec{x}_i)$ היא ההסתברות החזויה ש-$y_i = 1$.
+
+\textbf{הבנת הנוסחה:}
+
+נפרק למקרים:
+
+\textit{אם $y_i = 1$ (המחלקה האמיתית היא \num{1}):}
+\begin{equation}
+\mathcal{L}_i = -\log(\hat{p}_i)
+\end{equation}
+
+אם $\hat{p}_i = 1$ (בטוח לחלוטין, וצדק) \rarrow{} $\mathcal{L}_i = 0$ (אין עונש)
+
+אם $\hat{p}_i = 0.5$ (לא בטוח) \rarrow{} $\mathcal{L}_i = 0.69$
+
+אם $\hat{p}_i = 0.01$ (טעה לגמרי) \rarrow{} $\mathcal{L}_i = 4.6$ (עונש כבד!)
+
+\textit{אם $y_i = 0$ (המחלקה האמיתית היא \num{0}):}
+\begin{equation}
+\mathcal{L}_i = -\log(1-\hat{p}_i)
+\end{equation}
+
+אם $\hat{p}_i = 0$ (בטוח לחלוטין, וצדק) \rarrow{} $\mathcal{L}_i = 0$
+
+אם $\hat{p}_i = 0.99$ (טעה לגמרי) \rarrow{} $\mathcal{L}_i = 4.6$
+
+\textbf{הקשר ל\en{Maximum Likelihood}:}
+
+בדיוק כמו ש\en{MSE} נובע מהנחה על התפלגות נורמלית של שגיאות, \en{Cross-Entropy} נובע מהנחה על \textbf{התפלגות ברנולי} \en{(Bernoulli Distribution)} - ההתפלגות של אירועים בינאריים.
+
+מקסום ה\en{Likelihood} שקול למזעור \en{Cross-Entropy}. זו ההצדקה התאורטית העמוקה.
+
+\textbf{פסאודו-קוד - השוואת \en{MSE} ו\en{Cross-Entropy}:}
+
+\begin{pythonbox}[השוואת פונקציות הפסד]
+import numpy as np
+import matplotlib.pyplot as plt
+
+def mse_loss(y_true, y_pred):
+    """MSE - not suitable for classification"""
+    return (y_true - y_pred)**2
+
+def cross_entropy_loss(y_true, y_pred):
+    """Cross-Entropy - suitable for classification"""
+    eps = 1e-15  # prevent log(0)
+    y_pred = np.clip(y_pred, eps, 1 - eps)
+    if y_true == 1:
+        return -np.log(y_pred)
+    else:
+        return -np.log(1 - y_pred)
+
+# Plotting
+y_pred = np.linspace(0.01, 0.99, 1000)
+
+plt.figure(figsize=(14, 6))
+
+# MSE
+plt.subplot(1, 2, 1)
+plt.plot(y_pred, [mse_loss(1, p) for p in y_pred], label='y_true=1')
+plt.plot(y_pred, [mse_loss(0, p) for p in y_pred], label='y_true=0')
+plt.xlabel('Predicted Probability')
+plt.ylabel('Loss')
+plt.title('MSE Loss (Not Suitable)')
+plt.legend()
+plt.grid(True, alpha=0.3)
+
+# Cross-Entropy
+plt.subplot(1, 2, 2)
+plt.plot(y_pred, [cross_entropy_loss(1, p) for p in y_pred], label='y_true=1')
+plt.plot(y_pred, [cross_entropy_loss(0, p) for p in y_pred], label='y_true=0')
+plt.xlabel('Predicted Probability')
+plt.ylabel('Loss')
+plt.title('Cross-Entropy Loss (Correct)')
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.yscale('log')
+
+plt.tight_layout()
+plt.show()
+\end{pythonbox}
+
+\textbf{תוצאה:} \en{Cross-Entropy} מעניש שגיאות בצורה לוגריתמית - טעויות קטנות מקבלות עונש קטן, אבל ביטחון גבוה בטעות מקבל עונש עצום.
+
+\hebrewsubsection{הגרדיאנט: אופטימיזציה של רגרסיה לוגיסטית}
+
+כדי למצוא את המשקלים $\vec{w}^*$ שממזערים את \en{Cross-Entropy}, נצטרך לחשב את הגרדיאנט.
+
+\textbf{נגזרת \en{Sigmoid} - הנוסחה היפה:}
+
+\begin{align}
+\frac{d\sigma(z)}{dz} &= \frac{d}{dz}\left[\frac{1}{1+e^{-z}}\right] \nonumber \\
+&= \frac{e^{-z}}{(1+e^{-z})^2} \nonumber \\
+&= \frac{1}{1+e^{-z}} \cdot \frac{e^{-z}}{1+e^{-z}} \nonumber \\
+&= \sigma(z) \cdot (1 - \sigma(z))
+\end{align}
+
+זו נוסחה יפהפייה - הנגזרת מתבטאת ב\en{Sigmoid} עצמו!
+
+\textbf{גרדיאנט \en{Cross-Entropy}:}
+
+לאחר חישובים (שאציג בפירוט), מתקבלת תוצאה אלגנטית להפתיע:
+
+\begin{equation}
+\frac{\partial \mathcal{L}}{\partial w_j} = \frac{1}{n}\sum_{i=1}^{n}(\hat{p}_i - y_i)x_{ij}
+\end{equation}
+
+או בצורה וקטורית:
+
+\begin{equation}
+\nabla_{\vec{w}}\mathcal{L} = \frac{1}{n}\mathbf{X}^T(\vec{\hat{p}} - \vec{y})
+\end{equation}
+
+\textbf{הפתעה מדהימה:} הנוסחה כמעט זהה לרגרסיה ליניארית! ההבדל היחיד: במקום $\vec{\hat{y}} = \mathbf{X}\vec{w}$ יש לנו $\vec{\hat{p}} = \sigma(\mathbf{X}\vec{w})$.
+
+\textbf{הוכחה מפורטת:}
+
+נתחיל מפונקציית ההפסד לדגימה אחת:
+
+\begin{equation}
+\mathcal{L}_i = -[y_i\log(\hat{p}_i) + (1-y_i)\log(1-\hat{p}_i)]
+\end{equation}
+
+כאשר $\hat{p}_i = \sigma(z_i) = \sigma(\vec{w}^T\vec{x}_i)$.
+
+נגזור לפי $w_j$ (כלל השרשרת):
+
+\begin{align}
+\frac{\partial \mathcal{L}_i}{\partial w_j} &= \frac{\partial \mathcal{L}_i}{\partial \hat{p}_i} \cdot \frac{\partial \hat{p}_i}{\partial z_i} \cdot \frac{\partial z_i}{\partial w_j}
+\end{align}
+
+\textit{צעד 1:} נגזרת לפי $\hat{p}_i$:
+
+\begin{align}
+\frac{\partial \mathcal{L}_i}{\partial \hat{p}_i} &= -\left[\frac{y_i}{\hat{p}_i} - \frac{1-y_i}{1-\hat{p}_i}\right] \nonumber \\
+&= \frac{-(y_i(1-\hat{p}_i) - (1-y_i)\hat{p}_i)}{\hat{p}_i(1-\hat{p}_i)} \nonumber \\
+&= \frac{\hat{p}_i - y_i}{\hat{p}_i(1-\hat{p}_i)}
+\end{align}
+
+\textit{צעד 2:} נגזרת \en{Sigmoid}:
+
+\begin{equation}
+\frac{\partial \hat{p}_i}{\partial z_i} = \hat{p}_i(1 - \hat{p}_i)
+\end{equation}
+
+\textit{צעד 3:} נגזרת השילוב הליניארי:
+
+\begin{equation}
+\frac{\partial z_i}{\partial w_j} = x_{ij}
+\end{equation}
+
+\textit{צעד 4:} שילוב הכל:
+
+\begin{align}
+\frac{\partial \mathcal{L}_i}{\partial w_j} &= \frac{\hat{p}_i - y_i}{\hat{p}_i(1-\hat{p}_i)} \cdot \hat{p}_i(1-\hat{p}_i) \cdot x_{ij} \nonumber \\
+&= (\hat{p}_i - y_i) x_{ij}
+\end{align}
+
+הגורמים $\hat{p}_i(1-\hat{p}_i)$ מתבטלים! זו הסיבה שהנוסחה פשוטה כל כך.
+
+עבור כל הנתונים:
+
+\begin{equation}
+\frac{\partial \mathcal{L}}{\partial w_j} = \frac{1}{n}\sum_{i=1}^{n}(\hat{p}_i - y_i)x_{ij} \quad \blacksquare
+\end{equation}
+
+\textbf{אלגוריתם \en{Gradient Descent} לרגרסיה לוגיסטית:}
+
+\begin{pythonbox}[רגרסיה לוגיסטית - מימוש מלא]
+import numpy as np
+
+def sigmoid(z):
+    """Sigmoid function"""
+    return 1 / (1 + np.exp(-np.clip(z, -500, 500)))  # clip to prevent overflow
+
+def cross_entropy_loss(y_true, y_pred):
+    """Cross-Entropy Loss"""
+    eps = 1e-15
+    y_pred = np.clip(y_pred, eps, 1 - eps)
+    return -np.mean(y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred))
+
+def logistic_regression_gd(X, y, alpha=0.01, max_iters=1000, tol=1e-6):
+    """
+    Logistic regression using Gradient Descent.
+
+    Args:
+        X: feature matrix (n, d)
+        y: binary labels vector (n,)
+        alpha: learning rate
+        max_iters: maximum number of iterations
+        tol: convergence threshold
+
+    Returns:
+        w: final weights
+        history: loss history
+    """
+    # Add intercept
+    X_with_intercept = np.column_stack([np.ones(len(X)), X])
+    n, d = X_with_intercept.shape
+
+    # Initialization
+    w = np.zeros(d)
+    history = []
+
+    for iteration in range(max_iters):
+        # Forward pass
+        z = X_with_intercept @ w
+        p_pred = sigmoid(z)
+
+        # Loss
+        loss = cross_entropy_loss(y, p_pred)
+        history.append(loss)
+
+        # Gradient
+        gradient = (1/n) * X_with_intercept.T @ (p_pred - y)
+
+        # Update
+        w_new = w - alpha * gradient
+
+        # Convergence check
+        if np.linalg.norm(w_new - w) < tol:
+            print(f"Converged at iteration {iteration}")
+            break
+
+        w = w_new
+
+        if iteration % 100 == 0:
+            print(f"Iteration {iteration}, Loss: {loss:.4f}")
+
+    return w, history
+
+# Example: Students - exam passing
+np.random.seed(42)
+n = 100
+
+# Features: study hours (1-10)
+hours = np.random.uniform(1, 10, n)
+X = hours.reshape(-1, 1)
+
+# Labels: passed (1) if studied more than 5 hours + noise
+prob_pass = sigmoid(2 * (hours - 5))
+y = (np.random.rand(n) < prob_pass).astype(int)
+
+# Training
+w, history = logistic_regression_gd(X, y, alpha=0.1, max_iters=1000)
+
+print(f"\nWeights: w0={w[0]:.3f}, w1={w[1]:.3f}")
+
+# Decision boundary: z=0 → w0 + w1*x = 0 → x = -w0/w1
+decision_boundary = -w[0] / w[1]
+print(f"Decision boundary: {decision_boundary:.2f} hours")
+
+# Visualization
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(12, 5))
+
+# Plot 1: convergence
+plt.subplot(1, 2, 1)
+plt.plot(history)
+plt.xlabel('Iteration')
+plt.ylabel('Cross-Entropy Loss')
+plt.title('Training Convergence')
+plt.grid(True, alpha=0.3)
+
+# Plot 2: probabilities and decision boundary
+plt.subplot(1, 2, 2)
+x_plot = np.linspace(0, 11, 100)
+z_plot = w[0] + w[1] * x_plot
+p_plot = sigmoid(z_plot)
+
+plt.scatter(hours[y==0], y[y==0], color='red', alpha=0.5, label='Failed')
+plt.scatter(hours[y==1], y[y==1], color='green', alpha=0.5, label='Passed')
+plt.plot(x_plot, p_plot, 'b-', linewidth=2, label='P(Pass)')
+plt.axvline(decision_boundary, color='black', linestyle='--', label='Decision Boundary')
+plt.axhline(0.5, color='gray', linestyle=':', alpha=0.5)
+plt.xlabel('Study Hours')
+plt.ylabel('Probability / Outcome')
+plt.title('Logistic Regression: Pass Probability')
+plt.legend()
+plt.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+\end{pythonbox}
+
+\hebrewsubsection{גבול ההחלטה: הקו שמפריד בין מחלקות}
+
+אחד המושגים המרכזיים בסיווג הוא \textbf{גבול ההחלטה} \en{(Decision Boundary)} - הקו (או המשטח) שמפריד בין המחלקות.
+
+\textbf{אינטואיציה:}
+
+גבול ההחלטה הוא המקום שבו ההסתברות היא בדיוק \num{0.5} - כלומר, המודל לא בטוח לאיזה צד להכריע.
+
+\textbf{מתמטית:}
+
+\begin{align}
+P(y=1|\vec{x}) &= 0.5 \nonumber \\
+\sigma(\vec{w}^T\vec{x}) &= 0.5 \nonumber \\
+\frac{1}{1 + e^{-\vec{w}^T\vec{x}}} &= 0.5 \nonumber \\
+e^{-\vec{w}^T\vec{x}} &= 1 \nonumber \\
+\vec{w}^T\vec{x} &= 0
+\end{align}
+
+\textbf{המסקנה:} גבול ההחלטה הוא \textbf{היפר-מישור ליניארי} $\vec{w}^T\vec{x} = 0$.
+
+\textbf{במימד דו-ממדי} ($d=1$, תכונה אחת):
+
+\begin{equation}
+w_0 + w_1 x = 0 \quad \Rightarrow \quad x = -\frac{w_0}{w_1}
+\end{equation}
+
+זו נקודה בודדת על ציר ה-$x$.
+
+\textbf{במימד תלת-ממדי} ($d=2$, שתי תכונות):
+
+\begin{equation}
+w_0 + w_1 x_1 + w_2 x_2 = 0
+\end{equation}
+
+זהו קו ישר במישור.
+
+\textbf{במימד גבוה יותר:}
+
+היפר-מישור שמפריד את המרחב לשני חצאים.
+
+\textbf{משמעות גיאומטרית:}
+
+הווקטור $\vec{w}$ הוא \textbf{נורמל} (אנכי) לגבול ההחלטה. הוא מצביע לכיוון המחלקה החיובית ($y=1$). ככל שנקודה רחוקה יותר מגבול ההחלטה בכיוון $\vec{w}$, ההסתברות ש-$y=1$ גבוהה יותר.
+
+\hebrewsubsection{מדדי הערכה: דיוק זה לא הכל}
+
+אחרי שאימנו מודל, איך נדע עד כמה הוא טוב?
+
+התשובה הראשונה שעולה בראש היא \textbf{דיוק} \en{(Accuracy)} - אחוז החיזויים הנכונים. אבל זה לא מספיק.
+
+\textbf{הבעיה של דיוק - דוגמה:}
+
+נניח שאנחנו מנבאים מחלה נדירה שמופיעה רק ב\percent{1} מהאוכלוסייה. אם המודל שלנו פשוט יחזה "לא חולה" לכולם, הוא יהיה \textbf{נכון ב\percent{99} מהמקרים!}
+
+אבל המודל הזה חסר תועלת - הוא לא זיהה אף חולה אחד.
+
+\textbf{מטריצת הבלבול} \en{(Confusion Matrix)}:
+
+כדי להבין באמת איך המודל עובד, צריך לראות את ההתפלגות המלאה של החיזויים:
+
+\begin{hebrewtable}[H]
+\caption{מטריצת בלבול}
+\centering
+\begin{rtltabular}{|l|c|c|}
+\hline
+& \textbf{\hebcell{חזוי: \num{0}}} & \textbf{\hebcell{חזוי: \num{1}}} \\
+\hline
+\textbf{\hebcell{אמיתי: \num{0}}} & \hebcell{\en{True Negative (TN)}} & \hebcell{\en{False Positive (FP)}} \\
+\hline
+\textbf{\hebcell{אמיתי: \num{1}}} & \hebcell{\en{False Negative (FN)}} & \hebcell{\en{True Positive (TP)}} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\textbf{מדדים נגזרים:}
+
+\textbf{דיוק} \en{(Accuracy)}:
+\begin{equation}
+\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
+\end{equation}
+
+\textbf{דיוק חיובי} \en{(Precision)}:
+\begin{equation}
+\text{Precision} = \frac{TP}{TP + FP}
+\end{equation}
+"מכל מי שחזינו כחיובי, כמה באמת חיוביים?"
+
+\textbf{רגישות} \en{(Recall / Sensitivity)}:
+\begin{equation}
+\text{Recall} = \frac{TP}{TP + FN}
+\end{equation}
+"מכל החיוביים האמיתיים, כמה זיהינו?"
+
+\textbf{\en{F1-Score}} - ממוצע הרמוני:
+\begin{equation}
+F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+\end{equation}
+
+\textbf{דוגמה - אבחון סרטן:}
+
+נניח שיש \num{100} מטופלים: \num{5} חולים, \num{95} בריאים.
+
+המודל חיזה: \num{4} כחולים (מתוכם \num{3} נכונים), \num{96} כבריאים.
+
+\begin{hebrewtable}[H]
+\caption{דוגמה: אבחון סרטן}
+\centering
+\begin{rtltabular}{|l|c|c|}
+\hline
+& \textbf{\hebcell{חזוי: בריא}} & \textbf{\hebcell{חזוי: חולה}} \\
+\hline
+\textbf{\hebcell{אמיתי: בריא}} & \num{94} & \num{1} \\
+\hline
+\textbf{\hebcell{אמיתי: חולה}} & \num{2} & \num{3} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+חישוב:
+\begin{itemize}
+\item \en{Accuracy} = $(94+3)/100 = 0.97$ - נראה מצוין!
+\item \en{Precision} = $3/(3+1) = 0.75$ - מכל החיזויים החיוביים, \percent{75} נכונים
+\item \en{Recall} = $3/(3+2) = 0.60$ - זיהינו רק \percent{60} מהחולים!
+\item $F_1 = 2 \cdot (0.75 \cdot 0.60)/(0.75 + 0.60) = 0.67$
+\end{itemize}
+
+\textbf{המסקנה:} למרות דיוק של \percent{97}, המודל החמיץ \num{2} מתוך \num{5} החולים - בעיה חמורה ברפואה!
+
+\textbf{איזון הסף:}
+
+ניתן לשלוט באיזון בין \en{Precision} ו\en{Recall} על ידי שינוי סף ההחלטה (במקום \num{0.5}, להשתמש ב\num{0.3} או \num{0.7}).
+
+\textbf{עקומת \en{ROC} (Receiver Operating Characteristic)}:
+
+גרף המציג את ה\en{True Positive Rate (Recall)} מול ה\en{False Positive Rate} עבור כל הספים האפשריים.
+
+\textbf{\en{AUC (Area Under Curve)}} - שטח מתחת לעקומת \en{ROC}:
+\begin{itemize}
+\item \en{AUC} = \num{1.0}: מודל מושלם
+\item \en{AUC} = \num{0.5}: מודל אקראי (חסר תועלת)
+\item \en{AUC} > \num{0.8}: מודל טוב מאוד
+\end{itemize}
+
+\begin{pythonbox}[חישוב מדדי הערכה ועקומת \en{ROC}]
+from sklearn.metrics import confusion_matrix, classification_report, roc_curve, auc
+import matplotlib.pyplot as plt
+
+def evaluate_classification(y_true, y_pred_proba, threshold=0.5):
+    """
+    Comprehensive evaluation of classification model.
+    """
+    # Decision by threshold
+    y_pred = (y_pred_proba >= threshold).astype(int)
+
+    # Confusion matrix
+    cm = confusion_matrix(y_true, y_pred)
+    print("Confusion Matrix:")
+    print(cm)
+
+    # Detailed report
+    print("\nClassification Report:")
+    print(classification_report(y_true, y_pred))
+
+    # ROC curve
+    fpr, tpr, thresholds = roc_curve(y_true, y_pred_proba)
+    roc_auc = auc(fpr, tpr)
+    
+    plt.figure(figsize=(10, 5))
+    
+    # ROC Curve
+    plt.subplot(1, 2, 1)
+    plt.plot(fpr, tpr, linewidth=2, label=f'ROC (AUC = {roc_auc:.3f})')
+    plt.plot([0, 1], [0, 1], 'k--', label='Random')
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('ROC Curve')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    
+    # Precision-Recall Trade-off
+    plt.subplot(1, 2, 2)
+    precisions = []
+    recalls = []
+    for thresh in np.linspace(0, 1, 100):
+        y_pred_temp = (y_pred_proba >= thresh).astype(int)
+        tn, fp, fn, tp = confusion_matrix(y_true, y_pred_temp).ravel()
+        if tp + fp > 0:
+            precisions.append(tp / (tp + fp))
+        else:
+            precisions.append(0)
+        recalls.append(tp / (tp + fn) if (tp + fn) > 0 else 0)
+    
+    plt.plot(recalls, precisions, linewidth=2)
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.title('Precision-Recall Trade-off')
+    plt.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.show()
+    
+    return roc_auc
+
+# Usage
+# y_true = ...  # true labels
+# y_pred_proba = ...  # predicted probabilities
+# evaluate_classification(y_true, y_pred_proba)
+\end{pythonbox}
+
+\hebrewsubsection{הכללה למרובה מחלקות: \en{Multiclass Classification}}
+
+עד כה דיברנו על סיווג בינארי - שתי מחלקות בלבד. אבל מה קורה כשיש יותר משתיים?
+
+\textbf{דוגמאות:}
+\begin{itemize}
+\item זיהוי ספרות כתובות ביד (\num{0}-\num{9}) - \num{10} מחלקות
+\item סיווג מינים של פרחים (סחלב, ורד, חמנית) - \num{3} מחלקות
+\item זיהוי רגשות (שמח, עצוב, כועס, ניטרלי) - \num{4} מחלקות
+\end{itemize}
+
+\textbf{שתי גישות עיקריות:}
+
+\textbf{גישה \num{1} - \en{One-vs-Rest (OvR)}:}
+
+אמן $K$ מסווגים בינאריים, כל אחד מפריד מחלקה אחת מכל השאר.
+
+למשל, עבור \num{3} מחלקות:
+\begin{itemize}
+\item מסווג \num{1}: "האם זה מחלקה A?" (כן/לא)
+\item מסווג \num{2}: "האם זה מחלקה B?" (כן/לא)
+\item מסווג \num{3}: "האם זה מחלקה C?" (כן/לא)
+\end{itemize}
+
+בשלב החיזוי, בחר את המחלקה עם ההסתברות הגבוהה ביותר.
+
+\textbf{גישה \num{2} - \en{Softmax Regression (Multinomial Logistic Regression)}:}
+
+הכללה ישירה של רגרסיה לוגיסטית ל-$K$ מחלקות.
+
+\textbf{פונקציית \en{Softmax}:}
+
+במקום \en{Sigmoid}, משתמשים ב\en{Softmax} שממפה וקטור של $K$ מספרים להסתברויות:
+
+\begin{equation}
+\text{Softmax}(z_k) = \frac{e^{z_k}}{\sum_{j=1}^{K} e^{z_j}}
+\end{equation}
+
+\textbf{תכונות:}
+\begin{itemize}
+\item $\sum_{k=1}^{K} \text{Softmax}(z_k) = 1$ - סכום ההסתברויות הוא \num{1}
+\item $\text{Softmax}(z_k) \in (0, 1)$ - כל ערך הוא הסתברות חוקית
+\item אם $z_k \gg z_j$ לכל $j \neq k$, אזי $\text{Softmax}(z_k) \approx 1$
+\end{itemize}
+
+\textbf{המודל:}
+
+עבור כל מחלקה $k$, יש וקטור משקלים $\vec{w}_k$:
+
+\begin{equation}
+P(y=k|\vec{x}) = \frac{e^{\vec{w}_k^T\vec{x}}}{\sum_{j=1}^{K} e^{\vec{w}_j^T\vec{x}}}
+\end{equation}
+
+\textbf{פונקציית ההפסד - \en{Categorical Cross-Entropy}:}
+
+\begin{equation}
+\mathcal{L} = -\frac{1}{n}\sum_{i=1}^{n}\sum_{k=1}^{K} y_{ik} \log(\hat{p}_{ik})
+\end{equation}
+
+כאשר $y_{ik} = 1$ אם הדגימה $i$ שייכת למחלקה $k$, ואחרת $y_{ik} = 0$ (קידוד \en{one-hot}).
+
+\textbf{קשר ל\en{Sigmoid}:}
+
+במקרה של שתי מחלקות ($K=2$), \en{Softmax} מצטמצם ל\en{Sigmoid}! זו הצדקה יפה לכך שהכללנו נכון.
+
+\begin{pythonbox}[דוגמה: \en{Softmax Regression}]
+import numpy as np
+
+def softmax(z):
+    """
+    Softmax function.
+
+    Args:
+        z: matrix (n, K) of logits
+
+    Returns:
+        probabilities (n, K)
+    """
+    # Subtract maximum for numerical stability
+    z_shifted = z - np.max(z, axis=1, keepdims=True)
+    exp_z = np.exp(z_shifted)
+    return exp_z / np.sum(exp_z, axis=1, keepdims=True)
+
+def softmax_regression(X, y, K, alpha=0.01, max_iters=1000):
+    """
+    Softmax Regression for multi-class.
+
+    Args:
+        X: feature matrix (n, d)
+        y: labels (n,) - numbers between 0 and K-1
+        K: number of classes
+
+    Returns:
+        W: weight matrix (d+1, K)
+    """
+    # Add intercept
+    X_with_intercept = np.column_stack([np.ones(len(X)), X])
+    n, d = X_with_intercept.shape
+
+    # One-hot encoding of y
+    Y_onehot = np.zeros((n, K))
+    Y_onehot[np.arange(n), y] = 1
+
+    # Weight initialization
+    W = np.random.randn(d, K) * 0.01
+
+    for iteration in range(max_iters):
+        # Forward pass
+        logits = X_with_intercept @ W
+        probs = softmax(logits)
+
+        # Loss
+        loss = -np.mean(np.sum(Y_onehot * np.log(probs + 1e-15), axis=1))
+
+        # Gradient
+        gradient = (1/n) * X_with_intercept.T @ (probs - Y_onehot)
+
+        # Update
+        W = W - alpha * gradient
+
+        if iteration % 100 == 0:
+            print(f"Iteration {iteration}, Loss: {loss:.4f}")
+
+    return W
+
+# Example: Iris dataset (3 classes)
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+
+iris = load_iris()
+X_train, X_test, y_train, y_test = train_test_split(
+    iris.data, iris.target, test_size=0.3, random_state=42
+)
+
+# Training
+W = softmax_regression(X_train, y_train, K=3, alpha=0.1, max_iters=500)
+
+# Evaluation
+X_test_with_intercept = np.column_stack([np.ones(len(X_test)), X_test])
+logits_test = X_test_with_intercept @ W
+probs_test = softmax(logits_test)
+y_pred = np.argmax(probs_test, axis=1)
+
+accuracy = np.mean(y_pred == y_test)
+print(f"\nAccuracy on test set: {accuracy:.3f}")
+\end{pythonbox}
+
+\hebrewsubsection{תרגיל תכנות עצמי \num{6.1} - רגרסיה לוגיסטית מאפס}
+
+\textbf{מטרה:} להבין לעומק את המתמטיקה של רגרסיה לוגיסטית.
+
+\textbf{משימה:}
+
+\begin{enumerate}
+\item צרו נתונים סינתטיים לסיווג בינארי (שתי מחלקות שניתן להפריד ליניארית)
+\item מימשו רגרסיה לוגיסטית מאפס (ללא \en{sklearn})
+\item השוו לפתרון של \en{sklearn}
+\item שנו את סף ההחלטה ובחנו את ההשפעה על \en{Precision/Recall}
+\item הציגו את גבול ההחלטה גרפית
+\end{enumerate}
+
+\hebrewsubsection{אפילוג: מסיווג פשוט לרשתות עמוקות}
+
+הגענו לסיום המסע ברגרסיה לוגיסטית. התחלנו עם ג'ון סנואו שחיפש את מקור מגיפת הכולרה, וסיימנו עם \en{Softmax} - הבסיס של רשתות נוירונים מודרניות.
+
+הקשר עמוק יותר ממה שנראה.
+
+\textbf{רשת נוירונים פשוטה} (\en{Feedforward Neural Network}) היא, למעשה, סדרה של רגרסיות לוגיסטיות מחוברות:
+
+\begin{itemize}
+\item כל נוירון בשכבה מבצע שילוב ליניארי של הקלטים
+\item לאחר מכן מופעלת פונקציה לא-ליניארית (\en{activation function}) - כמו \en{Sigmoid, ReLU}
+\item השכבה האחרונה משתמשת ב\en{Softmax} לסיווג
+\end{itemize}
+
+ההבדל היחיד: במקום להעביר את התכונות הגולמיות ישירות ל\en{Softmax}, הרשת הנוירונית \textbf{לומדת} איזה שילוב של תכונות הכי טוב - היא יוצרת "תכונות חדשות" בשכבות הביניים.
+
+אבל המבנה הבסיסי? זהה לחלוטין. פונקציית הפסד - \en{Cross-Entropy}. האופטימיזציה - \en{Gradient Descent} (או גרסאות מתקדמות כמו \en{Adam}).
+
+כש\en{David Rumelhart, Geoffrey Hinton}, ו\en{Ronald Williams} פרסמו את אלגוריתם ה\en{Backpropagation} ב-\hebyear{1986} \cite{rumelhart1986}, הם לא המציאו משהו חדש לגמרי. הם הראו איך לחשב את הגרדיאנט ברשת עמוקה באמצעות כלל השרשרת - בדיוק כמו שעשינו ברגרסיה לוגיסטית, רק בסקלה גדולה יותר.
+
+היום, מודלים כמו \en{GPT, BERT}, ו\en{Vision Transformers} משתמשים באותם עקרונות: פונקציית הפסד (בדרך כלל \en{Cross-Entropy}), גרדיאנט, ואופטימיזציה איטרטיבית. הסקלה השתנתה - מיליארדי פרמטרים במקום מאות - אבל היסוד נותר זהה.
+
+\hebrewsubsection{סיכום: מה למדנו}
+
+רגרסיה לוגיסטית מלמדת אותנו שלפעמים הקפיצה הקטנה ביותר - מחיזוי מספרים לחיזוי הסתברויות - דורשת שינוי מהותי בגישה המתמטית.
+
+\textbf{העקרונות המרכזיים:}
+
+\begin{enumerate}
+\item \textbf{פונקציית \en{Sigmoid}} - הגשר בין ליניארי ללוגיסטי
+\item \textbf{\en{Cross-Entropy Loss}} - פונקציית ההפסד הנכונה להסתברויות
+\item \textbf{גבול החלטה ליניארי} - למרות הלא-ליניאריות, הגבול עדיין ישר
+\item \textbf{מדדי הערכה} - דיוק זה לא הכל, צריך \en{Precision, Recall, F1}
+\item \textbf{הכללה למרובה מחלקות} - \en{Softmax} כהרחבה טבעית
+\end{enumerate}
+
+\textbf{הכלים שרכשנו:}
+
+\begin{itemize}
+\item \en{Sigmoid} ו\en{Softmax} - מיפוי למרחב הסתברויות
+\item \en{Cross-Entropy} - מדידת מרחק בין התפלגויות
+\item מטריצת בלבול - הבנה מעמיקה של ביצועים
+\item עקומת \en{ROC} ו\en{AUC} - הערכה גלובלית
+\end{itemize}
+
+\subsection*{מטלות וקריאה מורחבת}
+
+\textbf{תרגיל \num{6.1}:} מימשו רגרסיה לוגיסטית מאפס (ראו פסאודו-קוד).
+
+\textbf{תרגיל \num{6.2}:} הוכיחו שבמקרה של שתי מחלקות, \en{Softmax} מצטמצם ל\en{Sigmoid}.
+
+רמז: התחילו מנוסחת \en{Softmax} ל-$K=2$ והראו ש-$P(y=1) = \sigma(z_1 - z_0)$.
+
+\textbf{תרגיל \num{6.3}:} השוו \en{Precision} ו\en{Recall} עבור ספי החלטה שונים (\num{0.3}, \num{0.5}, \num{0.7}).
+
+\textbf{קריאה מורחבת:}
+
+\begin{itemize}
+\item \cite{cox1958} – \en{"The Regression Analysis of Binary Sequences"}: D.R. Cox על רגרסיה לוגיסטית
+\item \cite{rumelhart1986} – \en{"Learning Representations by Back-propagating Errors"}: Backpropagation והקשר לרגרסיה
+\item \cite{goodfellow2016} – \en{Deep Learning}, פרק \num{6}: רשתות \en{Feedforward}
+\item \cite{bishop2006} – \en{Pattern Recognition and Machine Learning}, פרק \num{4}: מודלים ליניאריים לסיווג
+\end{itemize}
+
+\textbf{שאלות להעמקה:}
+
+\begin{enumerate}
+\item מדוע \en{Cross-Entropy} מתאים יותר מ\en{MSE} לסיווג?
+\item מה יקרה לגבול ההחלטה אם נכפיל את כל המשקלים ב-\num{2}?
+\item האם רגרסיה לוגיסטית יכולה לפתור בעיית \en{XOR}?
+\end{enumerate}
+
+\textbf{סיום פרק \num{6}}

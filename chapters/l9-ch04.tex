@@ -252,21 +252,21 @@ np.random.seed(42)
 n = 100
 x = np.random.randn(n)
 
-# קורלציות שונות
+# Different correlations
 correlations = [1.0, 0.8, 0.5, 0.0, -0.5, -0.8, -1.0]
 
 fig, axes = plt.subplots(2, 4, figsize=(16, 8))
 axes = axes.flatten()
 
 for i, r_target in enumerate(correlations):
-    # יצירת Y עם קורלציה רצויה
+    # Create Y with desired correlation
     noise = np.random.randn(n)
     y = r_target * x + np.sqrt(1 - r_target**2) * noise
     
-    # חישוב קורלציה בפועל
+    # Compute actual correlation
     r_actual = np.corrcoef(x, y)[0, 1]
     
-    # ציור
+    # Plot
     axes[i].scatter(x, y, alpha=0.6)
     axes[i].set_title(f'r = {r_actual:.2f}')
     axes[i].set_xlabel('X')
@@ -306,54 +306,54 @@ plt.show()
 \begin{pythonbox}[חישוב קורלציה וקו-ווריאנס ידני]
 import numpy as np
 
-# נתונים
+# Data
 x = np.array([160, 170, 180, 175, 165])
 y = np.array([55, 65, 75, 70, 60])
 
-print("=== דרך 1: נוסחה ישירה ===")
-# ממוצעים
+print("=== Method 1: Direct formula ===")
+# Means
 x_mean = np.mean(x)
 y_mean = np.mean(y)
 
-# קו-ווריאנס
+# Covariance
 cov_manual = np.mean((x - x_mean) * (y - y_mean))
 print(f"Cov(X,Y) = {cov_manual:.2f}")
 
-# סטיות תקן
+# Standard deviations
 sigma_x = np.std(x)
 sigma_y = np.std(y)
 
-# קורלציה
+# Correlation
 r_manual = cov_manual / (sigma_x * sigma_y)
 print(f"r = {r_manual:.4f}")
 
-print("\n=== דרך 2: אלגברה ליניארית ===")
-# ווקטורים ממורכזים
+print("\n=== Method 2: Linear algebra ===")
+# Centered vectors
 x_c = x - x_mean
 y_c = y - y_mean
 
-# קו-ווריאנס כמכפלה סקלרית
+# Covariance as dot product
 cov_dot = np.dot(x_c, y_c) / len(x)
 print(f"Cov(X,Y) = {cov_dot:.2f}")
 
-# קורלציה כ-Cosine Similarity
+# Correlation as Cosine Similarity
 r_cosine = np.dot(x_c, y_c) / (np.linalg.norm(x_c) * np.linalg.norm(y_c))
 print(f"r = {r_cosine:.4f}")
 
-print("\n=== דרך 3: NumPy ===")
-# מטריצת קו-ווריאנס
-cov_matrix = np.cov(x, y, ddof=0)  # ddof=0 לחלוקה ב-n
+print("\n=== Method 3: NumPy ===")
+# Covariance matrix
+cov_matrix = np.cov(x, y, ddof=0)  # ddof=0 for division by n
 cov_numpy = cov_matrix[0, 1]
 print(f"Cov(X,Y) = {cov_numpy:.2f}")
 
-# מטריצת קורלציה
+# Correlation matrix
 corr_matrix = np.corrcoef(x, y)
 r_numpy = corr_matrix[0, 1]
 print(f"r = {r_numpy:.4f}")
 
-print("\n=== השוואה ===")
-print(f"Cov - כל השיטות זהות? {np.allclose([cov_manual, cov_dot, cov_numpy], cov_manual)}")
-print(f"r - כל השיטות זהות? {np.allclose([r_manual, r_cosine, r_numpy], r_manual)}")
+print("\n=== Comparison ===")
+print(f"Cov - All methods identical? {np.allclose([cov_manual, cov_dot, cov_numpy], cov_manual)}")
+print(f"r - All methods identical? {np.allclose([r_manual, r_cosine, r_numpy], r_manual)}")
 \end{pythonbox}
 
 \textbf{תוצאה צפויה:} כל השיטות יתנו אותה תוצאה, מה שמדגים את הקשר העמוק בין קורלציה ומכפלה סקלרית.
@@ -402,12 +402,12 @@ print(f"r - כל השיטות זהות? {np.allclose([r_manual, r_cosine, r_nump
 import seaborn as sns
 import pandas as pd
 
-# דוגמה: Iris dataset
+# Example: Iris dataset
 from sklearn.datasets import load_iris
 iris = load_iris()
 df = pd.DataFrame(iris.data, columns=iris.feature_names)
 
-# מטריצת קורלציה
+# Correlation matrix
 corr_matrix = df.corr()
 
 # Heatmap
@@ -418,7 +418,7 @@ plt.title('Correlation Matrix - Iris Dataset')
 plt.tight_layout()
 plt.show()
 
-# זיהוי Multicollinearity
+# Detect Multicollinearity
 high_corr = (corr_matrix.abs() > 0.9) & (corr_matrix != 1)
 if high_corr.any().any():
     print("Warning: High correlation detected (Multicollinearity)")
@@ -576,45 +576,45 @@ from scipy.stats import pearsonr
 
 def partial_correlation(x, y, z):
     """
-    מחשבת קורלציה חלקית r_{xy.z}
-    
+    Computes partial correlation r_{xy.z}
+
     Args:
-        x, y, z: וקטורי נתונים
-        
+        x, y, z: data vectors
+
     Returns:
-        float: קורלציה חלקית
+        float: partial correlation
     """
-    # קורלציות זוגיות
+    # Pairwise correlations
     r_xy, _ = pearsonr(x, y)
     r_xz, _ = pearsonr(x, z)
     r_yz, _ = pearsonr(y, z)
     
-    # נוסחת קורלציה חלקית
+    # Partial correlation formula
     numerator = r_xy - r_xz * r_yz
     denominator = np.sqrt((1 - r_xz**2) * (1 - r_yz**2))
     
     return numerator / denominator
 
-# דוגמה: גלידה, טביעות, חום
+# Example: ice cream, drownings, heat
 np.random.seed(42)
 n = 100
 
-# חום הקיץ (משתנה מבלבל)
+# Summer heat (confounding variable)
 heat = np.random.randn(n)
 
-# גלידה וטביעות תלויים בחום
+# Ice cream and drownings depend on heat
 ice_cream = 0.8 * heat + np.random.randn(n) * 0.2
 drownings = 0.7 * heat + np.random.randn(n) * 0.3
 
-# קורלציה רגילה
+# Regular correlation
 r_regular, _ = pearsonr(ice_cream, drownings)
-print(f"קורלציה רגילה: {r_regular:.3f}")
+print(f"Regular correlation: {r_regular:.3f}")
 
-# קורלציה חלקית (שליטה על חום)
+# Partial correlation (controlling for heat)
 r_partial = partial_correlation(ice_cream, drownings, heat)
-print(f"קורלציה חלקית (שליטה על חום): {r_partial:.3f}")
+print(f"Partial correlation (controlling for heat): {r_partial:.3f}")
 
-# התוצאה: הקורלציה נעלמת!
+# Result: correlation disappears!
 \end{pythonbox}
 
 \textbf{תוצאה צפויה:} הקורלציה הרגילה גבוהה ($\sim 0.7$), אך הקורלציה החלקית כמעט אפס ($\sim 0.05$).
@@ -632,17 +632,17 @@ print(f"קורלציה חלקית (שליטה על חום): {r_partial:.3f}")
 \begin{pythonbox}[קורלציה אפס עם תלות מושלמת]
 import matplotlib.pyplot as plt
 
-# יצירת קשר ריבועי
+# Create quadratic relationship
 x = np.linspace(-3, 3, 100)
 y = x**2
 
-# חישוב קורלציה
+# Compute correlation
 r, _ = pearsonr(x, y)
 
-print(f"קורלציה: {r:.6f}")
-print("אבל Y תלוי לחלוטין ב-X!")
+print(f"Correlation: {r:.6f}")
+print("But Y is completely dependent on X!")
 
-# ציור
+# Plot
 plt.figure(figsize=(8, 6))
 plt.scatter(x, y, alpha=0.6)
 plt.xlabel('X')
@@ -693,20 +693,20 @@ plt.show()
 \begin{pythonbox}[השוואת קורלציית פירסון וספירמן]
 from scipy.stats import spearmanr
 
-# קשר ריבועי
+# Quadratic relationship
 x = np.linspace(-3, 3, 100)
 y = x**2
 
-# פירסון
+# Pearson
 r_pearson, _ = pearsonr(x, y)
 
-# ספירמן
+# Spearman
 r_spearman, _ = spearmanr(x, y)
 
 print(f"Pearson: {r_pearson:.4f}")
 print(f"Spearman: {r_spearman:.4f}")
 
-# קשר אקספוננציאלי (מונוטוני)
+# Exponential relationship (monotonic)
 x_exp = np.linspace(0, 5, 100)
 y_exp = np.exp(x_exp)
 
@@ -739,30 +739,30 @@ print(f"Spearman: {r_spearman_exp:.4f}")
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-# פרמטרים
+# Parameters
 np.random.seed(42)
 n = 200
 
-# משתנה מבלבל: חום הקיץ
-temperature = np.random.uniform(15, 35, n)  # טמפרטורה בצלזיוס
+# Confounding variable: summer heat
+temperature = np.random.uniform(15, 35, n)  # Temperature in Celsius
 
-# גלידה תלויה בחום + רעש
+# Ice cream depends on heat + noise
 ice_cream = 2 * temperature + np.random.randn(n) * 5
 
-# טביעות תלויות בחום + רעש
+# Drownings depend on heat + noise
 drownings = 1.5 * temperature + np.random.randn(n) * 3
 
-# קורלציות
+# Correlations
 r_naive, _ = pearsonr(ice_cream, drownings)
 r_partial = partial_correlation(ice_cream, drownings, temperature)
 
-print(f"קורלציה נאיבית (ללא שליטה): {r_naive:.3f}")
-print(f"קורלציה חלקית (עם שליטה על חום): {r_partial:.3f}")
+print(f"Naive correlation (without control): {r_naive:.3f}")
+print(f"Partial correlation (controlling for heat): {r_partial:.3f}")
 
-# ויזואליזציה
+# Visualization
 fig = plt.figure(figsize=(15, 5))
 
-# גרף 1: קורלציה נאיבית
+# Plot 1: Naive correlation
 ax1 = fig.add_subplot(131)
 ax1.scatter(ice_cream, drownings, c=temperature, cmap='hot', alpha=0.6)
 ax1.set_xlabel('Ice Cream Sales')
@@ -770,7 +770,7 @@ ax1.set_ylabel('Drownings')
 ax1.set_title(f'Naive Correlation: r = {r_naive:.3f}')
 ax1.grid(True, alpha=0.3)
 
-# גרף 2: 3D - רואים את המבלבל
+# Plot 2: 3D - shows the confounder
 ax2 = fig.add_subplot(132, projection='3d')
 ax2.scatter(temperature, ice_cream, drownings, c=temperature, cmap='hot', alpha=0.6)
 ax2.set_xlabel('Temperature')
@@ -778,7 +778,7 @@ ax2.set_ylabel('Ice Cream')
 ax2.set_zlabel('Drownings')
 ax2.set_title('True Relationship (3D)')
 
-# גרף 3: לאחר הסרת המבלבל (שאריות)
+# Plot 3: After removing confounder (residuals)
 from sklearn.linear_model import LinearRegression
 model_ice = LinearRegression().fit(temperature.reshape(-1, 1), ice_cream)
 model_drown = LinearRegression().fit(temperature.reshape(-1, 1), drownings)

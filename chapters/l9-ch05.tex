@@ -1,0 +1,1019 @@
+% l9-ch05.tex
+% פרק 5: רגרסיה ליניארית - הקו שעצב את המודרניות
+% מחבר: ד"ר יורם סגל
+% תאריך: ספטמבר 2025 - שיעור 07
+% כל הזכויות שמורות \textenglish{©}
+
+\hebrewsection{רגרסיה ליניארית: הקו שעצב את המודרניות}
+
+\noindent\textbf{\en{Linear Regression: The Line That Shaped Modernity}}
+
+\begin{center}
+\textbf{ד"ר יורם סגל}
+
+ספטמבר 2025 - שיעור 07
+
+כל הזכויות שמורות \textenglish{©}
+\end{center}
+
+\vspace{0.5cm}
+
+\hebrewsubsection{פרולוג: הקו שחיזה את המציאות}
+
+בליל ה\en{-}\num{1} בינואר \hebyear{1801}, האסטרונום האיטלקי ג'וזפה פיאצי \en{(Giuseppe Piazzi)} גילה נקודת אור קטנה שנעה לאט על רקע הכוכבים. הוא מדד את מיקומה במשך \num{41} לילות, עד שהשמש עלתה והעלימה אותה מהעין. העולם המדעי היה נסער - האם זה כוכב לכת חדש? והחשוב מכל: איפה הוא יופיע שוב כשהשמש תרד?
+
+הבעיה היתה מתמטית טהורה. פיאצי היה מחזיק ב\en{-}\num{41} נקודות מדידה, כל אחת עם שגיאות מדידה קטנות. היה צריך למצוא את המסלול - עקומה מתמטית שמתארת את תנועת הגוף השמיימי החדש. מתמטיקאים גדולים ניסו ונכשלו.
+
+עד שצעיר בן \num{24}, קרל פרידריך גאוס \en{(Carl Friedrich Gauss)}, פרסם חישוב שהדהים את העולם המדעי. הוא לא רק חיזה היכן יופיע הגוף - הוא צדק בדיוק מדהים. השיטה שלו? מה שאנחנו מכירים היום כ\textbf{רגרסיה ליניארית} ושיטת \textbf{הריבועים הפחותים} \en{(Least Squares)}.
+
+הקו שגאוס משך דרך נקודות המדידה של פיאצי לא היה רק כלי מתמטי. הוא היה ביטוי לאמונה פילוסופית עמוקה: שהמציאות, למרות הרעש והאי-ודאות, ניתנת לחיזוי. שמאחורי הכאוס של המדידות מסתתר סדר מתמטי. שניתן, באמצעות הכלים הנכונים, \textit{לראות את הבלתי נראה}.
+
+היום, יותר מ\en{-}\num{220} שנה אחרי ההישג של גאוס, רגרסיה ליניארית היא אבן היסוד של כמעט כל מערכת בינה מלאכותית. מנועי החיפוש של \en{Google}, מערכות ההמלצות של \en{Netflix}, הרכב האוטונומי, אבחון רפואי - כולם בנויים על עקרונות שגאוס גילה כשניסה למצוא כוכב לכת אבוד.
+
+זה הפרק שבו נבין איך זה עובד.
+
+\hebrewsubsection{תחילת המסע: מגאוס לגוגל}
+
+הסיפור של רגרסיה ליניארית הוא סיפור של תחרות מדעית, גאווה אישית, וויכוח על קדימות שנמשך עשרות שנים.
+
+\textbf{המתחרים:}
+
+ב\en{-}\hebyear{1805}, הצרפתי אדריאן-מארי לז'נדר \en{(Adrien-Marie Legendre)} פרסם את שיטת הריבועים הפחותים בספרו על מסלולי שביטים \cite{legendre1805}. הוא תיאר בבירור את העיקרון: מצא את הקו שממזער את \textit{סכום ריבועי השגיאות}.
+
+אבל גאוס טען שהוא השתמש בשיטה כבר ב\en{-}\hebyear{1795} - עשר שנים לפני הפרסום של לז'נדר! הוא סירב לפרסם את השיטה כי חיפש הצדקה תיאורטית מושלמת. רק ב\en{-}\hebyear{1809}, בספרו \en{"Theoria Motus"} \cite{gauss1809}, גאוס פרסם לא רק את השיטה, אלא גם את ההצדקה הסטטיסטית המלאה שלה.
+
+הוויכוח על הקרדיט היה מר. לז'נדר, שכבר היה בשנות ה\en{-}\num{50} לחייו, חש שנשדד. גאוס, הצעיר והגאה, סירב להתנצל. עד היום, ספרי ההיסטוריה חלוקים: יש המייחסים את ההמצאה ללז'נדר (הראשון שפרסם), ויש המייחסים אותה לגאוס (שפיתח את התאוריה המלאה).
+
+\textbf{הקפיצה המושגית:}
+
+מה שמרתק בסיפור הזה הוא לא רק הויכוח האישי, אלא הקפיצה המושגית. לפני גאוס ולז'נדר, מדענים ניסו למצוא \textit{קשרים מדויקים} בין משתנים. המהפכה היתה להבין שבעולם האמיתי, עם שגיאות מדידה ורעש, אנחנו לא מחפשים \textit{אמת מדויקת} אלא \textit{קירוב הטוב ביותר}.
+
+זו אותה קפיצה שמאפשרת היום לבינה מלאכותית לפעול. מודלי \en{GPT} לא "יודעים" את התשובה הנכונה - הם מוצאים את התשובה ה\textit{סבירה ביותר} על סמך הנתונים. זהו היסוד הפילוסופי של כל למידת מכונה מודרנית.
+
+\hebrewsubsection{השאלה המרכזית: מהו "הקו הטוב ביותר"?}
+
+דמיינו שאתם עומדים מול לוח עם פיזור של נקודות. כל נקודה מייצגת תצפית - למשל, גובה ומשקל של אדם, או שנות לימוד והכנסה. אתם רוצים למשוך קו דרך הנקודות האלה. אבל איזה קו?
+
+אם תבקשו מעשרה אנשים למשוך קו "באופן אינטואיטיבי", תקבלו עשרה קווים שונים. כולם יהיו "סבירים", אבל שונים. השאלה היא: \textbf{האם יש קו אחד שהוא "הכי טוב"?}
+
+זוהי שאלה מתמטית עמוקה שמסתתרת מאחוריה שאלה פילוסופית: מה המשמעות של "טוב"?
+
+\textbf{הגדרות אפשריות של "טוב":}
+
+נניח שיש לנו $n$ נקודות: $(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n)$, ואנחנו מחפשים קו $\hat{y} = w_0 + w_1 x$.
+
+עבור כל נקודה, השגיאה היא $e_i = y_i - \hat{y}_i = y_i - (w_0 + w_1 x_i)$.
+
+איך נמדוד עד כמה הקו "טוב"? יש כמה אפשרויות:
+
+\textbf{אפשרות \num{1} - סכום השגיאות:} $\sum_{i=1}^{n} e_i$
+
+בעיה: שגיאות חיוביות ושליליות מבטלות זו את זו. קו שעובר הרחק מכל הנקודות, אבל "מאוזן", יקבל ציון מושלם.
+
+\textbf{אפשרות \num{2} - סכום ערכים מוחלטים:} $\sum_{i=1}^{n} |e_i|$
+
+זה עובד! זה נקרא \en{Mean Absolute Error (MAE)}. אבל יש בעיה טכנית: הפונקציה המוחלטת אינה גזירה בנקודה $x=0$, מה שמסבך את האופטימיזציה.
+
+\textbf{אפשרות \num{3} - סכום ריבועי השגיאות:} $\sum_{i=1}^{n} e_i^2$
+
+זה הבחירה של גאוס ולז'נדר. למה?
+
+\hebrewsubsection{פונקציית ההפסד: למה דווקא ריבוע?}
+
+גאוס לא בחר את הריבוע באקראי. היו לו ארבע סיבות מתמטיות עמוקות:
+
+\textbf{סיבה \num{1} - גזירות:}
+
+הפונקציה $f(x) = x^2$ גזירה בכל מקום, והנגזרת שלה פשוטה: $f'(x) = 2x$. זה הופך את בעיית האופטימיזציה לפתירה אנליטית. הפונקציה המוחלטת $|x|$ אינה גזירה ב\en{-}$x=0$, מה שמסבך את המתמטיקה.
+
+\textbf{סיבה \num{2} - הטיה כלפי שגיאות גדולות:}
+
+ריבוע \textit{מעניש} שגיאות גדולות הרבה יותר משגיאות קטנות. שגיאה של \num{2} נותנת $2^2 = 4$, אבל שגיאה של \num{10} נותנת $10^2 = 100$ - פי \num{25} יותר! זה אומר שהמודל "ירצה" להימנע משגיאות גדולות.
+
+בואו נראה דוגמה מספרית:
+
+\begin{hebrewtable}[H]
+\caption{השוואת עונשים: \en{MAE} מול \en{MSE}}
+\centering
+\begin{rtltabular}{|r|r|r|}
+\hline
+\textbf{\hebcell{שגיאה}} & \textbf{\hebcell{\en{MAE} ($|e|$)}} & \textbf{\hebcell{\en{MSE} ($e^2$)}} \\
+\hline
+\num{1} & \num{1} & \num{1} \\
+\hline
+\num{2} & \num{2} & \num{4} \\
+\hline
+\num{5} & \num{5} & \num{25} \\
+\hline
+\num{10} & \num{10} & \num{100} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+שימו לב: ב\en{-}MSE, שגיאה של \num{10} היא פי \num{10} יותר גרועה משגיאה של \num{5}, אבל ב\en{-}MAE היא רק פי \num{2} יותר גרועה.
+
+\textbf{סיבה \num{3} - הצדקה הסתברותית:}
+
+גאוס הוכיח משהו מדהים: אם שגיאות המדידה מתפלגות נורמלית (התפלגות גאוס!), אז מזעור סכום ריבועי השגיאות הוא \textit{בדיוק} שיטת ה\en{-}Maximum Likelihood - השיטה הסטטיסטית המושלמת למציאת הפרמטרים הטובים ביותר.
+
+הקשר העמוק הזה בין ריבוע השגיאות להתפלגות הנורמלית הוא אחד היופי של המתמטיקה. נראה את ההוכחה:
+
+\textbf{משפט \num{5.1} - שקילות \en{MSE} ו\en{-}Maximum Likelihood:}
+
+אם שגיאות המדידה $\epsilon_i \sim \mathcal{N}(0, \sigma^2)$ (מתפלגות נורמלית), אזי מזעור \en{MSE} שקול למקסום ה\en{-}Likelihood.
+
+\textbf{הוכחה:}
+
+נניח $y_i = w_0 + w_1 x_i + \epsilon_i$ כאשר $\epsilon_i \sim \mathcal{N}(0, \sigma^2)$.
+
+פונקציית ה\en{-}Likelihood עבור תצפית בודדת:
+
+\begin{equation}
+p(y_i | x_i, w_0, w_1) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(y_i - w_0 - w_1 x_i)^2}{2\sigma^2}\right)
+\end{equation}
+
+ה\en{-}Likelihood עבור כל הנתונים (בהנחת בלתי-תלות):
+
+\begin{equation}
+L(w_0, w_1) = \prod_{i=1}^{n} p(y_i | x_i, w_0, w_1)
+\end{equation}
+
+\en{Log-Likelihood} (נוח יותר לאופטימיזציה):
+
+\begin{align}
+\log L(w_0, w_1) &= \sum_{i=1}^{n} \log p(y_i | x_i, w_0, w_1) \nonumber \\
+&= \sum_{i=1}^{n} \left[ \log\frac{1}{\sqrt{2\pi\sigma^2}} - \frac{(y_i - w_0 - w_1 x_i)^2}{2\sigma^2} \right] \nonumber \\
+&= -\frac{n}{2}\log(2\pi\sigma^2) - \frac{1}{2\sigma^2} \sum_{i=1}^{n} (y_i - w_0 - w_1 x_i)^2
+\end{align}
+
+מקסום \en{Log-Likelihood} שקול למזעור:
+
+\begin{equation}
+\sum_{i=1}^{n} (y_i - w_0 - w_1 x_i)^2
+\end{equation}
+
+שזה בדיוק סכום ריבועי השגיאות! $\blacksquare$
+
+\textbf{סיבה \num{4} - קשר לאלגברה ליניארית:}
+
+הריבוע יוצר קשר ישיר למכפלה סקלרית ולנורמה $L_2$. זה מאפשר לנסח את הבעיה כ\textbf{הטלה אורתוגונלית} במרחב וקטורי - גישה גיאומטרית עמוקה שנראה בהמשך.
+
+\textbf{הגדרה פורמלית - \en{Mean Squared Error (MSE)}:}
+
+\begin{equation}
+\text{MSE}(w_0, w_1) = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 = \frac{1}{n} \sum_{i=1}^{n} (y_i - w_0 - w_1 x_i)^2
+\end{equation}
+
+המטרה שלנו: למצוא $w_0^*, w_1^*$ שממזערים את \en{MSE}.
+
+\hebrewsubsection{הכלי המתמטי: גזירה חלקית כמצפן}
+
+איך מוצאים את המינימום של פונקציה? אם הייתה לנו פונקציה של משתנה אחד, $f(x)$, היינו גוזרים ומשווים לאפס: $f'(x) = 0$.
+
+אבל כאן יש לנו פונקציה של \textit{שני} משתנים: $\text{MSE}(w_0, w_1)$. צריך כלי חדש: \textbf{גזירה חלקית} \en{(Partial Derivative)}.
+
+\textbf{האינטואיציה של גזירה חלקית:}
+
+דמיינו שאתם עומדים על הר. הגובה שלכם הוא פונקציה של שני משתנים: קו אורך וקו רוחב, $h(x, y)$. גזירה חלקית לפי $x$ עונה על השאלה: "אם אני הולך צעד אחד מזרחה (כיוון $x$), כמה הגובה משתנה?"
+
+באופן פורמלי, הנגזרת החלקית של $f(x, y)$ לפי $x$ היא:
+
+\begin{equation}
+\frac{\partial f}{\partial x} = \lim_{h \to 0} \frac{f(x+h, y) - f(x, y)}{h}
+\end{equation}
+
+שימו לב: אנחנו מחזיקים את $y$ \textit{קבוע} ומשנים רק את $x$.
+
+\textbf{כללי גזירה חלקית:}
+
+כמו בגזירה רגילה, יש כללים:
+
+\begin{hebrewtable}[H]
+\caption{כללי גזירה חלקית}
+\centering
+\begin{rtltabular}{|l|l|}
+\hline
+\textbf{\hebcell{פונקציה}} & \textbf{\hebcell{נגזרת חלקית לפי \en{x}}} \\
+\hline
+$f(x,y) = x^2 + y^2$ & $\frac{\partial f}{\partial x} = 2x$ \\
+\hline
+$f(x,y) = xy$ & $\frac{\partial f}{\partial x} = y$ \\
+\hline
+$f(x,y) = x^2y + xy^2$ & $\frac{\partial f}{\partial x} = 2xy + y^2$ \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+העיקרון: \textbf{התייחס לכל המשתנים האחרים כאל קבועים}.
+
+\textbf{הגרדיאנט - וקטור הכיוון:}
+
+כשיש $n$ משתנים, אוספים את כל הנגזרות החלקיות לווקטור אחד שנקרא \textbf{גרדיאנט} \en{(Gradient)}:
+
+\begin{equation}
+\nabla f = \begin{bmatrix} \frac{\partial f}{\partial w_0} \\ \frac{\partial f}{\partial w_1} \\ \vdots \\ \frac{\partial f}{\partial w_n} \end{bmatrix}
+\end{equation}
+
+הגרדיאנט מצביע על \textbf{כיוון העלייה המהירה ביותר}. לכן, כדי לרדת (למצוא מינימום), נלך בכיוון \textit{ההפוך} לגרדיאנט: $-\nabla f$.
+
+זה היסוד של \en{Gradient Descent} - אבל לפני שנגיע לשם, נמצא את הפתרון האנליטי.
+
+\hebrewsubsection{הפתרון המושלם: \en{Normal Equation}}
+
+אנחנו מחפשים את $w_0^*, w_1^*$ שממזערים:
+
+\begin{equation}
+\text{MSE}(w_0, w_1) = \frac{1}{n} \sum_{i=1}^{n} (y_i - w_0 - w_1 x_i)^2
+\end{equation}
+
+\textbf{צעד \num{1}: נגזרות חלקיות}
+
+נגזור לפי $w_0$:
+
+\begin{align}
+\frac{\partial \text{MSE}}{\partial w_0} &= \frac{\partial}{\partial w_0} \left[ \frac{1}{n} \sum_{i=1}^{n} (y_i - w_0 - w_1 x_i)^2 \right] \nonumber \\
+&= \frac{1}{n} \sum_{i=1}^{n} 2(y_i - w_0 - w_1 x_i) \cdot (-1) \nonumber \\
+&= -\frac{2}{n} \sum_{i=1}^{n} (y_i - w_0 - w_1 x_i)
+\end{align}
+
+נגזור לפי $w_1$:
+
+\begin{align}
+\frac{\partial \text{MSE}}{\partial w_1} &= \frac{\partial}{\partial w_1} \left[ \frac{1}{n} \sum_{i=1}^{n} (y_i - w_0 - w_1 x_i)^2 \right] \nonumber \\
+&= \frac{1}{n} \sum_{i=1}^{n} 2(y_i - w_0 - w_1 x_i) \cdot (-x_i) \nonumber \\
+&= -\frac{2}{n} \sum_{i=1}^{n} x_i(y_i - w_0 - w_1 x_i)
+\end{align}
+
+\textbf{צעד \num{2}: השוואה לאפס}
+
+כדי למצוא מינימום, נשווה את הנגזרות לאפס:
+
+\begin{equation}
+\begin{cases}
+\sum_{i=1}^{n} (y_i - w_0 - w_1 x_i) = 0 \\
+\sum_{i=1}^{n} x_i(y_i - w_0 - w_1 x_i) = 0
+\end{cases}
+\end{equation}
+
+\textbf{צעד \num{3}: פתיחת הסכומים}
+
+מהמשוואה הראשונה:
+
+\begin{align}
+\sum_{i=1}^{n} y_i - n w_0 - w_1 \sum_{i=1}^{n} x_i &= 0 \nonumber \\
+n \bar{y} - n w_0 - n w_1 \bar{x} &= 0 \nonumber \\
+w_0 &= \bar{y} - w_1 \bar{x}
+\end{align}
+
+זו משוואה יפהפייה שאומרת: \textbf{הקו חייב לעבור דרך נקודת הממוצע} $(\bar{x}, \bar{y})$.
+
+\textbf{צעד \num{4}: הצבה במשוואה השנייה}
+
+נציב $w_0 = \bar{y} - w_1 \bar{x}$ במשוואה השנייה:
+
+\begin{align}
+\sum_{i=1}^{n} x_i(y_i - (\bar{y} - w_1 \bar{x}) - w_1 x_i) &= 0 \nonumber \\
+\sum_{i=1}^{n} x_i(y_i - \bar{y}) - w_1 \sum_{i=1}^{n} x_i(\bar{x} - x_i) &= 0 \nonumber \\
+\sum_{i=1}^{n} x_i(y_i - \bar{y}) &= w_1 \sum_{i=1}^{n} x_i(x_i - \bar{x})
+\end{align}
+
+\textbf{צעד \num{5}: הפתרון הסופי}
+
+\begin{equation}
+w_1^* = \frac{\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^{n} (x_i - \bar{x})^2}
+\end{equation}
+
+\begin{equation}
+w_0^* = \bar{y} - w_1^* \bar{x}
+\end{equation}
+
+\textbf{זיהוי מדהים:}
+
+המונה ב\en{-}$w_1^*$ הוא \textbf{קו-ווריאנס} בין $X$ ו\en{-}$Y$!
+
+המכנה הוא \textbf{שונות} של $X$!
+
+לכן:
+
+\begin{equation}
+w_1^* = \frac{\text{Cov}(X, Y)}{\text{Var}(X)} = \frac{\text{Cov}(X, Y)}{\sigma_X^2} = r \cdot \frac{\sigma_Y}{\sigma_X}
+\end{equation}
+
+כאשר $r$ הוא מקדם הקורלציה! הנוסחה מקשרת בין רגרסיה לקורלציה בצורה אלגנטית.
+
+\textbf{פסאודו-קוד - חישוב ידני של רגרסיה:}
+
+\begin{pythonbox}[רגרסיה ליניארית - פתרון אנליטי]
+import numpy as np
+
+def linear_regression_analytical(x, y):
+    """
+    Computes linear regression analytically.
+
+    Returns:
+        w0, w1: intercept and slope
+    """
+    n = len(x)
+
+    # Means
+    x_mean = np.mean(x)
+    y_mean = np.mean(y)
+
+    # Method 1: direct formula
+    numerator = np.sum((x - x_mean) * (y - y_mean))
+    denominator = np.sum((x - x_mean)**2)
+
+    w1 = numerator / denominator
+    w0 = y_mean - w1 * x_mean
+
+    return w0, w1
+
+# Example
+x = np.array([1, 2, 3, 4, 5])
+y = np.array([2, 4, 5, 4, 5])
+
+w0, w1 = linear_regression_analytical(x, y)
+print(f"y = {w0:.2f} + {w1:.2f}x")
+
+# Compare to sklearn
+from sklearn.linear_model import LinearRegression
+model = LinearRegression()
+model.fit(x.reshape(-1, 1), y)
+print(f"sklearn: y = {model.intercept_:.2f} + {model.coef_[0]:.2f}x")
+\end{pythonbox}
+
+\hebrewsubsection{נוסחה מטריצית: אלגנטיות האלגברה הליניארית}
+
+הפתרון שמצאנו יפה, אבל הוא מוגבל לרגרסיה עם משתנה בלתי תלוי אחד. מה קורה כשיש לנו $d$ תכונות?
+
+זה הזמן לעבור לנוסחה המטריצית - אחת הנוסחאות האלגנטיות והעוצמתיות ביותר בלמידת מכונה.
+
+\textbf{סימונים מטריציים:}
+
+נניח שיש לנו $n$ תצפיות ו\en{-}$d$ תכונות. נארגן את הנתונים במטריצה:
+
+\begin{equation}
+\mathbf{X} = \begin{bmatrix}
+1 & x_{1,1} & x_{1,2} & \cdots & x_{1,d} \\
+1 & x_{2,1} & x_{2,2} & \cdots & x_{2,d} \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+1 & x_{n,1} & x_{n,2} & \cdots & x_{n,d}
+\end{bmatrix} \in \mathbb{R}^{n \times (d+1)}
+\end{equation}
+
+עמודת האחדים הראשונה היא עבור האיבר החופשי $w_0$.
+
+וקטור המשקלים:
+\begin{equation}
+\vec{w} = \begin{bmatrix} w_0 \\ w_1 \\ \vdots \\ w_d \end{bmatrix} \in \mathbb{R}^{d+1}
+\end{equation}
+
+וקטור התוויות:
+\begin{equation}
+\vec{y} = \begin{bmatrix} y_1 \\ y_2 \\ \vdots \\ y_n \end{bmatrix} \in \mathbb{R}^{n}
+\end{equation}
+
+\textbf{החיזוי במטריצות:}
+
+\begin{equation}
+\vec{\hat{y}} = \mathbf{X}\vec{w}
+\end{equation}
+
+\textbf{פונקציית ההפסד במטריצות:}
+
+\begin{align}
+\text{MSE}(\vec{w}) &= \frac{1}{n} \|\vec{y} - \vec{\hat{y}}\|^2 \nonumber \\
+&= \frac{1}{n} \|\vec{y} - \mathbf{X}\vec{w}\|^2 \nonumber \\
+&= \frac{1}{n} (\vec{y} - \mathbf{X}\vec{w})^T(\vec{y} - \mathbf{X}\vec{w})
+\end{align}
+
+\textbf{גזירה במטריצות:}
+
+כדי למצוא את המינימום, נגזור לפי $\vec{w}$ ונשווה לאפס. יש לנו כלל גזירה מטריצי:
+
+\begin{equation}
+\frac{\partial}{\partial \vec{w}} (\vec{y} - \mathbf{X}\vec{w})^T(\vec{y} - \mathbf{X}\vec{w}) = -2\mathbf{X}^T(\vec{y} - \mathbf{X}\vec{w})
+\end{equation}
+
+השוואה לאפס:
+
+\begin{align}
+-2\mathbf{X}^T(\vec{y} - \mathbf{X}\vec{w}) &= \vec{0} \nonumber \\
+\mathbf{X}^T\vec{y} - \mathbf{X}^T\mathbf{X}\vec{w} &= \vec{0} \nonumber \\
+\mathbf{X}^T\mathbf{X}\vec{w} &= \mathbf{X}^T\vec{y}
+\end{align}
+
+זו נקראת ה\textbf{\en{Normal Equation}} - משוואה נורמלית.
+
+\textbf{הפתרון:}
+
+אם $\mathbf{X}^T\mathbf{X}$ הפיכה (דטרמיננטה $\neq 0$), אזי:
+
+\begin{equation}
+\vec{w}^* = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\vec{y}
+\end{equation}
+
+זוהי \textbf{נוסחת הזהב של רגרסיה ליניארית}. נוסחה סגורה, אלגנטית, שפותרת את הבעיה במכה אחת.
+
+\textbf{מורכבות חישובית:}
+
+חישוב $(\mathbf{X}^T\mathbf{X})^{-1}$ דורש $O(d^3)$ פעולות (היפוך מטריצה).
+
+חישוב $\mathbf{X}^T\mathbf{X}$ דורש $O(nd^2)$ פעולות.
+
+סה"כ: $O(nd^2 + d^3)$.
+
+זה מעולה כאשר $d$ קטן (עשרות, מאות). אבל כאשר $d$ עצום (מיליונים, כמו ברשתות נוירונים), זה לא מעשי. זו הסיבה שנזקק ל\en{-}Gradient Descent.
+
+\textbf{פסאודו-קוד - פתרון מטריצי:}
+
+\begin{pythonbox}[רגרסיה מרובה - \en{Normal Equation}]
+import numpy as np
+
+def linear_regression_normal_equation(X, y):
+    """
+    Solves linear regression using Normal Equation.
+
+    Args:
+        X: feature matrix (n, d) - without column of 1s
+        y: label vector (n,)
+
+    Returns:
+        w: weight vector (d+1,)
+    """
+    # Add column of 1s for intercept
+    X_with_intercept = np.column_stack([np.ones(len(X)), X])
+
+    # Normal Equation: w = (X^T X)^{-1} X^T y
+    XtX = X_with_intercept.T @ X_with_intercept
+    Xty = X_with_intercept.T @ y
+
+    w = np.linalg.solve(XtX, Xty)  # More efficient than inv()
+
+    return w
+
+# Example with 3 features
+np.random.seed(42)
+n, d = 100, 3
+
+X = np.random.randn(n, d)
+true_w = np.array([5, 2, -3, 1])  # [intercept, w1, w2, w3]
+y = np.column_stack([np.ones(n), X]) @ true_w + np.random.randn(n) * 0.5
+
+# Solve
+w_estimated = linear_regression_normal_equation(X, y)
+
+print("True weights:", true_w)
+print("Estimated weights:", w_estimated)
+print("Error:", np.linalg.norm(true_w - w_estimated))
+\end{pythonbox}
+
+\hebrewsubsection{הדרך האיטרטיבית: \en{Gradient Descent}}
+
+הנוסחה הסגורה $\vec{w}^* = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\vec{y}$ מושלמת מבחינה מתמטית, אבל יש לה שלוש בעיות מעשיות:
+
+\textbf{בעיה \num{1} - סיבוכיות:} כאשר $d$ גדול (מיליוני פרמטרים), חישוב $(\mathbf{X}^T\mathbf{X})^{-1}$ לא מעשי.
+
+\textbf{בעיה \num{2} - זיכרון:} המטריצה $\mathbf{X}^T\mathbf{X}$ היא בגודל $d \times d$. אם $d = 10^6$, זה $10^{12}$ מספרים - טרה-בייט של זיכרון!
+
+\textbf{בעיה \num{3} - יציבות:} אם $\mathbf{X}^T\mathbf{X}$ כמעט סינגולרית (קרובה לאי-הפיכה), ההיפוך יוצר שגיאות נומריות עצומות.
+
+הפתרון: \textbf{\en{Gradient Descent}} - שיטה איטרטיבית שלא דורשת היפוך מטריצות.
+
+\textbf{האינטואיציה - ירידה מההר:}
+
+דמיינו שאתם עומדים על הר בערפל. אתם לא רואים את כל ההר, רק את השיפוע מתחת לרגליכם. איך תמצאו את העמק (המינימום)?
+
+תלכו \textit{בכיוון הירידה החדה ביותר} - הכיוון של שיפוע שלילי מקסימלי. תחזרו על זה שוב ושוב, עד שתגיעו למקום שבו השיפוע אפס - המינימום.
+
+זה בדיוק \en{Gradient Descent}.
+
+\textbf{האלגוריתם:}
+
+\textit{צעד \num{1}: אתחול} - התחל מנקודה אקראית $\vec{w}^{(0)}$
+
+\textit{צעד \num{2}: חישוב גרדיאנט} - חשב את הגרדיאנט (כיוון העלייה):
+\begin{equation}
+\nabla_{\vec{w}} \text{MSE} = -\frac{2}{n}\mathbf{X}^T(\vec{y} - \mathbf{X}\vec{w})
+\end{equation}
+
+\textit{צעד \num{3}: צעד בכיוון ההפוך} - עדכן:
+\begin{equation}
+\vec{w}^{(t+1)} = \vec{w}^{(t)} - \alpha \nabla_{\vec{w}} \text{MSE}
+\end{equation}
+
+כאשר $\alpha$ הוא \textbf{\en{learning rate}} - גודל הצעד.
+
+\textit{צעד \num{4}: חזרה} - חזור לצעד \num{2} עד התכנסות.
+
+\textbf{קצב הלמידה - האיזון העדין:}
+
+$\alpha$ קטן מדי \rarrow{} ההתכנסות איטית (אלפי איטרציות)
+
+$\alpha$ גדול מדי \rarrow{} האלגוריתם "קופץ" ולא מתכנס
+
+$\alpha$ אופטימלי \rarrow{} התכנסות מהירה ויציבה
+
+\begin{hebrewtable}[H]
+\caption{השפעת \en{learning rate}}
+\centering
+\begin{rtltabular}{|l|p{8cm}|}
+\hline
+\textbf{\hebcell{\en{Learning Rate}}} & \textbf{\hebcell{התנהגות}} \\
+\hline
+\hebcell{קטן מדי ($\alpha = 10^{-6}$)} & \hebcell{התכנסות איטית מאוד, דורש אלפי איטרציות} \\
+\hline
+\hebcell{אופטימלי ($\alpha = 10^{-2}$)} & \hebcell{התכנסות מהירה ויציבה} \\
+\hline
+\hebcell{גדול מדי ($\alpha = 10^{1}$)} & \hebcell{קפיצות, חוסר התכנסות, פיצוץ לאינסוף} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\textbf{פסאודו-קוד - \en{Gradient Descent} מלא:}
+
+\begin{pythonbox}[\en{Gradient Descent} - מימוש מלא]
+import numpy as np
+import matplotlib.pyplot as plt
+
+def gradient_descent(X, y, alpha=0.01, max_iters=1000, tol=1e-6):
+    """
+    Linear regression using Gradient Descent.
+
+    Args:
+        X: feature matrix (n, d)
+        y: label vector (n,)
+        alpha: learning rate
+        max_iters: maximum number of iterations
+        tol: convergence threshold
+
+    Returns:
+        w: final weights
+        history: loss history
+    """
+    # Add intercept
+    X_with_intercept = np.column_stack([np.ones(len(X)), X])
+    n, d = X_with_intercept.shape
+
+    # Random initialization
+    w = np.random.randn(d) * 0.01
+
+    history = []
+
+    for iteration in range(max_iters):
+        # Prediction
+        y_pred = X_with_intercept @ w
+
+        # Loss (MSE)
+        mse = np.mean((y - y_pred)**2)
+        history.append(mse)
+
+        # Gradient
+        gradient = -2/n * X_with_intercept.T @ (y - y_pred)
+
+        # Update
+        w_new = w - alpha * gradient
+
+        # Check convergence
+        if np.linalg.norm(w_new - w) < tol:
+            print(f"Converged at iteration {iteration}")
+            break
+
+        w = w_new
+
+    return w, history
+
+# Example
+np.random.seed(42)
+n, d = 100, 3
+X = np.random.randn(n, d)
+true_w = np.array([5, 2, -3, 1])
+y = np.column_stack([np.ones(n), X]) @ true_w + np.random.randn(n) * 0.5
+
+# Run
+w_gd, history = gradient_descent(X, y, alpha=0.01, max_iters=1000)
+
+print("Weights (Gradient Descent):", w_gd)
+print("Weights (true):", true_w)
+
+# Convergence plot
+plt.figure(figsize=(10, 6))
+plt.plot(history)
+plt.xlabel('Iteration')
+plt.ylabel('MSE')
+plt.title('Gradient Descent Convergence')
+plt.yscale('log')
+plt.grid(True, alpha=0.3)
+plt.show()
+\end{pythonbox}
+
+\hebrewsubsection{וריאציות מודרניות: מ\en{-}Batch ל\en{-}Stochastic}
+
+\en{Gradient Descent} הקלאסי מחשב את הגרדיאנט על \textit{כל} הנתונים בכל איטרציה. כאשר $n$ עצום (מיליוני דגימות), זה איטי מאוד.
+
+\textbf{\en{Stochastic Gradient Descent (SGD)}:}
+
+במקום לחשב את הגרדיאנט על כל הנתונים, בחר \textit{דגימה אחת} אקראית $(\vec{x}_i, y_i)$ ועדכן לפיה:
+
+\begin{equation}
+\vec{w}^{(t+1)} = \vec{w}^{(t)} - \alpha \cdot 2(\vec{x}_i^T\vec{w}^{(t)} - y_i)\vec{x}_i
+\end{equation}
+
+\textbf{יתרונות:}
+\begin{itemize}
+\item מהיר מאוד - עדכון אחרי כל דגימה
+\item יכול "לברוח" ממינימומים מקומיים בגלל הרעש
+\end{itemize}
+
+\textbf{חסרונות:}
+\begin{itemize}
+\item רועש - הגרדיאנט משתנה מאוד בין איטרציות
+\item לא מתכנס למינימום מדויק, אלא "מרפרף" סביבו
+\end{itemize}
+
+\textbf{\en{Mini-Batch Gradient Descent}:}
+
+הפשרה: בחר \textit{קבוצה קטנה} של $b$ דגימות (batch) ועדכן לפיה:
+
+\begin{equation}
+\vec{w}^{(t+1)} = \vec{w}^{(t)} - \frac{\alpha}{b} \sum_{i \in \text{batch}} 2(\vec{x}_i^T\vec{w}^{(t)} - y_i)\vec{x}_i
+\end{equation}
+
+זה האיזון האופטימלי - מספיק מהיר, מספיק יציב. זו השיטה הסטנדרטית ב\en{-}Deep Learning.
+
+\textbf{גדלי \en{batch} נפוצים:} \num{32}, \num{64}, \num{128}, \num{256}
+
+\begin{hebrewtable}[H]
+\caption{השוואת שיטות \en{Gradient Descent}}
+\centering
+\begin{rtltabular}{|l|r|l|l|}
+\hline
+\textbf{\hebcell{שיטה}} & \textbf{\hebcell{\en{Batch Size}}} & \textbf{\hebcell{יתרונות}} & \textbf{\hebcell{חסרונות}} \\
+\hline
+\hebcell{\en{Batch GD}} & $n$ & \hebcell{יציב, מדויק} & \hebcell{איטי, דורש זיכרון רב} \\
+\hline
+\hebcell{\en{SGD}} & \num{1} & \hebcell{מהיר מאוד} & \hebcell{רועש, לא מתכנס למדויק} \\
+\hline
+\hebcell{\en{Mini-Batch}} & \num{32-256} & \hebcell{איזון טוב} & \hebcell{צריך לכוונן גודל} \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\hebrewsubsection{אופטימיזרים מתקדמים: מעבר ל\en{-}Vanilla GD}
+
+\en{Gradient Descent} הפשוט (שנקרא \en{"Vanilla GD"}) לא משתמש בשום מידע מהעבר. כל איטרציה עומדת בפני עצמה. זה לא אופטימלי.
+
+\textbf{\en{Momentum} - תנופה:}
+
+דמיינו כדור שמתגלגל במורד הר. הוא לא רק נע בכיוון השיפוע הנוכחי - הוא גם \textit{זוכר} את המהירות שלו. זה עוזר לו "לדהור" דרך עמקים שטוחים ולא להיתקע.
+
+\begin{align}
+\vec{v}^{(t+1)} &= \beta \vec{v}^{(t)} + \alpha \nabla_{\vec{w}} \text{MSE} \\
+\vec{w}^{(t+1)} &= \vec{w}^{(t)} - \vec{v}^{(t+1)}
+\end{align}
+
+$\beta \approx 0.9$ הוא \textbf{מקדם התנופה}.
+
+\textbf{\en{Adam} - \en{Adaptive Moment Estimation}:}
+
+האופטימיזר המודרני הפופולרי ביותר. הוא משלב:
+\begin{itemize}
+\item \en{Momentum} - זוכר את הכיוון הכללי
+\item \en{RMSProp} - מתאים את קצב הלמידה לכל פרמטר בנפרד
+\end{itemize}
+
+האלגוריתם מורכב, אבל התוצאות מדהימות - התכנסות מהירה ויציבה.
+
+\begin{pythonbox}[\en{Adam Optimizer} - שימוש ב\en{-}PyTorch]
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# הגדרת מודל רגרסיה פשוט
+model = nn.Linear(in_features=3, out_features=1)
+
+# אופטימיזר Adam
+optimizer = optim.Adam(model.parameters(), lr=0.01)
+
+# לולאת אימון
+for epoch in range(100):
+    # Forward pass
+    y_pred = model(X_tensor)
+    loss = nn.MSELoss()(y_pred, y_tensor)
+    
+    # Backward pass
+    optimizer.zero_grad()  # אפס גרדיאנטים
+    loss.backward()        # חשב גרדיאנטים
+    optimizer.step()       # עדכן משקלים
+    
+    if epoch % 10 == 0:
+        print(f"Epoch {epoch}, Loss: {loss.item():.4f}")
+\end{pythonbox}
+
+\hebrewsubsection{הקשר העמוק: גיאומטריה של אופטימיזציה}
+
+רגרסיה ליניארית אינה רק טכניקה חישובית - היא תובנה גיאומטרית עמוקה.
+
+\textbf{המרחב הווקטורי של התצפיות:}
+
+חשבו על כל תצפית כווקטור במרחב $n$-ממדי. המטריצה $\mathbf{X}$ פורשת \textbf{תת-מרחב} - כל השילובים הליניאריים של העמודות שלה:
+
+\begin{equation}
+\text{span}(\mathbf{X}) = \left\{ \mathbf{X}\vec{w} : \vec{w} \in \mathbb{R}^{d+1} \right\}
+\end{equation}
+
+הווקטור $\vec{y}$ (התוויות האמיתיות) בדרך כלל \textit{לא} נמצא בתת-מרחב הזה - יש רעש, שגיאות מדידה, משתנים חסרים.
+
+\textbf{השאלה הגיאומטרית:}
+
+מהי הנקודה ב\en{-}$\text{span}(\mathbf{X})$ שהכי קרובה ל\en{-}$\vec{y}$?
+
+זו שאלת \textbf{הטלה אורתוגונלית} \en{(Orthogonal Projection)}. התשובה: הנקודה $\vec{\hat{y}} = \mathbf{X}\vec{w}^*$ כך שהווקטור $\vec{y} - \vec{\hat{y}}$ \textit{אורתוגונלי} לכל $\text{span}(\mathbf{X})$.
+
+\textbf{משפט \num{5.2} - הטלה אורתוגונלית:}
+
+הפתרון של רגרסיה ליניארית הוא ההטלה האורתוגונלית של $\vec{y}$ על $\text{span}(\mathbf{X})$.
+
+\textbf{הוכחה:}
+
+תנאי האורתוגונליות: הווקטור $\vec{y} - \mathbf{X}\vec{w}$ חייב להיות אורתוגונלי לכל עמודה של $\mathbf{X}$:
+
+\begin{equation}
+\mathbf{X}^T(\vec{y} - \mathbf{X}\vec{w}) = \vec{0}
+\end{equation}
+
+פתיחת הסוגריים:
+
+\begin{equation}
+\mathbf{X}^T\vec{y} - \mathbf{X}^T\mathbf{X}\vec{w} = \vec{0}
+\end{equation}
+
+זו בדיוק ה\en{-}Normal Equation! לכן:
+
+\begin{equation}
+\vec{w}^* = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\vec{y} \quad \blacksquare
+\end{equation}
+
+\textbf{המשמעות העמוקה:}
+
+כאשר אנחנו פותרים רגרסיה ליניארית, אנחנו למעשה מבצעים הטלה גיאומטרית. השארית $\vec{y} - \vec{\hat{y}}$ היא \textbf{הרכיב האנכי} - החלק שלא ניתן להסביר על ידי המודל הליניארי.
+
+זו הסיבה שבגרף \en{residual plot} (שאריות מול חיזוי), אנחנו מצפים לראות רעש אקראי - אם יש תבנית, זה אומר שהשארנו מידע שהמודל לא לכד.
+
+\textbf{מטריצת ההטלה:}
+
+ניתן לכתוב את ההטלה כמטריצה:
+
+\begin{equation}
+\mathbf{P} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T
+\end{equation}
+
+אזי $\vec{\hat{y}} = \mathbf{P}\vec{y}$.
+
+\textbf{תכונות של מטריצת הטלה:}
+
+\begin{enumerate}
+\item \textbf{סימטרית}: $\mathbf{P}^T = \mathbf{P}$
+\item \textbf{אידמפוטנטית}: $\mathbf{P}^2 = \mathbf{P}$ (הטלה של הטלה היא אותה הטלה)
+\item \textbf{דרגה}: $\text{rank}(\mathbf{P}) = d+1$ (ממד תת-המרחב)
+\end{enumerate}
+
+\hebrewsubsection{תרגיל תכנות עצמי \num{5.1} - השוואת שיטות}
+
+\textbf{מטרה:} להבין את היתרונות והחסרונות של כל שיטה.
+
+\textbf{משימה:}
+
+\begin{enumerate}
+\item צרו נתונים סינתטיים עם $d$ תכונות ורעש
+\item פתרו באמצעות:
+\begin{itemize}
+\item \en{Normal Equation}
+\item \en{Gradient Descent}
+\item \en{Stochastic GD}
+\item \en{Mini-Batch GD}
+\item \en{Adam}
+\end{itemize}
+\item השוו: זמן ריצה, דיוק, יציבות
+\item נסו עם $d$ גדל: \num{10}, \num{100}, \num{1000}
+\end{enumerate}
+
+\begin{pythonbox}[השוואת שיטות אופטימיזציה]
+import numpy as np
+import time
+from sklearn.linear_model import LinearRegression
+
+def compare_methods(n=1000, d=10, noise=0.5):
+    """
+    Compares different methods for linear regression.
+    """
+    # Create data
+    np.random.seed(42)
+    X = np.random.randn(n, d)
+    true_w = np.random.randn(d + 1)
+    X_with_intercept = np.column_stack([np.ones(n), X])
+    y = X_with_intercept @ true_w + np.random.randn(n) * noise
+
+    results = {}
+
+    # Method 1: Normal Equation
+    start = time.time()
+    XtX = X_with_intercept.T @ X_with_intercept
+    Xty = X_with_intercept.T @ y
+    w_normal = np.linalg.solve(XtX, Xty)
+    time_normal = time.time() - start
+    error_normal = np.linalg.norm(w_normal - true_w)
+    results['Normal Equation'] = (time_normal, error_normal)
+
+    # Method 2: Gradient Descent (simple)
+    start = time.time()
+    w = np.random.randn(d + 1) * 0.01
+    alpha = 0.01
+    for _ in range(1000):
+        gradient = -2/n * X_with_intercept.T @ (y - X_with_intercept @ w)
+        w = w - alpha * gradient
+    time_gd = time.time() - start
+    error_gd = np.linalg.norm(w - true_w)
+    results['Gradient Descent'] = (time_gd, error_gd)
+
+    # Method 3: sklearn (advanced optimization)
+    start = time.time()
+    model = LinearRegression()
+    model.fit(X, y)
+    w_sklearn = np.concatenate([[model.intercept_], model.coef_])
+    time_sklearn = time.time() - start
+    error_sklearn = np.linalg.norm(w_sklearn - true_w)
+    results['sklearn'] = (time_sklearn, error_sklearn)
+
+    # Print results
+    print(f"\n{'='*60}")
+    print(f"n={n}, d={d}, noise={noise}")
+    print(f"{'='*60}")
+    print(f"{'Method':<20} {'Time (s)':<15} {'Error':<15}")
+    print(f"{'-'*60}")
+    for method, (t, e) in results.items():
+        print(f"{method:<20} {t:<15.6f} {e:<15.6f}")
+
+    return results
+
+# Run
+compare_methods(n=1000, d=10)
+compare_methods(n=1000, d=100)
+compare_methods(n=1000, d=500)
+\end{pythonbox}
+
+\textbf{תוצאה צפויה:}
+
+\begin{hebrewtable}[H]
+\caption{השוואת ביצועים (אומדן)}
+\centering
+\begin{rtltabular}{|l|r|r|r|}
+\hline
+\textbf{\hebcell{שיטה}} & \textbf{\hebcell{$d=10$}} & \textbf{\hebcell{$d=100$}} & \textbf{\hebcell{$d=500$}} \\
+\hline
+\hebcell{\en{Normal Eq}} & \num{0.001}s & \num{0.01}s & \num{0.5}s \\
+\hline
+\hebcell{\en{GD (1000 iter)}} & \num{0.02}s & \num{0.2}s & \num{1.0}s \\
+\hline
+\hebcell{\en{sklearn}} & \num{0.001}s & \num{0.008}s & \num{0.3}s \\
+\hline
+\end{rtltabular}
+\end{hebrewtable}
+
+\textbf{מסקנות:}
+
+\begin{itemize}
+\item עבור $d$ קטן: \en{Normal Equation} הכי מהיר ומדויק
+\item עבור $d$ גדול: \en{Gradient Descent} יעיל יותר
+\item \en{sklearn} משלב את שתי הגישות והוא האופטימלי
+\end{itemize}
+
+\hebrewsubsection{אתגרים ומגבלות: מתי רגרסיה נכשלת}
+
+רגרסיה ליניארית היא כלי עוצמתי, אבל היא לא פלא. יש מצבים שבהם היא נכשלת כישלון חרוץ.
+
+\textbf{בעיה \num{1} - קשרים לא-ליניאריים:}
+
+אם הקשר האמיתי הוא $y = x^2$, רגרסיה ליניארית תיכשל. הקו הישר לא יכול לתפוס עקומה פרבולית.
+
+\textbf{פתרון:} הוסף תכונות פולינומיות - $x, x^2, x^3, \ldots$ - או עבור למודלים לא-ליניאריים (רשתות נוירונים).
+
+\textbf{בעיה \num{2} - \en{Multicollinearity}:}
+
+אם שתי תכונות קשורות מאוד ($r > 0.95$), המטריצה $\mathbf{X}^T\mathbf{X}$ כמעט סינגולרית. ההיפוך יוצר שגיאות נומריות עצומות, והמשקלים הופכים לא יציבים.
+
+\textbf{דוגמה:} אם יש תכונה "גובה בס"מ" ותכונה "גובה במטרים", הן קשורות לחלוטין ($\times 100$). המודל לא יכול להפריד ביניהן.
+
+\textbf{זיהוי:} חשב \en{VIF (Variance Inflation Factor)}:
+
+\begin{equation}
+\text{VIF}_j = \frac{1}{1 - R_j^2}
+\end{equation}
+
+כאשר $R_j^2$ הוא ה\en{-}\Rsquared{} של רגרסיה של תכונה $j$ על כל התכונות האחרות.
+
+אם $\text{VIF} > 10$ \rarrow{} בעיה חמורה.
+
+\textbf{פתרון:} הסר תכונות מיותרות, או השתמש ב\en{-}Ridge/Lasso Regression.
+
+\textbf{בעיה \num{3} - \en{Outliers}:}
+
+רגרסיה ליניארית (עם \en{MSE}) רגישה מאוד לערכים חריגים. שגיאה של \num{100} נותנת $100^2 = 10000$ - עונש עצום שמשנה את כל הקו.
+
+\textbf{פתרון:} השתמש ב\en{-}Robust Regression (למשל, \en{Huber Loss}) או זהה והסר \en{outliers}.
+
+\textbf{בעיה \num{4} - \en{Overfitting} (התאמת יתר):}
+
+כאשר $d \approx n$ או $d > n$, המודל יכול "לשנן" את נתוני האימון ולהיכשל בנתוני הבדיקה.
+
+\textbf{פתרון:} רגולריזציה (\en{Ridge/Lasso}), הפחתת תכונות, או איסוף עוד נתונים.
+
+\hebrewsubsection{אפילוג: מקו פשוט לרשתות עמוקות}
+
+הגענו למעגל שלם. התחלנו עם גאוס ב\en{-}\hebyear{1801}, שניסה למצוא כוכב לכת אבוד. סיימנו עם \en{Gradient Descent} - הכלי המרכזי שמאמן את \en{GPT-4}.
+
+מה הקשר?
+
+\textbf{רשת נוירונים היא רגרסיה ליניארית במסווה.}
+
+כל שכבה ברשת נוירונים היא פעולה ליניארית (\en{matrix multiplication}) ואחריה פונקציה לא-ליניארית (\en{activation}). אם נסיר את הפונקציות הלא-ליניאריות, נישאר עם... רגרסיה ליניארית מורכבת.
+
+המבנה הבסיסי זהה:
+\begin{itemize}
+\item פונקציית הפסד (\en{loss function})
+\item גרדיאנט (כיוון הירידה)
+\item אופטימיזר (\en{Adam, SGD})
+\item עדכון איטרטיבי של משקלים
+\end{itemize}
+
+ההבדל היחיד: במקום קו ישר פשוט, יש לנו מיליוני פרמטרים המתארים פונקציה מורכבת בצורה בלתי נתפסת.
+
+אבל העקרונות? זהים לחלוטין.
+
+כשגאוס חיפש את הכוכב האבוד, הוא לא ידע שהוא מניח את היסוד למהפכה שתגיע \num{220} שנה אחרי מותו. שהשיטה שלו תאמן מודלים שמנבאים סרטן, מתרגמים שפות, ויוצרים אמנות.
+
+זו העוצמה של רעיון טוב - הוא חי הרבה מעבר למי שהמציא אותו.
+
+\hebrewsubsection{סיכום: מה למדנו}
+
+רגרסיה ליניארית אינה רק טכניקה סטטיסטית. היא דרך לחשוב על העולם - כיצד למצוא סדר בכאוס, כיצד לחזות את הבלתי צפוי, כיצד ללמוד מנתונים.
+
+\textbf{העקרונות המרכזיים:}
+
+\begin{enumerate}
+\item \textbf{מזעור שגיאה בריבוע} - לא רק נוחות מתמטית, אלא הצדקה סטטיסטית עמוקה
+\item \textbf{פתרון אנליטי} - \en{Normal Equation} יפה, אלגנטית, אבל לא תמיד מעשית
+\item \textbf{פתרון איטרטיבי} - \en{Gradient Descent} הוא הבסיס של כל למידה מודרנית
+\item \textbf{גיאומטריה} - הטלה אורתוגונלית מקשרת אופטימיזציה לאלגברה ליניארית
+\item \textbf{הכללה} - מקו פשוט ל\en{-}Deep Learning, העקרונות נשמרים
+\end{enumerate}
+
+\textbf{הכלים שרכשנו:}
+
+\begin{itemize}
+\item גזירה חלקית וגרדיאנט - המצפן המתמטי
+\item \en{Normal Equation} - פתרון מדויק במכה אחת
+\item \en{Gradient Descent} - איטרציה שמתאימה לקנה מידה
+\item אינטואיציה גיאומטרית - הטלה כהסבר ויזואלי
+\end{itemize}
+
+\textbf{מבט קדימה - פרק \num{6}:}
+
+בפרק הבא נחקור את \textbf{סיווג} - כיצד עוברים מחיזוי ערכים רציפים (רגרסיה) לחיזוי קטגוריות. נראה:
+
+\begin{itemize}
+\item \textbf{רגרסיה לוגיסטית} - רגרסיה שמסווגת
+\item \textbf{פונקציית \en{Sigmoid}} - כיצד ממפים מספרים להסתברויות
+\item \textbf{\en{Cross-Entropy Loss}} - למה לא \en{MSE} לסיווג?
+\item \textbf{גבול ההחלטה} - הקו שמפריד בין מחלקות
+\item \textbf{הכללה למרובה מחלקות} - \en{Softmax} ו\en{-}One-vs-All
+\end{itemize}
+
+\subsection*{מטלות וקריאה מורחבת}
+
+\textbf{תרגיל \num{5.1}:} השווה שיטות אופטימיזציה (ראו פסאודו-קוד).
+
+\textbf{תרגיל \num{5.2}:} הוכח שמטריצת ההטלה $\mathbf{P} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T$ היא אידמפוטנטית.
+
+רמז: חשב $\mathbf{P}^2$ והראה שהיא שווה ל\en{-}$\mathbf{P}$.
+
+\textbf{תרגיל \num{5.3}:} מצא את קצב הלמידה האופטימלי עבור \en{Gradient Descent} על נתונים סינתטיים.
+
+\textbf{קריאה מורחבת:}
+
+\begin{itemize}
+\item \cite{legendre1805} – \en{"Nouvelles méthodes pour la détermination des orbites des comètes"}: לז'נדר על ריבועים פחותים
+\item \cite{gauss1809} – \en{"Theoria Motus Corporum Coelestium"}: גאוס והצדקה סטטיסטית
+\item \cite{ruder2016} – \en{"An Overview of Gradient Descent Optimization Algorithms"}: סקירה מקיפה של אופטימיזרים
+\item \cite{goodfellow2016} – \en{Deep Learning}, פרק \num{8}: אופטימיזציה ב\en{-}Deep Learning
+\end{itemize}
+
+\textbf{שאלות להעמקה:}
+
+\begin{enumerate}
+\item מדוע \en{Adam} מתכנס מהר יותר מ\en{-}Vanilla GD?
+\item מה יקרה ל\en{-}Normal Equation אם $\mathbf{X}^T\mathbf{X}$ סינגולרית?
+\item האם \en{Gradient Descent} מובטח להתכנס למינימום גלובלי?
+\end{enumerate}
+
+\textbf{סיום פרק \num{5}}

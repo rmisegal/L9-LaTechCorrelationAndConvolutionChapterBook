@@ -1,5 +1,5 @@
 % l9-ch03.tex
-% פרק 3: הערכת מודלים – מקדם הקביעה R²
+% פרק 3: הערכת מודלים – מקדם הקביעה \Rsquared{}
 % מחבר: ד"ר יורם סגל
 % תאריך: ספטמבר 2025
 
@@ -237,32 +237,32 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 
-# נתונים פשוטים: Y = 2X + רעש
+# Simple data: Y = 2X + noise
 np.random.seed(42)
 n = 100
 X_real = np.random.rand(n, 1)
 y = 2 * X_real.flatten() + np.random.randn(n) * 0.5
 
-# נבדוק R² כפונקציה של מספר תכונות אקראיות
+# Test R² as a function of number of random features
 r2_scores = []
 
 for num_random_features in [0, 1, 5, 10, 20, 50]:
-    # הוספת תכונות אקראיות (רעש!)
+    # Add random features (noise!)
     X_random = np.random.randn(n, num_random_features)
     X_combined = np.hstack([X_real, X_random])
-    
-    # אימון
+
+    # Train
     model = LinearRegression()
     model.fit(X_combined, y)
-    
-    # R² על נתוני האימון
+
+    # R² on training data
     y_pred = model.predict(X_combined)
     r2 = r2_score(y, y_pred)
     r2_scores.append(r2)
-    
+
     print(f"Num features: {1 + num_random_features}, R²: {r2:.4f}")
 
-# תוצאה: R² עולה עם כל תכונה, גם אם היא רעש!
+# Result: R² increases with each feature, even if it's noise!
 \end{pythonbox}
 
 \textbf{תוצאה צפויה:}
@@ -337,22 +337,22 @@ R^2_{\text{adj}} = 1 - (1 - R^2) \cdot \frac{n - 1}{n - p - 1}
 \begin{pythonbox}[\en{Adjusted \Rsquared{}} – מונע עליה מלאכותית]
 def adjusted_r2(r2, n, p):
     """
-    חישוב Adjusted R².
-    
+    Compute Adjusted R².
+
     Args:
-        r2: R² רגיל
-        n: מספר דגימות
-        p: מספר תכונות (לא כולל intercept)
+        r2: regular R²
+        n: number of samples
+        p: number of features (excluding intercept)
     """
     return 1 - (1 - r2) * (n - 1) / (n - p - 1)
 
-# חישוב מחדש
+# Recalculation
 for i, num_random in enumerate([0, 1, 5, 10, 20, 50]):
     r2 = r2_scores[i]
     n = 100
     p = 1 + num_random
     adj_r2 = adjusted_r2(r2, n, p)
-    
+
     print(f"Features: {p}, R²: {r2:.4f}, Adj R²: {adj_r2:.4f}")
 \end{pythonbox}
 
@@ -455,46 +455,46 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 
-# 1. יצירת נתונים
+# 1. Create data
 np.random.seed(42)
 n = 100
-X = np.random.rand(n, 1) * 10  # X בין 0 ל-10
-y = 3 * X.flatten() + 5 + np.random.randn(n) * 2  # y = 3x + 5 + רעש
+X = np.random.rand(n, 1) * 10  # X between 0 and 10
+y = 3 * X.flatten() + 5 + np.random.randn(n) * 2  # y = 3x + 5 + noise
 
-# 2. אימון מודל
+# 2. Train model
 model = LinearRegression()
 model.fit(X, y)
 y_pred = model.predict(X)
 
-print(f"המודל שנלמד: y = {model.coef_[0]:.3f}x + {model.intercept_:.3f}")
+print(f"The learned model: y = {model.coef_[0]:.3f}x + {model.intercept_:.3f}")
 
-# 3. דרך 1: נוסחה ישירה
+# 3. Method 1: direct formula
 y_mean = np.mean(y)
 SS_tot = np.sum((y - y_mean)**2)
 SS_res = np.sum((y - y_pred)**2)
 r2_manual = 1 - (SS_res / SS_tot)
 
-print(f"\nדרך 1 (נוסחה ישירה):")
+print(f"\nMethod 1 (direct formula):")
 print(f"  SS_tot = {SS_tot:.2f}")
 print(f"  SS_res = {SS_res:.2f}")
 print(f"  R² = {r2_manual:.6f}")
 
-# 4. דרך 2: קורלציה בריבוע (רק לרגרסיה פשוטה!)
+# 4. Method 2: correlation squared (simple regression only!)
 correlation = np.corrcoef(X.flatten(), y)[0, 1]
 r2_from_corr = correlation**2
 
-print(f"\nדרך 2 (קורלציה):")
+print(f"\nMethod 2 (correlation):")
 print(f"  r = {correlation:.6f}")
 print(f"  R² = r² = {r2_from_corr:.6f}")
 
-# 5. דרך 3: sklearn
+# 5. Method 3: sklearn
 r2_sklearn = r2_score(y, y_pred)
 
-print(f"\nדרך 3 (sklearn):")
+print(f"\nMethod 3 (sklearn):")
 print(f"  R² = {r2_sklearn:.6f}")
 
-# 6. השוואה
-print(f"\nהכל זהה? {np.allclose([r2_manual, r2_from_corr, r2_sklearn], r2_sklearn)}")
+# 6. Comparison
+print(f"\nAll identical? {np.allclose([r2_manual, r2_from_corr, r2_sklearn], r2_sklearn)}")
 \end{pythonbox}
 
 \textbf{תוצאה צפויה:} כל שלוש השיטות יתנו $R^2 \approx \num{0.95}$ (תלוי ברעש).
@@ -518,40 +518,40 @@ import matplotlib.pyplot as plt
 def adjusted_r2(r2, n, p):
     return 1 - (1 - r2) * (n - 1) / (n - p - 1)
 
-# נתונים
+# Data
 np.random.seed(42)
 n = 100
 X_real = np.random.rand(n, 1)
 y = 2 * X_real.flatten() + np.random.randn(n) * 0.5
 
-# מעקב
+# Tracking
 num_features_list = []
 r2_list = []
 adj_r2_list = []
 
 for num_random in range(0, 51):
-    # הוספת תכונות אקראיות
+    # Add random features
     if num_random == 0:
         X_combined = X_real
     else:
         X_random = np.random.randn(n, num_random)
         X_combined = np.hstack([X_real, X_random])
-    
-    # אימון
+
+    # Train
     model = LinearRegression()
     model.fit(X_combined, y)
     y_pred = model.predict(X_combined)
-    
-    # חישוב
+
+    # Compute
     r2 = r2_score(y, y_pred)
     p = X_combined.shape[1]
     adj_r2 = adjusted_r2(r2, n, p)
-    
+
     num_features_list.append(p)
     r2_list.append(r2)
     adj_r2_list.append(adj_r2)
 
-# גרף
+# Plot
 plt.figure(figsize=(10, 6))
 plt.plot(num_features_list, r2_list, label='R²', marker='o', markersize=3)
 plt.plot(num_features_list, adj_r2_list, label='Adjusted R²', marker='s', markersize=3)

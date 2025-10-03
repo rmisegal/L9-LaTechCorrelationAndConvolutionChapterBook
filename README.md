@@ -4,9 +4,13 @@
 
 **Copyright:** © 2025 Dr. Yoram Segal. All rights reserved.
 
+## Book Abstract
+
+This book is part of a comprehensive series on artificial intelligence and machine learning, focusing on the mathematical foundations that underpin modern AI systems. Chapter 9 bridges classical linear algebra with contemporary machine learning applications, exploring how fundamental mathematical concepts—from vector spaces to correlation analysis—form the theoretical backbone of artificial intelligence. Beginning with Gauss's revolutionary work on least squares regression in 1801, the text traces the evolution of linear methods through to their modern applications in neural networks and deep learning. The chapter addresses critical challenges in high-dimensional data analysis, including the curse of dimensionality and dimensionality reduction techniques like PCA. It provides rigorous mathematical proofs alongside practical Python implementations, demonstrating how abstract linear algebra concepts translate into working AI systems. From correlation analysis and causal inference to linear and logistic regression, each topic is presented with historical context, mathematical rigor, and real-world applications. This bilingual Hebrew-English text serves both as a theoretical foundation and a practical guide for students, researchers, and practitioners seeking to understand the linear algebraic principles that make artificial intelligence possible.
+
 ## About This Book
 
-This academic book chapter explores fundamental concepts in linear algebra, correlation, and convolution that form the mathematical foundations for artificial intelligence and machine learning. The work covers:
+This academic book chapter explores fundamental concepts in linear algebra, correlation, and regression that form the mathematical foundations for artificial intelligence and machine learning. The work covers:
 
 ### Chapter Contents
 
@@ -34,13 +38,25 @@ This academic book chapter explores fundamental concepts in linear algebra, corr
    - Partial correlation and confounding variables
    - Spurious correlations and causation
    - Causal inference basics
+   - Connection to cosine similarity in vector spaces
 
-5. **Convolution and Pattern Recognition** (Placeholder)
-   - Convolution operations in signal processing
-   - Applications in computer vision
-   - Connection to neural networks
+5. **Linear Regression: The Line That Shaped Modernity** - רגרסיה ליניארית: הקו שעצב את המודרניות
+   - Historical context: Gauss and Legendre's least squares method
+   - Mathematical foundations of linear regression
+   - Loss functions and optimization
+   - Gradient descent algorithm
+   - Multiple linear regression and matrix formulation
+   - Practical Python implementations
+   - Connection to modern AI and neural networks
 
-6. **Advanced Topics** (Placeholder)
+6. **Logistic Regression: From Numbers to Classes** - רגרסיה לוגיסטית: מחיזוי מספרים למחלקות
+   - Binary classification fundamentals
+   - The sigmoid (logistic) function
+   - Maximum likelihood estimation
+   - Cross-entropy loss function
+   - Decision boundaries and probability interpretation
+   - Multi-class classification (softmax regression)
+   - Applications in medical diagnosis and predictive analytics
 
 ## Technical Implementation
 
@@ -73,9 +89,9 @@ L9-CorrelationConvolution/
 │   ├── l9-ch01.tex               # פרק 1: מבוא - עולמו הנסתר של הווקטור
 │   ├── l9-ch02.tex               # פרק 2: קללת המימדיות
 │   ├── l9-ch03.tex               # פרק 3: מקדם הקביעה R²
-│   ├── l9-ch04.tex               # פרק 4: (בפיתוח)
-│   ├── l9-ch05.tex               # פרק 5: (בפיתוח)
-│   └── l9-ch06.tex               # פרק 6: (בפיתוח)
+│   ├── l9-ch04.tex               # פרק 4: מתאם ושונות משותפת
+│   ├── l9-ch05.tex               # פרק 5: רגרסיה ליניארית
+│   └── l9-ch06.tex               # פרק 6: רגרסיה לוגיסטית
 └── Notepad++UserDefinLang/
     ├── Readme.txt                 # הוראות שימוש
     └── LaTeX-HebrewTemplate.udl.xml  # הגדרת syntax highlighting
